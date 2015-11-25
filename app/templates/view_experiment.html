@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/view_experiment.css') }}">
+    <script src="{{ url_for('static',filename='scripts/highcharts.js') }}"></script>
+    <script src="{{ url_for('static',filename='scripts/app/view_experiment.js') }}"></script>
+    <script src="{{ url_for('static',filename='scripts/purl.js') }}"></script>
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+    {% if current_user.is_authenticated %}
+    {% else %}
+        <a href="{{ url_for('main_page') }}">Sign In</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="loading_screen">Loading...</div>
+    <div class="chart_fullscreen">
+         <input type="button" class="btnCloseChartFullscreen" value="X" />
+    </div>
+    <div class="experiment_details">
+        <div class="wrapper">
+            <p class="exp_details">
+                <span class="date">{{ exp_details.date }}</span>
+                <span class="title">{{ exp_details.title }}</span>
+                <span class="description">{{ exp_details.comment }}</span>
+            </p>
+            <p class="exp_properties">
+                <span class="steps">Calculation steps: {{ exp_details.steps }}</span>
+                <span class="sync">Steps between synchronization: {{ exp_details.sync }}</span>
+                <span class="alpha">Alpha: {{ exp_details.alpha }}</span>
+                <span class="beta">Beta: {{ exp_details.beta }}</span>
+                <span class="gama">Gama: {{ exp_details.gama }}</span>
+            </p>
+            <p class="exp_uploaded_files">
+                <span class="steps">Models: </span>
+                <a class="download" href="/static/uploads/final.pdb" download="{{ current_user.username }}_models">models.pdb</a>
+                <span class="sync">Experiment data: </span>
+                <a class="download" href="/static/uploads/exp_data.dat" download="{{ current_user.username }}_exp_data">exp_data.dat</a>
+            </p>
+            <a class="home_button" href="/home">Home</a>
+        </div>
+    </div>
+    <div id="PresentationPanel">
+        <div class="DataViewerPanel">
+            <div class="Buttons jsmolButtons">
+                <input type="button" id="jsmolButton1" value="1" />
+                <input type="button" id="jsmolButton1" value="2" />
+                <input type="button" id="jsmolButton1" value="3" />
+            </div>
+            <div id="jsmolViewer"></div>
+            <div id="chart"></div>
+            <div class="Buttons chartButtons">
+                <input type="button" id="btnDefault" value="1:1" />
+                <input type="button" id="btnZoomIn" value="+" />
+                <input type="button" id="btnZoomOut" value="-" />
+                <input type="button" id="btnFullscreen" value="F" />
+            </div>
+        </div>
+        <hr />
+        <div class="ControlsPanel">
+            <div class="Wrapper">
+                <div class="Controls">
+                    <span class="progressSpan">Progress:</span>
+                    <div class="progressBar"></div>
+                    <span class="progress_value"></span>
+                    <span class="sliderLabel">Weight:</span>
+                    <input type="range" id="slider" class="btnSlider" value="0" min="0" max="100" step="1" title="Weight" />
+                    <span class="sliderValue">0</span>
+                </div>
+                <div class="model_buttons"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

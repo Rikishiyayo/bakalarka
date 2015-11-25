@@ -1,0 +1,248 @@
+.fullscreen_window{
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 100px;
+    top: 0;
+    left: 0;
+    background-color: green;
+    display: none;
+}
+
+div.message{
+    font-size: 20px;
+    text-align: center;
+    /*height: 40px;*/
+    line-height: 40px;
+}
+
+div.submit_experiment{
+    width: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+    div.submit_experiment h1 {
+        font-size: 30px;
+        margin: 0 auto 25px;
+        text-align: center;
+    }
+
+        div.submit_experiment form p {
+            width: 100%;
+            margin: 0 auto 10px;
+            font-size: 26px;
+            text-align: center;
+            position: relative;
+        }
+        
+        div.submit_experiment form p.form_buttons {
+            text-align: right;
+            font-size: 0;
+            margin-bottom: 0;
+        }
+
+        div.submit_experiment form input {
+            box-sizing: border-box !important;
+            vertical-align: middle;
+            font-size: 20px;
+            width: 57%;
+            padding: 3px 10px;
+            color: #4c4c4c;
+            border-radius: 4px;
+            border: 1px solid lightgrey;
+            height: 40px;
+        }
+        
+/*            div.submit_experiment form input:not([type="file"]){
+                border: 1px solid lightgrey;
+                height: 40px;
+            }*/
+
+            div.submit_experiment form input.error{
+                background-color: #f65858;
+            }
+
+            div.submit_experiment form input[type="submit"] {
+                display: inline-block;
+                width: 57%;
+                border: 1px solid lightskyblue !important;
+                background-color: lightskyblue;
+                border-radius: 4px;
+                height: 40px;
+                margin: 0;
+            }
+
+                div.submit_experiment form input[type="submit"]:hover {
+                    border: 1px solid #6ca4c8 !important;
+                    background-color: #6ca4c8;
+                    cursor: pointer;
+                }
+
+            div.submit_experiment form input[type="reset"] {
+                display: inline-block;
+                width: 34%;
+                border: 1px solid #f65858 !important;
+                background-color: #f65858;
+                border-radius: 4px;
+                height: 40px;
+                margin: 0;
+                margin-right: 3%;
+            }
+
+                div.submit_experiment form input[type="reset"]:hover {
+                    border: 1px solid #dc3f3f !important;
+                    background-color: #dc3f3f;
+                    cursor: pointer;
+                }
+
+            div.submit_experiment form input[type="file"] {
+                padding: 0;
+            }
+
+            div.submit_experiment form input:focus {
+                border-color: lightskyblue;
+                border-width: 2px;
+            }
+
+        div.submit_experiment form textarea {
+            box-sizing: border-box;
+            border: 1px solid lightgrey;
+            border-radius: 4px;
+            vertical-align: middle;
+            font-size: 20px;
+            font-family: Arial;
+            color: #4c4c4c;
+            width: 57%;
+            height: 200px;
+            padding: 3px 10px;
+            resize: vertical;
+            max-height: 650px;
+        }
+
+            div.submit_experiment form textarea:focus {
+                border-color: lightskyblue;
+                border-width: 2px;
+            }
+
+        div.submit_experiment form label {
+            margin-right: 3%;
+            font-size: 20px;
+            display: inline-block;
+            width: 40%;
+            vertical-align: middle;
+            text-align: right;
+        }
+
+div.experiment_list{
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+    div.experiment_list h1 {
+        font-size: 30px;
+        margin: 0 auto 25px;
+        text-align: center;
+        display: inline-block;
+        width: 85%;
+        vertical-align: middle;
+    }
+    
+    div.experiment_list div.experiment_list_overlay{
+        display: none;
+        position: absolute;
+        color: #4c4c4c;
+        font-size: 20px;
+        text-align: center;
+        padding-top: 200px;
+        background-color: whitesmoke;
+        width: 100%;
+        height: 100%;
+        margin-top: 59px;
+        top: 0;
+        left: 0;
+        opacity: 0.93;
+    }
+    
+    div.experiment_list img.img_reload_list{
+        display: inline-block;
+        margin-left: 5%;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 4px;
+        height: 34px;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
+    }
+    
+    div.experiment_list img.img_reload_list:hover{
+        background-color: lightgray;
+        cursor: pointer;
+    }
+
+    div.experiment_list .experiment_row {
+        width: 90%;
+        margin: auto;
+        height: 40px;
+        font-size: 0;
+        border-radius: 4px;
+    }
+
+        div.experiment_list .experiment_row:hover {
+             background-color: lightgrey;
+             cursor: pointer;
+        }
+
+    div.experiment_list .experiment_row a {
+        display: none;
+    }
+
+    div.experiment_list .experiment_row span {
+        display: inline-block;
+        font-size: 20px;
+        box-sizing: border-box;
+        vertical-align: middle;
+        line-height: 40px;
+    }
+
+        div.experiment_list .experiment_row span.date {
+            width: 20%;
+            padding-left: 10px;
+        }
+
+        div.experiment_list .experiment_row span.name {
+            width: 48%;
+        }
+        
+        div.experiment_list .experiment_row span.progress {
+            width: 9%;
+        }
+
+        div.experiment_list .experiment_row span.status {
+            width: 16%;
+        }
+        
+        div.experiment_list .experiment_row img{
+            display: none;
+            vertical-align: middle;
+            height: 40px;
+        }
+
+.ui-tooltip {
+    background: #4c4c4c !important;
+    box-sizing: border-box !important;
+    height: 40px;
+    padding: 0 5px !important;
+    margin: 0 !important;
+    line-height: 40px;
+    border: none !important;
+    box-shadow: 0 0 0 !important;
+    border-radius: 4px !important;
+    color: whitesmoke;
+}
+
+.ui-tooltip-content {
+    font-size: 14px !important;
+}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main_page.css') }}">
+    <script src="{{ url_for('static',filename='scripts/app/main_page.js') }}"></script>
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+    <a class="dropdown_toggle">Log In</a>
+    <div class="dropdown_login_form_wrapper">
+        <form class="login_form" name="login_form" action="{{ url_for('login') }}" method="post" id="login_form">
+            {{ l_form.hidden_tag() }}
+            <p class="login_errors">
+                {% for message in get_flashed_messages() %}
+                    <span>{{ message }}</span>
+                {% endfor %}
+                {% for error in l_form.login_email.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ l_form.login_email}}
+            </p>
+            <p>
+                {{ l_form.login_password }}
+            </p>
+            <p class="last_row">
+                {{ l_form.remember_me.label }}{{ l_form.remember_me }}
+                {{ l_form.submit }}
+            </p>
+        </form>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="register_form">
+        <h1>Sign Up</h1>
+        <form name="register_form" action="{{ url_for('register') }}" method="post" id="register_form">
+            {{ r_form.hidden_tag() }}
+            <p>
+                {{ r_form.register_email.label }}{{ r_form.register_email}}
+                {% for error in r_form.register_email.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ r_form.username.label }}{{ r_form.username }}
+                {% for error in r_form.username.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ r_form.register_password.label }}{{ r_form.register_password }}
+                {% for error in r_form.register_password.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ r_form.password2.label }}{{ r_form.password2 }}
+                {% for error in r_form.password2.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p class="submit-button">
+                {{ r_form.submit }}
+            </p>
+        </form>
+    </div>
+{% endblock %}

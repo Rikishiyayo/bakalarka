@@ -1,0 +1,394 @@
+.loading_screen{
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: whitesmoke;
+    position: fixed;
+    z-index: 10000;
+    color: #4c4c4c;
+    text-align: center;
+    padding-top: 480px;
+    opacity: 0.9;
+    font-size: 30px;
+}
+
+.chart_fullscreen{
+    box-sizing: border-box;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #4c4c4c;
+    display: none;
+    position: fixed;
+    z-index: 10000
+}
+
+    .chart_fullscreen #chart {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        padding: 20px;
+        box-sizing: border-box;
+        top: 0;
+        left: 0;
+        margin: auto;
+        position: relative;
+    }
+
+    .chart_fullscreen .btnCloseChartFullscreen {
+        display: block;
+        position: absolute;
+        background-color: white;
+        color: red;
+        border: none;
+        width: 40px;
+        height: 40px;
+        right: 0;
+        top: 0;
+        z-index: 100000;
+        font-weight: bold;
+        font-size: 26px;
+    }
+
+        .chart_fullscreen .btnCloseChartFullscreen:hover {
+            background-color: red;
+            color: white;
+            cursor: pointer;
+        }
+        
+.experiment_details{
+    width: 100%;
+    margin-top: 25px;
+}
+
+    .experiment_details .wrapper{
+        width: 82%;
+        margin: auto;
+        font-size: 0;
+    }
+
+        .experiment_details .wrapper p {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0;
+            font-size: 0;
+        }
+        
+            .experiment_details .wrapper span {
+                display: inline-block;
+                font-size: 14px;
+            }
+        
+            .experiment_details .wrapper p.exp_details {
+                width: 40%;
+                margin-right: 5%
+            }
+            
+                .experiment_details .wrapper p.exp_details span.date {
+                    width: 15%;
+                }
+                
+               .experiment_details .wrapper p.exp_details span.title {
+                    width: 85%;
+                }
+                
+               .experiment_details .wrapper p.exp_details span.description {
+                    width: 100%;
+                    margin-top: 10px;
+                }
+            
+            .experiment_details .wrapper p.exp_properties {
+                width: 22%;
+            }
+                
+                .experiment_details .wrapper p.exp_properties span {
+                    width: 100%;
+                }
+                
+            .experiment_details .wrapper p.exp_uploaded_files {
+                width: 20%;
+            }
+                
+                .experiment_details .wrapper p.exp_uploaded_files span {
+                    width: 50%;
+                    vertical-align: middle;
+                }
+                
+                .experiment_details .wrapper p.exp_uploaded_files a {
+                    width: 40%;
+                    margin-left: 10%;
+                    display: inline-block;
+                    font-size: 14px;
+                    text-decoration: none;
+                    vertical-align: middle;
+                }
+                
+                .experiment_details .wrapper p.exp_uploaded_files a:hover {
+                    text-decoration: underline;
+                }
+
+        .experiment_details .wrapper a.home_button {
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 4px;
+            border: 1px solid #9498a1;
+            background-color: lightskyblue;
+            text-decoration: none;
+            width: 8%;
+            margin-left: 5%;
+            font-size: 20px;
+            text-align: center;
+            color: #4c4c4c;
+        }
+
+            .experiment_details .wrapper a.home_button:hover {
+                background-color: #6ca4c8;
+                cursor: pointer;
+            }
+
+#PresentationPanel {
+    width: 100%;
+    font-size: 0;
+    margin: 25px 0;
+}
+
+    #PresentationPanel .DataViewerPanel {
+        margin: auto;
+        width: 82%;
+    }
+
+        #PresentationPanel .DataViewerPanel .Buttons {
+            display: inline-block;
+            width: 3%;
+            height: 450px;
+            vertical-align: middle;
+        }
+
+            #PresentationPanel .DataViewerPanel .Buttons.jsmolButtons {
+                margin-right: 1%;
+            }
+
+            #PresentationPanel .DataViewerPanel .Buttons.chartButtons {
+                margin-left: 1%;
+            }
+
+            #PresentationPanel .DataViewerPanel .Buttons input {
+                display: block;
+                width: 100%;
+                margin: auto;
+                background-color: lightgrey;
+                border-radius: 4px;
+                height: 25px;
+                margin-bottom: 5px;
+                box-sizing: border-box;
+                border: 1px solid #9498a1;
+                color: #4c4c4c;
+                font-size: 14px;
+            }
+
+                #PresentationPanel .DataViewerPanel .Buttons input:hover {
+                    background-color: #9498a1;
+                    cursor: pointer;
+                }
+
+        #PresentationPanel .DataViewerPanel #jsmolViewer {
+            display: inline-block;
+            width: 36%;
+            height: 450px;
+            background-color: #cdd0d7;
+            vertical-align: middle;
+            border: 1px solid #9498a1;
+            border-radius: 4px;
+            vertical-align: middle;
+            box-sizing: border-box;
+            padding: 2px;
+            position: relative;
+            z-index: 1;
+            font-size: 0;
+        }
+
+        #PresentationPanel .DataViewerPanel #chart {
+            display: inline-block;
+            width: 55%;
+            height: 450px;
+            box-sizing: border-box;
+            border: 1px solid #9498a1;
+            border-radius: 4px;
+            margin-left: 1%;
+            overflow: auto;
+            vertical-align: middle;
+        }
+
+hr {
+    width: 82%;
+    margin: 25px auto;
+}
+
+.ControlsPanel {
+    width: 82%;
+    margin: auto;
+    font-size: 0px; /*remove white space between buttons*/
+}
+
+    .ControlsPanel .Wrapper {
+        margin: auto;
+        width: 55%;
+        font-size: 0;
+    }
+
+        .ControlsPanel .Wrapper .model_buttons {
+            width: 45%;
+            font-size: 0;
+            vertical-align: middle;
+            display: inline-block;
+            margin-left: 5%;
+        }
+
+            .ControlsPanel .Wrapper .model_buttons span {
+                font-size: 14px;
+                margin: 0 10px;
+                display: inline-block;
+                height: 25px;
+                line-height: 25px;
+                width: 18%;
+                margin: 0 2.5%;
+                margin-bottom: 5px;
+                vertical-align: middle;
+            }
+
+            .ControlsPanel .Wrapper .model_buttons input {
+                box-sizing: border-box;
+                width: 27%;
+                height: 25px;
+                margin-bottom: 5px;
+                text-align: center;
+                border: 1px solid #9498a1;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                padding: 0 6px 0 6px;
+                display: inline-block;
+                vertical-align: middle;
+                color: #4c4c4c;
+            }
+
+                .ControlsPanel .Wrapper .model_buttons input:not(.selected):hover {
+                    background-color: #9498a1 !important;
+                    cursor: pointer;
+                }
+
+                .ControlsPanel .Wrapper .model_buttons input.selected {
+                    background-color: greenyellow;
+                }
+
+                    .ControlsPanel .Wrapper .model_buttons input.selected:hover {
+                        background-color: #8acc25;
+                        cursor: pointer;
+                    }
+
+        .ControlsPanel .Wrapper .Controls {
+            font-size: 0;
+            width: 50%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+            .ControlsPanel .Wrapper .Controls .progressSpan {
+                font-size: 14px;
+                vertical-align: middle;
+                margin-right: 2%;
+                display: inline-block;
+                margin-bottom: 20px;
+                width: 20%;
+                text-align: right;
+            }
+
+            .ControlsPanel .Wrapper .Controls .progressBar {
+                display: inline-block;
+                font-size: 20px;
+                width: 66%;
+                height: 25px;
+                margin-bottom: 20px;
+                vertical-align: middle;
+                box-sizing: border-box;
+            }
+            
+            .ControlsPanel .Wrapper .Controls .progress_value {
+                font-size: 14px;
+                vertical-align: middle;
+                margin-left: 3%;
+                width: 9%;
+                display: inline-block;
+                margin-bottom: 20px;
+            }            
+
+                .ControlsPanel .Wrapper .Controls .progressBar.ui-widget-content {
+                    border: 1px solid #9498a1;
+                }
+
+                .ControlsPanel .Wrapper .Controls .progressBar .ui-widget-header {
+                    background: none;
+                    border: 1px solid yellowgreen;
+                }
+
+                .ControlsPanel .Wrapper .Controls .progressBar .ui-progressbar-value {
+                    background-color: greenyellow;
+                }
+
+
+            .ControlsPanel .Wrapper .Controls .sliderLabel {
+                display: inline-block;
+                width: 20%;
+                vertical-align: middle;
+                margin-right: 2%;
+                font-size: 14px;
+                text-align: right;
+            }
+
+            .ControlsPanel .Wrapper .Controls .btnSlider {
+                width: 66%;
+                vertical-align: middle;
+                margin: 0;
+                height: 25px;
+            }
+
+            .ControlsPanel .Wrapper .Controls .sliderValue {
+                font-size: 14px;
+                vertical-align: middle;
+                margin-left: 3%;
+                width: 9%;
+                display: inline-block;
+            }
+
+            .ControlsPanel .Wrapper .Controls input:not(.btnSlider) {
+                width: 55%;
+                box-sizing: border-box;
+                height: 25px;
+                margin: 20px auto 0 auto;
+                border: 1px solid #9498a1;
+                border-radius: 4px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: bold;
+                padding: 0 6px 0 6px;
+                display: block;
+                color: #4c4c4c;
+            }
+
+                .ControlsPanel .Wrapper .Controls input:not(.btnSlider):hover {
+                    cursor: pointer;
+                    background-color: #9498a1;
+                }
+
+
+            .ControlsPanel .Wrapper .Controls input.selected {
+                background-color: lightskyblue;
+            }
+
+                .ControlsPanel .Wrapper .Controls input.selected:hover {
+                    background-color: #6ca4c8;
+                    cursor: pointer;
+                }

@@ -1,0 +1,189 @@
+a.dropdown_toggle{
+    display: inline-block;
+    color: whitesmoke;
+    font-size: 20px;
+    position: absolute;
+    right: 5%;
+    vertical-align: middle;
+    margin: 15px 15px 15px 0;
+    line-height: 31px;
+}
+
+    a.dropdown_toggle:hover{
+        color: lightgrey;
+        cursor: pointer;
+    }
+
+div.dropdown_login_form_wrapper{
+    position: absolute;
+    top: 60px;
+    right: 5%;
+    background-color: #4c4c4c;
+    display: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 100000;
+    box-shadow: 0 0 3px #4c4c4c;
+}
+
+
+    div.dropdown_login_form_wrapper form.login_form{
+        display: inline-block;
+        width: 100%;
+        margin: 0;
+        vertical-align: middle;
+        color: whitesmoke;
+        font-size: 22px;
+    }
+
+    div.dropdown_login_form_wrapper form.login_form p{
+        margin: 10px 15px 0 15px;
+        font-size: 0;
+    }
+
+    div.dropdown_login_form_wrapper form.login_form p.login_errors{
+        text-align: center;
+        line-height: 40px;
+    }
+
+
+        div.dropdown_login_form_wrapper form.login_form p.last_row{
+            margin-bottom: 10px;
+        }
+
+        div.dropdown_login_form_wrapper form.login_form span{
+            font-size: 16px;
+            color: #f65858;
+        }
+
+        div.dropdown_login_form_wrapper form.login_form label{
+            display: inline-block;
+            line-height: 40px;
+            vertical-align: middle;
+            width: 43%;
+            font-size: 16px;
+        }
+
+        div.dropdown_login_form_wrapper form.login_form input{
+            vertical-align: middle;
+            box-sizing: border-box;
+            padding: 2px 5px;
+            border: none;
+            border-radius: 4px;
+            color: #4c4c4c;
+            font-size: 20px;
+            height: 40px;
+        }
+
+        div.dropdown_login_form_wrapper form.login_form input.error{
+            background-color: #f65858;
+        }
+
+        div.dropdown_login_form_wrapper form.login_form input#remember_me{
+            margin: 0;
+            width: 5%
+        }
+
+        div.dropdown_login_form_wrapper form.login_form input#submit{
+            display: inline-block;
+            background-color: greenyellow;
+            border: 1px solid greenyellow;
+            border-radius: 4px;
+            padding: 3px 10px;
+            color: #4c4c4c;
+            font-size: 20px;
+            width: 40%;
+            margin-left: 12%;
+        }
+
+            div.dropdown_login_form_wrapper form.login_form input#submit:hover{
+                border-color: #8acc25;
+                background-color: #8acc25;
+                cursor: pointer;
+            }
+
+.register_form{
+     display: inline-block;
+     vertical-align: middle;
+     width: 100%;
+}
+
+    .register_form h1{
+        width: 30%;
+        font-size: 26px;
+        text-align: center;
+        margin: auto;
+        margin-bottom: 25px;
+    }
+
+    .register_form form{
+        width: 30%;
+        margin: auto;
+    }
+    
+    .register_form form p:not(.submit-button){
+        margin-bottom: 10px;
+    }
+    
+    .register_form form input{
+        vertical-align: middle;
+        width: 60%;
+        box-sizing: border-box;
+        padding: 2px 5px;
+        border: 1px solid lightgrey;
+        border-radius: 4px;
+        color: #4c4c4c;;
+        font-size: 20px;
+        display: inline-block;
+        height: 40px;
+    }
+
+        .register_form form input:not([type="submit"]):focus{
+            border: 2px solid lightskyblue;
+        }
+
+    .register_form form input.error{
+        background-color: #f65858;
+    }
+
+    .register_form form input#submit{
+        margin-left: 40%;
+        width: 60%;
+        border: 1px solid lightskyblue;
+        border-radius: 4px;
+        color: #4c4c4c;;
+        background-color: lightskyblue;
+    }
+
+    .register_form form input#submit:hover{
+        border: 1px solid #6ca4c8;
+        background-color: #6ca4c8;
+        cursor: pointer;
+    }
+    
+    
+    .register_form form label{
+        display: inline-block;
+        width: 37.5%;
+        margin-right: 2.5%;
+        vertical-align: middle;
+        font-size: 20px;
+        text-align: right;
+    }
+    
+    .register_form form span{
+        vertical-align: middle;
+        font-size: 16px;
+        color: #4c4c4c;
+        border-radius: 4px;
+        margin-left: 1%;
+        display: inline-block !important;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 5px;
+        box-sizing: border-box;
+        position: absolute;
+    }
+    
+    
+    
