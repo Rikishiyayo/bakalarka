@@ -203,6 +203,7 @@ function viewFile() {
     }, 5000);
     $('.model_buttons').html("");
     //open file and display it - defaultly all models
+    Jmol._isAsync = true;
     jmol1 = Jmol.getApplet("jmol1", info);
     Jmol.script(jmol1, "load async /static/uploads/final.pdb; ribbons only");
     $("#jsmolViewer").html(Jmol.getAppletHtml(jmol1));

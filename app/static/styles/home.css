@@ -9,15 +9,9 @@
     display: none;
 }
 
-div.message{
-    font-size: 20px;
-    text-align: center;
-    /*height: 40px;*/
-    line-height: 40px;
-}
 
 div.submit_experiment{
-    width: 50%;
+    width: 47%;
     display: inline-block;
     vertical-align: middle;
 }
@@ -46,7 +40,7 @@ div.submit_experiment{
             box-sizing: border-box !important;
             vertical-align: middle;
             font-size: 20px;
-            width: 57%;
+            width: 54%;
             padding: 3px 10px;
             color: #4c4c4c;
             border-radius: 4px;
@@ -65,7 +59,7 @@ div.submit_experiment{
 
             div.submit_experiment form input[type="submit"] {
                 display: inline-block;
-                width: 57%;
+                width: 54%;
                 border: 1px solid lightskyblue !important;
                 background-color: lightskyblue;
                 border-radius: 4px;
@@ -81,7 +75,7 @@ div.submit_experiment{
 
             div.submit_experiment form input[type="reset"] {
                 display: inline-block;
-                width: 34%;
+                width: 43%;
                 border: 1px solid #f65858 !important;
                 background-color: #f65858;
                 border-radius: 4px;
@@ -113,7 +107,7 @@ div.submit_experiment{
             font-size: 20px;
             font-family: Arial;
             color: #4c4c4c;
-            width: 57%;
+            width: 54%;
             height: 200px;
             padding: 3px 10px;
             resize: vertical;
@@ -129,13 +123,13 @@ div.submit_experiment{
             margin-right: 3%;
             font-size: 20px;
             display: inline-block;
-            width: 40%;
+            width: 43%;
             vertical-align: middle;
             text-align: right;
         }
 
 div.experiment_list{
-    width: 50%;
+    width: 53%;
     display: inline-block;
     vertical-align: top;
     position: relative;
@@ -163,7 +157,18 @@ div.experiment_list{
         margin-top: 59px;
         top: 0;
         left: 0;
-        opacity: 0.93;
+        opacity: 1;
+    }
+
+    div.experiment_list img.loading{
+        display: inline-block;
+        margin-left: 5%;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 4px;
+        height: 60px;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
     }
     
     div.experiment_list img.img_reload_list{
@@ -183,8 +188,9 @@ div.experiment_list{
     }
 
     div.experiment_list .experiment_row {
-        width: 90%;
-        margin: auto;
+        box-sizing: border-box;
+        width: 95%;
+        margin-left: 5%;
         height: 40px;
         font-size: 0;
         border-radius: 4px;
@@ -205,19 +211,22 @@ div.experiment_list{
         box-sizing: border-box;
         vertical-align: middle;
         line-height: 40px;
+        margin-left: 1%;
     }
 
         div.experiment_list .experiment_row span.date {
-            width: 20%;
-            padding-left: 10px;
+            width: 16%;
         }
 
         div.experiment_list .experiment_row span.name {
-            width: 48%;
+            width: 44%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: pre;
         }
         
         div.experiment_list .experiment_row span.progress {
-            width: 9%;
+            width: 8%;
         }
 
         div.experiment_list .experiment_row span.status {
@@ -228,6 +237,8 @@ div.experiment_list{
             display: none;
             vertical-align: middle;
             height: 40px;
+            width: 40px;
+            margin-left: 4.5%;
         }
 
 .ui-tooltip {

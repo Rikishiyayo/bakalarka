@@ -11,8 +11,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="message">
-        {% for message in get_flashed_messages() %}
+    <div class="flash-message">
+        {% for message in get_flashed_messages(category_filter=["info"]) %}
             <span>{{ message }}</span>
         {% endfor %}
     </div>
@@ -21,7 +21,7 @@
         <h1>Submit a new Saxs Experiment</h1>
         <form action="" method="post" enctype="multipart/form-data" id="new_experiment_form">
             {{ form.hidden_tag() }}
-            <p class="ergfregf" title="erfgvregvrvg">
+            <p>
                 {{ form.title.label }}{{ form.title}}
                 {% for error in form.title.errors %}
                     <span>{{ error }}</span>
@@ -85,12 +85,14 @@
         </form>
     </div>
     <div class="experiment_list">
-        <div class="experiment_list_overlay">Loading...</div>
+        <div class="experiment_list_overlay">
+            <img class="img_loading" src="/static/styles/icons/gears.gif" title="reload">
+        </div>
         <img class="img_reload_list" src="/static/styles/icons/reload.png" title="reload">
         <h1>View a Saxs Experiment</h1>
         {% for item in exps %}
             <p title="its working" class="experiment_row">
-                <a href={{ url_for('view_experiment', user_id=item.user_id, exp_guid=item.exp_guid) }}></a>
+                <a href={{ url_for('main.view_experiment', user_id=item.user_id, exp_guid=item.exp_guid) }}></a>
                 <span class="date">{{ item.date }}</span>
                 <span class="name">{{ item.title }}</span>
                 <span class="progress">{{ item.progress }}</span>

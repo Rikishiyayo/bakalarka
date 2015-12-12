@@ -1,0 +1,35 @@
+div.page-header {
+    font-size: 20px;
+}
+    div.page-header .account-status{
+        margin-bottom: 25px;
+    }
+
+        div.page-header .account-status span{
+            display: inline-block;
+            line-height: 40px;
+            border-radius: 4px;
+            padding: 0 10px;
+        }
+
+        div.page-header .account-status span.confirmed{
+            background-color: yellowgreen;
+        }
+
+        div.page-header .account-status span.not-confirmed{
+            background-color: #f65858;
+        }
+
+        div.page-header .account-status span.active{
+            background-color: greenyellow;
+            margin-left: 25px;
+        }
+
+        div.page-header .account-status span.not-active{
+            background-color: #f65858;
+            margin-left: 25px;
+        }
+
+    div.page-header h1{
+        margin-top: 0;
+    }

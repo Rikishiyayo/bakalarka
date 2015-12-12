@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/unconfirmed.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="flash-message">
+        {% for message in get_flashed_messages(category_filter=["info"]) %}
+            <span>{{ message }}</span>
+        {% endfor %}
+    </div>
+    <div class="account-status">
+        {% if current_user.confirmed %}
+            <span class="confirmed">Account confirmed</span>
+        {% else %}
+            <span class="not-confirmed">Account not confirmed</span>
+        {% endif %}
+        {% if current_user.active %}
+            <span class="active">Account active</span>
+        {% else %}
+            <span class="not-active">Account not active</span>
+        {% endif %}
+    </div>
+    <h1>
+        Hello, {{ current_user.username }}!
+    </h1>
+    {% if not current_user.confirmed %}
+    <h3>You have not confirmed your account yet.</h3>
+    <p>
+        Before you can access this site you need to confirm your account.
+        Check your inbox, you should have received an email with a confirmation link.
+    </p>
+    {% endif %}
+    <p>
+        You will not be able to access this site, until your account is activated by admins. Admins
+        are notified right after registration, so it should not take long.
+    </p>
+    {% if not current_user.confirmed %}
+    <p>
+        Need another confirmation email?
+        <a href="/userManagement/confirm">Click here</a>
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

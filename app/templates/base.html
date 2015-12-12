@@ -7,6 +7,7 @@
       <script src="{{ url_for('static',filename='scripts/JSmol.min.js') }}"></script>      
       <script src="{{ url_for('static',filename='scripts/jquery-ui.min.js') }}"></script>
       <script src="{{ url_for('static',filename='scripts/jquery.validate.min.js') }}"></script>
+      <script src="{{ url_for('static',filename='scripts/app/base.js') }}"></script>
     {% endblock %}
   </head>
   <body>
@@ -18,7 +19,7 @@
           {% endif %}
           {% if current_user.is_authenticated %}
             <span class="greetings">Hi, {{ current_user.username }}</span>
-            <a class="sign_out" href="{{ url_for('logout') }}">Log Out</a>
+            <a class="sign_out" href="{{ url_for('userManagement.logout') }}">Log Out</a>
           {% endif %}
         {% endblock %}
       </header>
@@ -26,7 +27,18 @@
         {% block content %}{% endblock %}
       </section>
       <footer>
-
+          <div class="footer-content-wrapper">
+              <span>Jaroslav Cabala 2015</span>
+              <a href="https://www.facebook.com/yayo.cabala" target="_blank">
+                  <img class="fb-icon" src="/static/styles/icons/fb_light_blue.png">
+              </a>
+              <img class="gmail-icon" src="/static/styles/icons/gmail_light_red.png">
+              <span class="mail-address">cab.jaro@gmail.com</span>
+              <div class="icons-license">Icons made by
+                  <a href="http://www.freepik.com" target="_blank" title="Freepik">Freepik</a>
+                  from <a href="http://www.flaticon.com" target="_blank" title="Flaticon">www.flaticon.com</a>
+              </div>
+          </div>
       </footer>
     </div>
   </body>

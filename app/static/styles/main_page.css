@@ -5,29 +5,32 @@ a.dropdown_toggle{
     position: absolute;
     right: 5%;
     vertical-align: middle;
-    margin: 15px 15px 15px 0;
-    line-height: 31px;
+    padding: 0 15px;
+    line-height: 60px;
+    background-color: #353535;
 }
 
     a.dropdown_toggle:hover{
-        color: lightgrey;
+        color: #c4c4c4;
         cursor: pointer;
     }
 
-div.dropdown_login_form_wrapper{
+div.dropdown-form-wrapper{
     position: absolute;
     top: 60px;
     right: 5%;
-    background-color: #4c4c4c;
+    background-color: #353535;
     display: none;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
     z-index: 100000;
-    box-shadow: 0 0 3px #4c4c4c;
 }
 
+div.dropdown-login-form-wrapper{
+    display: block;
+}
 
-    div.dropdown_login_form_wrapper form.login_form{
+    div.dropdown-login-form-wrapper form.login_form{
         display: inline-block;
         width: 100%;
         margin: 0;
@@ -36,35 +39,43 @@ div.dropdown_login_form_wrapper{
         font-size: 22px;
     }
 
-    div.dropdown_login_form_wrapper form.login_form p{
+    div.dropdown-login-form-wrapper form.login_form p{
         margin: 10px 15px 0 15px;
         font-size: 0;
     }
 
-    div.dropdown_login_form_wrapper form.login_form p.login_errors{
+    div.dropdown-login-form-wrapper form.login_form p.login_errors{
         text-align: center;
         line-height: 40px;
     }
 
 
-        div.dropdown_login_form_wrapper form.login_form p.last_row{
-            margin-bottom: 10px;
+        div.dropdown-login-form-wrapper form.login_form p.last_row{
+            margin: 30px 0 10px;
+            text-align: center;
         }
 
-        div.dropdown_login_form_wrapper form.login_form span{
+        div.dropdown-login-form-wrapper form.login_form span{
             font-size: 16px;
             color: #f65858;
         }
 
-        div.dropdown_login_form_wrapper form.login_form label{
-            display: inline-block;
-            line-height: 40px;
-            vertical-align: middle;
-            width: 43%;
-            font-size: 16px;
+        div.dropdown-login-form-wrapper form.login_form label{
+            font-size: 14px;
         }
 
-        div.dropdown_login_form_wrapper form.login_form input{
+        div.dropdown-login-form-wrapper form.login_form label:not(.toggle-password-reset-request-form){
+            display: inline-block;
+            vertical-align: middle;
+            width: 38%;
+        }
+
+            div.dropdown-login-form-wrapper form.login_form label:hover{
+                color: #b3b3b3;
+                cursor: pointer;
+            }
+
+        div.dropdown-login-form-wrapper form.login_form input{
             vertical-align: middle;
             box-sizing: border-box;
             padding: 2px 5px;
@@ -75,16 +86,16 @@ div.dropdown_login_form_wrapper{
             height: 40px;
         }
 
-        div.dropdown_login_form_wrapper form.login_form input.error{
+        div.dropdown-login-form-wrapper form.login_form input.error{
             background-color: #f65858;
         }
 
-        div.dropdown_login_form_wrapper form.login_form input#remember_me{
+        div.dropdown-login-form-wrapper form.login_form input#remember_me{
             margin: 0;
             width: 5%
         }
 
-        div.dropdown_login_form_wrapper form.login_form input#submit{
+        div.dropdown-login-form-wrapper form.login_form input#submit{
             display: inline-block;
             background-color: greenyellow;
             border: 1px solid greenyellow;
@@ -92,23 +103,108 @@ div.dropdown_login_form_wrapper{
             padding: 3px 10px;
             color: #4c4c4c;
             font-size: 20px;
-            width: 40%;
-            margin-left: 12%;
+            width: 51%;
+            margin-left: 6%;
         }
 
-            div.dropdown_login_form_wrapper form.login_form input#submit:hover{
+            div.dropdown-login-form-wrapper form.login_form input#submit:hover{
                 border-color: #8acc25;
                 background-color: #8acc25;
                 cursor: pointer;
             }
 
-.register_form{
+
+div.dropdown_password_reset_request_form_wrapper{
+    display: none;
+}
+
+
+    div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form{
+        display: inline-block;
+        width: 100%;
+        margin: 0;
+        vertical-align: middle;
+        color: whitesmoke;
+        font-size: 22px;
+    }
+
+    div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form p{
+        margin: 10px 15px 0 15px;
+        font-size: 0;
+    }
+
+    div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form p.password-reset-request-errors{
+        text-align: center;
+        line-height: 40px;
+    }
+
+
+        div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form p.last_row{
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form span{
+            font-size: 16px;
+            color: #f65858;
+        }
+
+        div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form input{
+            vertical-align: middle;
+            box-sizing: border-box;
+            padding: 2px 5px;
+            border: none;
+            border-radius: 4px;
+            color: #4c4c4c;
+            font-size: 20px;
+            height: 40px;
+        }
+
+        div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form input.error{
+            background-color: #f65858;
+        }
+
+        div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form input#submit{
+            display: inline-block;
+            background-color: lightskyblue;
+            border: 1px solid lightskyblue;
+            border-radius: 4px;
+            padding: 3px 10px;
+            color: #4c4c4c;
+            font-size: 20px;
+            width: 100%;
+        }
+
+            div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form input#submit:hover{
+                border-color: #6ca4c8;
+                background-color: #6ca4c8;
+                cursor: pointer;
+            }
+
+        div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form input#cancel{
+            display: inline-block;
+            background-color: whitesmoke;
+            border: 1px solid whitesmoke;
+            border-radius: 4px;
+            padding: 3px 10px;
+            color: #4c4c4c;
+            font-size: 20px;
+            width: 100%
+        }
+
+            div.dropdown_password_reset_request_form_wrapper form.password_reset_request_form input#cancel:hover{
+                border-color: #b3b3b3;
+                background-color: #b3b3b3;
+                cursor: pointer;
+            }
+
+.register-form-wrapper {
      display: inline-block;
      vertical-align: middle;
      width: 100%;
 }
 
-    .register_form h1{
+    .register-form-wrapper h1{
         width: 30%;
         font-size: 26px;
         text-align: center;
@@ -116,18 +212,18 @@ div.dropdown_login_form_wrapper{
         margin-bottom: 25px;
     }
 
-    .register_form form{
-        width: 30%;
+    .register-form-wrapper form{
+        width: 32%;
         margin: auto;
     }
     
-    .register_form form p:not(.submit-button){
+    .register-form-wrapper form p:not(.submit-button){
         margin-bottom: 10px;
     }
     
-    .register_form form input{
+    .register-form-wrapper form input{
         vertical-align: middle;
-        width: 60%;
+        width: 64%;
         box-sizing: border-box;
         padding: 2px 5px;
         border: 1px solid lightgrey;
@@ -138,40 +234,40 @@ div.dropdown_login_form_wrapper{
         height: 40px;
     }
 
-        .register_form form input:not([type="submit"]):focus{
+        .register-form-wrapper form input:not([type="submit"]):focus{
             border: 2px solid lightskyblue;
         }
 
-    .register_form form input.error{
+    .register-form-wrapper form input.error{
         background-color: #f65858;
     }
 
-    .register_form form input#submit{
-        margin-left: 40%;
-        width: 60%;
+    .register-form-wrapper form input#submit{
+        margin-left: 36%;
+        width: 64%;
         border: 1px solid lightskyblue;
         border-radius: 4px;
         color: #4c4c4c;;
         background-color: lightskyblue;
     }
 
-    .register_form form input#submit:hover{
+    .register-form-wrapper form input#submit:hover{
         border: 1px solid #6ca4c8;
         background-color: #6ca4c8;
         cursor: pointer;
     }
     
     
-    .register_form form label{
+    .register-form-wrapper form label{
         display: inline-block;
-        width: 37.5%;
+        width: 33.5%;
         margin-right: 2.5%;
         vertical-align: middle;
         font-size: 20px;
         text-align: right;
     }
     
-    .register_form form span{
+    .register-form-wrapper form span{
         vertical-align: middle;
         font-size: 16px;
         color: #4c4c4c;
