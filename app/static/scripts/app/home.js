@@ -1,18 +1,75 @@
 $(function () {
-        validation();
-        changeStatusColor();
-        experimentRowHover();
-        tooltips();
-       
-        $('.img_reload_list').on('click', function(){
-            $('.experiment_list_overlay').show();
-            $.get("/get_experiments", onGetExperimentsSuccess);
-        });
+    validation();
+    setPages();
+    changeStatusColor();
+    experimentRowHover();
+    tooltips();
+    changePageOnPageClick();
+    changePageOnNextClick();
+    changePageOnPreviousClick();
+
+    $('.img_reload_list').on('click', function(){
+        $('.experiment_list_overlay').show();
+        $.get("/get_experiments/0", onGetExperimentsSuccess);
+        selectPageControl(1);
+    });
 });
 
+//
+function setPages(){
+    $('span._1').addClass('selected');
+    $('span.page:not(.previous, .next)').slice(13).addClass('hiddenAfter')
+}
+
+//
+function changePageOnPageClick(){
+    $('span.page:not(.previous, .next)').on('click', function(){
+       if ( !$(this).hasClass('selected') ){
+           $.get("/get_experiments/" + (parseInt($(this).text()) - 1).toString(), onGetExperimentsSuccess);
+           selectPageControl($(this).text());
+       }
+    });
+}
+
+//
+function changePageOnNextClick(){
+    $('span.next').on('click', function(){
+       selectedPage = $('span.page.selected');
+       lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
+
+       if ( !selectedPage.is($('span.page:not(.previous, .next)').last()) ){
+           $.get("/get_experiments/" + selectedPage.text(), onGetExperimentsSuccess);
+           selectPageControl(parseInt(selectedPage.text()) + 1);
+
+           if (selectedPage.is(lastVisiblePage)) {
+               $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
+               $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
+           }
+       }
+    });
+}
+
+//
+function changePageOnPreviousClick(){
+    $('span.previous').on('click', function(){
+       selectedPage = $('span.page.selected');
+       firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
+
+       if ( selectedPage.text() != "1" ){
+           $.get("/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString(), onGetExperimentsSuccess);
+           selectPageControl(parseInt(selectedPage.text()) - 1);
+
+           if (selectedPage.is(firstVisiblePage)) {
+               $('span.page:not(.previous, .next).hiddenBefore').last().removeClass('hiddenBefore');
+               $('span.page:not(.previous, .next):visible').last().addClass('hiddenAfter');
+           }
+       }
+    });
+}
+
+//
 function onGetExperimentsSuccess(data) {
-    $('.experiment_list p').detach();        
-    var expsListElement = $('.experiment_list');
+    $('.experiment_list p.experiment_row').detach();
     var exps = data.exps;
     
     for (var i = 0; i < exps.length; i++) {
@@ -23,7 +80,7 @@ function onGetExperimentsSuccess(data) {
         newEl += "<span class=\"progress\">" + exps[i].progress + "</span>";
         newEl += "<span class=\"status\">" + exps[i].status + "</span>";
         newEl += "<img src=\"/static/styles/icons/eye_grey.png\">";
-        expsListElement.append(newEl);
+        $(newEl).insertBefore('.pagination-controls');
     }
     
     changeStatusColor();
@@ -65,6 +122,14 @@ function experimentRowHover(){
             var href = $(this).children('a').attr('href');
             window.location.href = href;
         });
+}
+
+//
+function selectPageControl(page){
+   $('span.page').each(function(){
+       $(this).removeClass('selected');
+   });
+   $('span._' + page).addClass('selected');
 }
 
 function validation() {

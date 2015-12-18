@@ -10,7 +10,7 @@ from config import config
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 mail = Mail()
-admin = Admin()
+admin = Admin(name="User management")
 lm = LoginManager()
 lm.login_view = 'main.main_page'
 
@@ -33,26 +33,3 @@ def create_app(config_name):
     app.register_blueprint(userMngmt_blueprint, url_prefix='/userManagement')
 
     return app
-
-
-# from flask import Flask
-# from flask.ext.bootstrap import Bootstrap
-# from flask.ext.login import LoginManager
-# from flask.ext.sqlalchemy import SQLAlchemy
-# from flask_admin import Admin
-# from flask_mail import Mail
-#
-# app = Flask(__name__)
-# app.config.from_object('config')
-# db = SQLAlchemy(app)
-# lm = LoginManager()
-# lm.init_app(app)
-# lm.login_view = 'main_page'
-# bootstrap = Bootstrap(app)
-# mail = Mail(app)
-#
-# from app import models
-# from app.main import views
-#
-# admin = Admin(app, template_mode='bootstrap3')
-# admin.add_view(models.UserView(models.User, db.session))

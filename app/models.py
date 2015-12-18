@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask.ext.login import UserMixin
+from flask.ext.login import UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app
+from flask import current_app, redirect, flash
 from app import db, lm
 from flask_admin.contrib.sqla import ModelView
 
@@ -92,6 +92,12 @@ class UserView(ModelView):
     can_create = False
     column_exclude_list = ['password_hash']
     column_editable_list = ['confirmed', 'active', 'role']
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role_id == 1
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect("/main_page")
     
     
 @lm.user_loader

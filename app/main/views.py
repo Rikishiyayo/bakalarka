@@ -33,12 +33,13 @@ def home():
         return redirect('/home')
 
     return render_template('home.html', form=form,
-                           exps=DirectoryAndFileReader.get_experiments(current_user.id))
+                           pages=DirectoryAndFileReader.get_experiments_count(current_user.id),
+                           exps=DirectoryAndFileReader.get_experiments(current_user.id, 0))
 
 
-@main.route('/get_experiments')
-def get_experiments():
-    return jsonify(exps = DirectoryAndFileReader.get_experiments(current_user.id))
+@main.route('/get_experiments/<page>')
+def get_experiments(page):
+    return jsonify(exps = DirectoryAndFileReader.get_experiments(current_user.id, int(page)))
 
 
 @main.route('/is_email_available')

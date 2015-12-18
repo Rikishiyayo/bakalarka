@@ -7,8 +7,8 @@ from app.models import User, Role
 class SaxsExperimentForm(Form):
     title = StringField('Title:', validators=[DataRequired("Required a title!"), Length(1, 35)])
     description = TextAreaField('Description:')
-    models = FileField('Upload a file with model/models:', validators=[DataRequired("Required a file with model or models")])
-    expData = FileField('Upload a file with experiment data:', validators=[DataRequired("Required a file with experiment data!")])
+    models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models")])
+    expData = FileField('File with experiment data:', validators=[DataRequired("Required a file with experiment data!")])
     calcSteps = IntegerField('Calculation steps:',
                              validators=[DataRequired("Required an integer number!"),
                                          NumberRange(10000, 1000000, "Minimum value is 10 000, maximum value is 1000000!")], default=10000)

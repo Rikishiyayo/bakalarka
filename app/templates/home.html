@@ -86,7 +86,7 @@
     </div>
     <div class="experiment_list">
         <div class="experiment_list_overlay">
-            <img class="img_loading" src="/static/styles/icons/gears.gif" title="reload">
+            <span>loading...</span>
         </div>
         <img class="img_reload_list" src="/static/styles/icons/reload.png" title="reload">
         <h1>View a Saxs Experiment</h1>
@@ -100,5 +100,14 @@
                 <img src="{{ url_for('static', filename='styles/icons/eye_grey.png') }}">
             </p>    
         {% endfor %}
+        <div class="pagination-controls">
+            {% if pages|length > 1%}
+                <span class="page previous"> < </span>
+                    {% for item in pages %}
+                        <span class="page _{{ loop.index }}">{{ loop.index }}</span>
+                    {% endfor %}
+                <span class="page next"> > </span>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

@@ -18,8 +18,10 @@
             <a href="/admin/user" class="user_management_link">User Management</a>
           {% endif %}
           {% if current_user.is_authenticated %}
-            <span class="greetings">Hi, {{ current_user.username }}</span>
-            <a class="sign_out" href="{{ url_for('userManagement.logout') }}">Log Out</a>
+            <p class="signout_greetings-wrapper">
+                <span class="greetings">Hi, {{ current_user.username }}</span>
+                <a class="sign_out" href="{{ url_for('userManagement.logout') }}">Log Out</a>
+            </p>
           {% endif %}
         {% endblock %}
       </header>

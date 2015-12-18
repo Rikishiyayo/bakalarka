@@ -3,8 +3,8 @@ var jmol1;
 
 var info = {
     color: "#cdd0d7", // white background (note this changes legacy default which was black)
-    height: 445, // pixels (but it may be in percent, like "100%")
-    width: 445,
+    height: 476, // pixels (but it may be in percent, like "100%")
+    width: "99%",
     use: "HTML5", // "HTML5" or "Java" (case-insensitive)
     j2sPath: "/static/scripts/j2s", // only used in the HTML5 modality
     console: "jmolApplet0_infodiv"
@@ -21,8 +21,16 @@ var options = {
 };
 
 $(function () {
+    $('header').on('mousemove', function(){
+        $('.loading-screen').hide();
+    });
+
+
+    $('.PageWrapper').css('min-width', '1550px');
     updateSliderValue();
     viewExperiment();
+    radioButtonSelectChange();
+    radioButtonSortChange();
 
     $('.model_buttons').on('click', 'input', function () {
         //if user click on model button, select or unselect it and hide/show respective model
@@ -39,52 +47,107 @@ $(function () {
         }
     });
 
-    $('.Controls').on('click', 'input#btnSelectAll', function () {
-        //first, select or unselect this button
-        $(this).toggleClass('selected');
-
-        //if button is selected, show all models, otherwise hide all but first model
-        if ($(this).hasClass('selected')) {
-            $('.model_buttons input').addClass('selected');
-            displayModelsButton();
-            displayCharts();
-        } else {
-            $('.model_buttons input').slice(1).removeClass('selected');
-            $('.model_buttons input#btnModel1').addClass('selected');
-            displayModelsButton();
-            displayCharts();
-        }
-    });
-
-    $('.Controls').on('click', 'input#btnSort', function () {
-        //first, select or unselect this button
-        $(this).toggleClass('selected');
-
-        //if button is selected, sort model buttons ascending
-        if ($(this).hasClass('selected'))
-            sortModels();
-    });
-
     $('#btnFullscreen').on('click', function () {
-        $('.chart_fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
+        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
         var chart = new Highcharts.Chart(options);
         chart.setSize($('#chart').width(), $('#chart').height());
     });
 
     $('.btnCloseChartFullscreen').on('click', function () {
         $('#chart').insertAfter('#PresentationPanel .DataViewerPanel #jsmolViewer');
-        $('.chart_fullscreen').css('display', 'none');
+        $('.chart-fullscreen').css('display', 'none');
         var chart = new Highcharts.Chart(options);
         chart.setSize($('#chart').width(), $('#chart').height());
     });
 });
 
-function sortModels() {
+function radioButtonSortChange(){
+    $('input[type=radio][name=sort]').on('change', function () {
+        switch($(this).val()){
+            case "1":
+                sortModels("asc");
+                highlightSelectedOption("sort");
+                return;
+            case "2":
+                sortModels("desc");
+                highlightSelectedOption("sort");
+                return;
+        }
+    });
+}
+
+function radioButtonSelectChange(){
+    $('input[type=radio][name=select]').on('change', function () {
+        switch($(this).val()){
+            case "1":
+                $('.model_buttons input').addClass('selected');
+                displayModelsButton();
+                displayCharts();
+                highlightSelectedOption("select");
+                return;
+            case "2":
+                $('.model_buttons input').removeClass('selected');
+                displayModelsButton();
+                displayCharts();
+                highlightSelectedOption("select");
+                return;
+            case "3":
+                $('.model_buttons input').removeClass('selected');
+                $('.model_buttons input#' + getModelWithHighestWeight()).addClass('selected');
+                displayModelsButton();
+                displayCharts();
+                highlightSelectedOption("select");
+                return;
+            case "4":
+                $('.model_buttons input').removeClass('selected');
+                $('.model_buttons input#' + getModelWithLowestWeight()).addClass('selected');
+                displayModelsButton();
+                displayCharts();
+                highlightSelectedOption("select");
+                return;
+        }
+    });
+}
+
+function highlightSelectedOption(option){
+    if (option == "select") {
+        $('input[type=radio][name=select]').next().removeClass('option-selected');
+        $('input[type=radio][name=select]:checked').next().addClass('option-selected');
+    } else if (option == "sort") {
+        $('input[type=radio][name=sort]').next().removeClass('option-selected');
+        $('input[type=radio][name=sort]:checked').next().addClass('option-selected');
+    }
+}
+
+//return id of a model with highest weight
+function getModelWithHighestWeight(){
+    var temp = weights;
+    temp.sort(function (a, b) {
+        return b.weight - a.weight;
+    });
+
+    return temp[0].model_no;
+}
+
+//return id of a model with lowest height
+function getModelWithLowestWeight(){
+    var temp = weights;
+    temp.sort(function (a, b) {
+        return a.weight - b.weight;
+    });
+
+    return temp[0].model_no;
+}
+
+//function sorts model buttons ascending or descending, depending on attribute value
+function sortModels(order) {
     //create a copy of array with weights
     var temp = weights;
     //sort weights ascending
     temp.sort(function (a, b) {
-        return a.weight - b.weight;
+        if (order == "asc")
+            return a.weight - b.weight;
+        return b.weight - a.weight;
     });
 
     //get all selected buttons so they can be selected after they are sorted
@@ -97,7 +160,8 @@ function sortModels() {
     var targetElement1 = $('.model_buttons');
     targetElement1.html("");
     for (var i = 0; i < temp.length; i++) {
-        targetElement1.append("<input type=\"button\" id=\"" + temp[i].model_no + "\" value=\"Model " + (temp[i].model_no + 1) + "\" class=\"btnModel\" + name=\""
+        targetElement1.append("<input type=\"button\" id=\"" + temp[i].model_no + "\" value=\"Model "
+            + (temp[i].model_no + 1) + "\" class=\"btnModel\" + name=\""
             + (temp[i].model_no + 1) + "\" />" + "<span class=\"" + i + "\">" + temp[i].weight + "</span>");
     }
 
@@ -109,9 +173,11 @@ function sortModels() {
 
 function updateSliderValue() {
     $('#slider').on('mousemove', function () {
-        $('.sliderValue').text($(this).val());
+        $('.sliderValue').text($(this).val() + "%");
     });
     $('#slider').on('mouseup', function () {
+        $('input[type=radio][name=select]:checked').prop('checked', false);
+        $('input[type=radio][name=select]').change();
         selectButtons($(this).val());
         displayModelsSlider($(this).val());
         displayCharts();
@@ -169,7 +235,7 @@ function onGetExperimentDataSuccess(data) {
         value: parseInt(metadata.progress)
     });
 
-    $('.progress_value').text(metadata.progress);
+    $('.progress_value').text(metadata.progress + "%");
 }
 
 function getComputedDataForModel(model) {
@@ -199,13 +265,13 @@ function onError(xhr, errorType, exception) {
 
 function viewFile() {
     setTimeout(function(){
-        $('.loading_screen').hide();
-    }, 5000);
+        $('header').mousemove();
+    }, 3000);
     $('.model_buttons').html("");
     //open file and display it - defaultly all models
-    Jmol._isAsync = true;
+//    Jmol._isAsync = true;
     jmol1 = Jmol.getApplet("jmol1", info);
-    Jmol.script(jmol1, "load async /static/uploads/final.pdb; ribbons only");
+    Jmol.script(jmol1, "load /static/uploads/final.pdb; ribbons only");
     $("#jsmolViewer").html(Jmol.getAppletHtml(jmol1));
     Jmol.script(jmol1, "frame all");
     Jmol.script(jmol1, "select model = 1; color red;select model = 2; color deepskyblue;select model = 3; color cyan;" +
@@ -217,12 +283,9 @@ function viewFile() {
 
 }
 
-//create buttons that represent each model in a given file
+//create control buttons and buttons that represent each model in a given file
 function createButtons() {
     var targetElement1 = $('.model_buttons');
-    var targetElement2 = $('.Controls');
-    targetElement2.append("<input type=\"button\" id=\"btnSelectAll\" value=\"Select All/Select One\" class=\"selected\" />");
-    targetElement2.append("<input type=\"button\" id=\"btnSort\" value=\"Sort by weight\" \>");
     for (var i = 0; i < weights.length; i++) {
         targetElement1.append("<input type=\"button\" id=\"" + weights[i].model_no + "\" value=\"Model " + (weights[i].model_no + 1) + "\" class=\"btnModel selected\" name=\""
             + (weights[i].model_no + 1) + "\" />" + "<span class=\"" + i + "\">" + weights[i].weight + "</span>");
@@ -242,8 +305,12 @@ function displayModelsButton() {
     displayedModels = displayedModels.substring(0, displayedModels.length - 1);
 
     //execute a script
-    Jmol.script(jmol1, "display all");
-    Jmol.script(jmol1, "frame [" + displayedModels + "]");
+    if  (displayedModels == "") {
+        Jmol.script(jmol1, "display none")
+    } else {
+        Jmol.script(jmol1, "display all");
+        Jmol.script(jmol1, "frame [" + displayedModels + "]");
+    }
 }
 
 function displayModelsSlider(weight) {

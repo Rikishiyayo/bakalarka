@@ -10,7 +10,7 @@ body {
 }
 
 .PageWrapper {
-    min-width: 1564px;
+    min-width: 1200px;
     margin-left: auto;
     margin-right: auto;
     color: #4c4c4c;
@@ -22,6 +22,7 @@ header {
     width: 100%;
     font-size: 0;
     height: 60px;
+    position: relative;
 }
 
     header a.user_management_link{
@@ -32,52 +33,52 @@ header {
         font-size: 20px;
         background-color: lightskyblue;
         padding: 3px 10px;
-        border: 1px solid lightskyblue;
         border-radius: 4px;
         box-sizing: border-box;
         height: 30px;
     }
     
         header a.user_management_link:hover{
-            border-color: #6ca4c8;
             background-color: #6ca4c8;
             cursor: pointer;
         }
-    
-    header a.sign_out{
-        color: #4c4c4c;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 20px;
-        background-color: #f65858;
-        padding: 3px 10px;
-        border: 1px solid #f65858;
-        border-radius: 4px;
-        position: absolute;
+
+    header .signout_greetings-wrapper {
+        position:absolute;
         right: 5%;
-        margin: 15px 15px 15px 0;
-        box-sizing: border-box;
-        height: 30px;
+        display: inline-block;
     }
-    
-        header a.sign_out:hover{
-            border-color: #dc3f3f;
-            background-color: #dc3f3f;
-            cursor: pointer;
+
+        header .signout_greetings-wrapper a.sign_out{
+            color: #4c4c4c;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            background-color: #f65858;
+            padding: 3px 10px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 30px;
+            vertical-align: middle;
         }
 
-    header span.greetings{
-        font-size: 20px;
-        color: whitesmoke;
-        display: inline-block;
-        margin: 15px 0;
-        position: absolute;
-        right: 12%;
-        line-height: 30px;
-    }
+            header .signout_greetings-wrapper a.sign_out:hover{
+                background-color: #dc3f3f;
+                cursor: pointer;
+            }
+
+        header .signout_greetings-wrapper span.greetings{
+            font-size: 20px;
+            color: whitesmoke;
+            display: inline-block;
+            margin: 15px 15px;
+            line-height: 30px;
+            vertical-align: middle;
+        }
+
 
 section {
-    width: 85%;
+    width: 90%;
     margin:25px auto;
     font-size: 0;
     position: relative;
@@ -94,7 +95,7 @@ section {
 
 footer {
     width: 100%;
-    margin: 75px 0;
+    margin: 100px 0;
 }
 
     footer .footer-content-wrapper{
@@ -139,4 +140,3 @@ footer {
                 footer .footer-content-wrapper div a:hover{
                     color: #608e19;
                 }
-

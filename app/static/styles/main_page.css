@@ -8,6 +8,10 @@ a.dropdown_toggle{
     padding: 0 15px;
     line-height: 60px;
     background-color: #353535;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
     a.dropdown_toggle:hover{
@@ -68,6 +72,10 @@ div.dropdown-login-form-wrapper{
             display: inline-block;
             vertical-align: middle;
             width: 38%;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
             div.dropdown-login-form-wrapper form.login_form label:hover{

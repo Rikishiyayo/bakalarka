@@ -21,6 +21,7 @@ class Config:
     LOGIN_BEFORE_CONFIRMATION = "You must first log in to confirm your account!"
     EXPERIMENT_SUBMITTED = "You have successfully submitted an experiment. You can examine result by clicking on a row with this experiment." \
                            "Click on a refresh button to load newest results"
+    EXPERIMENTS_ON_ONE_PAGE = 16
 
     @staticmethod
     def init_app(app):

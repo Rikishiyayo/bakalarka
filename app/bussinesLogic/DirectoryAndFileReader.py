@@ -7,8 +7,9 @@ from flask import current_app
 # user_id - id of a user which matches a directory on a server where this user has his experiments saved
 #
 # returns an array of dictionaries - dictionary has 4 keys: title, date, status and progress
-def get_experiments(user_id):
+def get_experiments(user_id, page):
     experiments = []
+    count = current_app.config['EXPERIMENTS_ON_ONE_PAGE']
 
     for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
         info = { "exp_guid": item, "user_id": user_id }
@@ -16,7 +17,26 @@ def get_experiments(user_id):
         read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat"), info, ["status", "progress"])
         experiments.append(info)
 
-    return experiments
+    start = page * count
+    end = page * count + count
+    return experiments[start:end]
+
+
+
+#
+#
+#
+#
+def get_experiments_count(user_id):
+    exps_count = len(os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))))
+    pages = exps_count / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
+
+    if pages.is_integer():
+        pages_array = [0] * int(pages)
+        return pages_array
+
+    pages_array = [0] * (int(pages) + 1)
+    return pages_array
 
 
 #
