@@ -76,7 +76,7 @@ def get_experiment_data():
     user_id = request.args.get("user_id")
     exp_guid = request.args.get("exp_guid")
     return jsonify(weights=DirectoryAndFileReader.get_weights(user_id, exp_guid),
-                   models=DirectoryAndFileReader.get_computed_values_for_models(user_id, exp_guid),
+                   computedCurves=DirectoryAndFileReader.get_computed_values_for_models(user_id, exp_guid),
                    metadata=DirectoryAndFileReader.get_experiment_result_data(user_id, exp_guid))
 
 

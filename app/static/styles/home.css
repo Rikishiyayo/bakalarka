@@ -148,7 +148,6 @@ div.experiment_list{
         display: none;
         position: absolute;
         color: #4c4c4c;
-        font-size: 20px;
         text-align: center;
         box-sizing: border-box;
         margin-top: 59px;
@@ -159,7 +158,6 @@ div.experiment_list{
         top: 0;
         left: 0;
         opacity: 1;
-        font-size: 20px;
     }
 
     div.experiment_list div.experiment_list_overlay:after{
@@ -168,6 +166,11 @@ div.experiment_list{
         vertical-align: middle;
         height: 100%;
     }
+
+        div.experiment_list div.experiment_list_overlay img{
+            width: 128px;
+            height: 128px;
+        }
 
     div.experiment_list img.img_reload_list{
         display: inline-block;

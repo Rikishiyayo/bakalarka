@@ -1,5 +1,10 @@
-var weights = [], models = [], metadata;
+var models = [], weights = [], computedCurves = [], metadata, viewer;
 var jmol1;
+
+var colors = ['white', 'grey', 'green', 'red', 'blue', 'yellow', 'black', 'cyan', 'magenta', 'orange', 'lightgrey',
+                'darkred', 'darkgreen', 'darkblue', 'darkyellow', 'darkcyan', 'darkmagenta', 'darkorange', 'lightorange',
+                'darkgrey', 'lightred', 'lightgreen', 'lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'
+             ];
 
 var info = {
     color: "#cdd0d7", // white background (note this changes legacy default which was black)
@@ -10,7 +15,7 @@ var info = {
     console: "jmolApplet0_infodiv"
 };
 
-var options = {
+var chartOptions = {
     chart: { renderTo: 'chart', type: 'spline' },
     xAxis: { title: { text: "q" } },
     yAxis: { title: { text: 'intensity' } },
@@ -20,12 +25,20 @@ var options = {
     legend: { enabled: false }
 };
 
+var options = {
+  width: 'auto',
+  height: 'auto',
+  antialias: true,
+  quality : 'medium',
+  background: '#cdd0d7'
+};
+
 $(function () {
-    $('header').on('mousemove', function(){
-        $('.loading-screen').hide();
-    });
+//    $('header').on('mousemove', function(){
+//        $('.loading-screen').hide();
+//    });
 
-
+    viewer = pv.Viewer(document.getElementById('jsmolViewer'), options);
     $('.PageWrapper').css('min-width', '1550px');
     updateSliderValue();
     viewExperiment();
@@ -47,18 +60,18 @@ $(function () {
         }
     });
 
-    $('#btnFullscreen').on('click', function () {
-        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
-        var chart = new Highcharts.Chart(options);
-        chart.setSize($('#chart').width(), $('#chart').height());
-    });
-
-    $('.btnCloseChartFullscreen').on('click', function () {
-        $('#chart').insertAfter('#PresentationPanel .DataViewerPanel #jsmolViewer');
-        $('.chart-fullscreen').css('display', 'none');
-        var chart = new Highcharts.Chart(options);
-        chart.setSize($('#chart').width(), $('#chart').height());
-    });
+//    $('#btnFullscreen').on('click', function () {
+//        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
+//        var chart = new Highcharts.Chart(options);
+//        chart.setSize($('#chart').width(), $('#chart').height());
+//    });
+//
+//    $('.btnCloseChartFullscreen').on('click', function () {
+//        $('#chart').insertAfter('#PresentationPanel .DataViewerPanel #jsmolViewer');
+//        $('.chart-fullscreen').css('display', 'none');
+//        var chart = new Highcharts.Chart(options);
+//        chart.setSize($('#chart').width(), $('#chart').height());
+//    });
 });
 
 function radioButtonSortChange(){
@@ -200,16 +213,16 @@ function onGetExperimentDataSuccess(data) {
     }
 
     //get all models and its computed values
-    $.each(data.models, function (k, v) {
-        models.push({ model: (k + 1), values: v });
+    $.each(data.computedCurves, function (k, v) {
+        computedCurves.push({ model: (k + 1), values: v });
     });
 
     viewFile();
 
     for (var i = 0; i < weights.length; i++) {
-        options.series.push({ data: getComputedDataForModel(i) });
+        chartOptions.series.push({ data: getComputedDataForModel(i) });
     }
-    var chart = new Highcharts.Chart(options);
+    var chart = new Highcharts.Chart(chartOptions);
 
     var chartWidth = $('#chart').width();
     var chartHeight = $('#chart').height();
@@ -240,7 +253,7 @@ function onGetExperimentDataSuccess(data) {
 
 function getComputedDataForModel(model) {
     var data = [];
-    $.each(models[model].values.model, function (i, o) {
+    $.each(computedCurves[model].values.model, function (i, o) {
         data.push([o.q_value, Math.log(o.intensity)]);
     });
     return data;
@@ -264,23 +277,14 @@ function onError(xhr, errorType, exception) {
 }
 
 function viewFile() {
-    setTimeout(function(){
-        $('header').mousemove();
-    }, 3000);
-    $('.model_buttons').html("");
-    //open file and display it - defaultly all models
-//    Jmol._isAsync = true;
-    jmol1 = Jmol.getApplet("jmol1", info);
-    Jmol.script(jmol1, "load /static/uploads/final.pdb; ribbons only");
-    $("#jsmolViewer").html(Jmol.getAppletHtml(jmol1));
-    Jmol.script(jmol1, "frame all");
-    Jmol.script(jmol1, "select model = 1; color red;select model = 2; color deepskyblue;select model = 3; color cyan;" +
-        "select model = 4; color gold;select model = 5; color green;select model = 6; color chartreuse;select model = 7; color deeppink;select model = 8; color magenta;select model = 9; color darkmagenta;" +
-        "select model = 10; color turquoise;select model = 11; color orange;select model = 12; color mediumspringgreen;select model = 13; color purple;select model = 14; color redorange;" +
-        "select model = 15; color blue;" + "select model = 16; color yellow;select model = 17; color greenblue;select model = 18; color gray;select model = 19; color black;" +
-        "select model = 20; color burlywood");
-    createButtons();
+  pv.io.fetchPdb('/static/uploads/final.pdb', function(structures) {
+    for (var i = 0; i < structures.length; ++i) {
+      models.push(viewer.cartoon('model'+ (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
+    }
+    viewer.autoZoom();
+  }, { loadAllModels : true } );
 
+  createButtons();
 }
 
 //create control buttons and buttons that represent each model in a given file
@@ -294,45 +298,45 @@ function createButtons() {
 
 //this function displays selected models
 function displayModelsButton() {
-    var displayedModels = "";
+    var displayedModels = [];
 
     //get selected models
     $('.model_buttons input.btnModel.selected').each(function () {
-        displayedModels += $(this).attr('name') + " ";
+        displayedModels.push(parseInt($(this).attr('name')));
     });
 
-    //erase a last whitespace
-    displayedModels = displayedModels.substring(0, displayedModels.length - 1);
-
-    //execute a script
-    if  (displayedModels == "") {
-        Jmol.script(jmol1, "display none")
-    } else {
-        Jmol.script(jmol1, "display all");
-        Jmol.script(jmol1, "frame [" + displayedModels + "]");
+    //show selected models
+    $.each(models,function(){
+        this.hide();
+    });
+    if  (displayedModels.length != 0) {
+        $.each(displayedModels, function(index, model){
+            models[model - 1].show();
+        });
     }
+    viewer.requestRedraw();
 }
 
 function displayModelsSlider(weight) {
-    var displayedModels = "";
+        var displayedModels = [];
 
     //get selected models whose weight is >= selected weight on a slider
     for (var i = 0; i < weights.length; i++) {
         if (parseFloat(weights[i].weight) >= (parseFloat(weight) / 100)) {
-            displayedModels += (weights[i].model_no + 1) + " ";
+            displayedModels.push(parseInt(weights[i].model_no));
         }
     }
 
-    //erase a last whitespace
-    displayedModels = displayedModels.substring(0, displayedModels.length - 1);
-
-    //execute a script
-    if (displayedModels == "") { //hide all models
-        Jmol.script(jmol1, "display none");
-    } else {
-        Jmol.script(jmol1, "display all");
-        Jmol.script(jmol1, "frame [" + displayedModels + "]");
+    //show selected models
+    $.each(models,function(){
+        this.hide();
+    });
+    if  (displayedModels.length != 0) {
+        $.each(displayedModels, function(index, model){
+            models[model].show();
+        });
     }
+    viewer.requestRedraw();
 }
 
 function displayCharts() {
