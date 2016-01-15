@@ -55,8 +55,8 @@ def create_result_file(path):
     result.close()
     
 
-# gets a file with model to display and moves it to a directory on a server for Jsmol to read and for user to download
-# gets a file with experiment data and moves it to a directory on a serverfor user to download
+# gets a file with model to display and moves it to a directory on a server to read and for user to download
+# gets a file with experiment data and moves it to a directory on a server for user to download
 # user_id - an id of a user that represents a directory where experiment data are stored
 # exp_guid - an identificator of a experiment
 def get_model_data(user_id, exp_guid):

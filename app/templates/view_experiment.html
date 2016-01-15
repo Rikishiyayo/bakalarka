@@ -2,8 +2,10 @@
 {% block head %}
     {{ super() }}
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/view_experiment.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/ChemDoodleWeb.css') }}">
     <script src="{{ url_for('static',filename='scripts/purl.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/highcharts.js') }}"></script>
+    <script src="{{ url_for('static',filename='scripts/ChemDoodleWeb.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/app/view_experiment.js') }}"></script>
 {% endblock %}
 

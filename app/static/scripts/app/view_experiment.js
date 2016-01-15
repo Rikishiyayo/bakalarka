@@ -1,30 +1,31 @@
+//global variables
+//models - array with models displayed in PV viewer to switch between them
+//weights - array with computed weights for every model
+//computedCurves - array of computed curves for every model
+//metadata - holds information about computation
+//represents a PV viewer object
 var models = [], weights = [], computedCurves = [], metadata, viewer;
-var jmol1;
 
+//available colors for models in PV viewer
 var colors = ['white', 'grey', 'green', 'red', 'blue', 'yellow', 'black', 'cyan', 'magenta', 'orange', 'lightgrey',
                 'darkred', 'darkgreen', 'darkblue', 'darkyellow', 'darkcyan', 'darkmagenta', 'darkorange', 'lightorange',
                 'darkgrey', 'lightred', 'lightgreen', 'lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'
              ];
 
-var info = {
-    color: "#cdd0d7", // white background (note this changes legacy default which was black)
-    height: 476, // pixels (but it may be in percent, like "100%")
-    width: "99%",
-    use: "HTML5", // "HTML5" or "Java" (case-insensitive)
-    j2sPath: "/static/scripts/j2s", // only used in the HTML5 modality
-    console: "jmolApplet0_infodiv"
-};
-
+//chart options
 var chartOptions = {
     chart: { renderTo: 'chart', type: 'spline' },
     xAxis: { title: { text: "q" } },
     yAxis: { title: { text: 'intensity' } },
     series: [],
-    plotOptions: { spline: { lineWidth: 5, marker: { enabled: false } } },
+    plotOptions: { spline: { lineWidth: 3, marker: { enabled: false } } },
     tooltip: { enabled: false },
-    legend: { enabled: false }
+    legend: { enabled: false },
+    title: { text: "Computed curves" }
 };
 
+
+//PV viewer options
 var options = {
   width: 'auto',
   height: 'auto',
@@ -33,32 +34,15 @@ var options = {
   background: '#cdd0d7'
 };
 
+////////////////////////////////////////////// main fucntion - calls other functions ////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
-//    $('header').on('mousemove', function(){
-//        $('.loading-screen').hide();
-//    });
-
     viewer = pv.Viewer(document.getElementById('jsmolViewer'), options);
     $('.PageWrapper').css('min-width', '1550px');
-    updateSliderValue();
+    sliderValueChanged();
     viewExperiment();
     radioButtonSelectChange();
     radioButtonSortChange();
-
-    $('.model_buttons').on('click', 'input', function () {
-        //if user click on model button, select or unselect it and hide/show respective model
-        if (canDeselect($(this).attr('name')) && $(this).attr('id') != "btnSelectAll") {
-            $('.Controls input#btnSelectAll').removeClass('selected');
-            $(this).toggleClass('selected');
-
-            //if all models are selected, select 'Select all' button
-            if (allModelButtonsClicked())
-                $('.Controls input#btnSelectAll').addClass('selected');
-
-            displayModelsButton();
-            displayCharts();
-        }
-    });
+    modelButtonClicked();
 
 //    $('#btnFullscreen').on('click', function () {
 //        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
@@ -73,15 +57,35 @@ $(function () {
 //        chart.setSize($('#chart').width(), $('#chart').height());
 //    });
 });
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//handles a click on a model button
+function modelButtonClicked(){
+    $('.model_buttons').on('click', 'input', function () {
+        //if user click on model button, select or unselect it and hide/show respective model
+        if (canDeselect($(this).attr('name')) && $(this).attr('id') != "btnSelectAll") {
+            $('.Controls input#btnSelectAll').removeClass('selected');
+            $(this).toggleClass('selected');
+
+            //if all models are selected, select 'Select all' button
+            if (allModelButtonsClicked())
+                $('.Controls input#btnSelectAll').addClass('selected');
+
+            displayModelsButton();
+            displayCurves();
+        }
+    });
+}
+
+//handles a change in selected radio button for sorting option
 function radioButtonSortChange(){
     $('input[type=radio][name=sort]').on('change', function () {
         switch($(this).val()){
-            case "1":
+            case "1":       //sort weights ascending
                 sortModels("asc");
                 highlightSelectedOption("sort");
                 return;
-            case "2":
+            case "2":       //sort weights descending
                 sortModels("desc");
                 highlightSelectedOption("sort");
                 return;
@@ -89,39 +93,41 @@ function radioButtonSortChange(){
     });
 }
 
+//handles a change in selected radio button for select option
 function radioButtonSelectChange(){
     $('input[type=radio][name=select]').on('change', function () {
         switch($(this).val()){
-            case "1":
+            case "1":       //display all models
                 $('.model_buttons input').addClass('selected');
                 displayModelsButton();
-                displayCharts();
+                displayCurves();
                 highlightSelectedOption("select");
                 return;
-            case "2":
+            case "2":       //hide all models
                 $('.model_buttons input').removeClass('selected');
                 displayModelsButton();
-                displayCharts();
+                displayCurves();
                 highlightSelectedOption("select");
                 return;
-            case "3":
+            case "3":       //display model with heighest weight
                 $('.model_buttons input').removeClass('selected');
                 $('.model_buttons input#' + getModelWithHighestWeight()).addClass('selected');
                 displayModelsButton();
-                displayCharts();
+                displayCurves();
                 highlightSelectedOption("select");
                 return;
-            case "4":
+            case "4":       //display model with lowest height
                 $('.model_buttons input').removeClass('selected');
                 $('.model_buttons input#' + getModelWithLowestWeight()).addClass('selected');
                 displayModelsButton();
-                displayCharts();
+                displayCurves();
                 highlightSelectedOption("select");
                 return;
         }
     });
 }
 
+//highlights selected radio button for select and sort option
 function highlightSelectedOption(option){
     if (option == "select") {
         $('input[type=radio][name=select]').next().removeClass('option-selected');
@@ -132,7 +138,7 @@ function highlightSelectedOption(option){
     }
 }
 
-//return id of a model with highest weight
+//return number of model with highest weight
 function getModelWithHighestWeight(){
     var temp = weights;
     temp.sort(function (a, b) {
@@ -142,7 +148,7 @@ function getModelWithHighestWeight(){
     return temp[0].model_no;
 }
 
-//return id of a model with lowest height
+//return id number of model with lowest height
 function getModelWithLowestWeight(){
     var temp = weights;
     temp.sort(function (a, b) {
@@ -152,11 +158,11 @@ function getModelWithLowestWeight(){
     return temp[0].model_no;
 }
 
-//function sorts model buttons ascending or descending, depending on attribute value
+//function sorts model buttons ascending or descending, depending on attribute 'order' value
 function sortModels(order) {
     //create a copy of array with weights
     var temp = weights;
-    //sort weights ascending
+    //sort weights ascending or descending
     temp.sort(function (a, b) {
         if (order == "asc")
             return a.weight - b.weight;
@@ -184,7 +190,8 @@ function sortModels(order) {
     }
 }
 
-function updateSliderValue() {
+// handles a slider value change and displays corresponding models and curves
+function sliderValueChanged() {
     $('#slider').on('mousemove', function () {
         $('.sliderValue').text($(this).val() + "%");
     });
@@ -193,10 +200,11 @@ function updateSliderValue() {
         $('input[type=radio][name=select]').change();
         selectButtons($(this).val());
         displayModelsSlider($(this).val());
-        displayCharts();
+        displayCurves();
     });
 };
 
+//asynchronously calls a method on a server, which loads experiment data in JSON. If server method succesfully returns data to the browser, 'onGetExperimentDataSuccess' is executed
 function viewExperiment() {
     $.get("/get_experiment_data", { user_id: $.url().segment(-2), exp_guid: $.url().segment(-1) }
              , onGetExperimentDataSuccess);
@@ -218,32 +226,43 @@ function onGetExperimentDataSuccess(data) {
     });
 
     viewFile();
+    createButtons();
 
+    //load data for every curve that will be displayed on chart
     for (var i = 0; i < weights.length; i++) {
-        chartOptions.series.push({ data: getComputedDataForModel(i) });
+        chartOptions.series.push({ data: getComputedCurveForModel(i) });
     }
+
+    //create a chart
     var chart = new Highcharts.Chart(chartOptions);
 
+    //set its width and height
     var chartWidth = $('#chart').width();
     var chartHeight = $('#chart').height();
 
+    //create event listener for zoom in button
     $('#btnZoomIn').click(function () {
         chartWidth *= 1.3;
         chartHeight *= 1.3;
         chart.setSize(chartWidth, chartHeight);
         return false;
     });
+
+    //create event listener for zoom out button
     $('#btnZoomOut').click(function () {
         chartWidth *= 0.7;
         chartHeight *= 0.7;
         chart.setSize(chartWidth, chartHeight);
         return false;
     });
+
+    //create event listener for default size of a chart
     $('#btnDefault').click(function () {
         chart.setSize($('#chart').width(), $('#chart').height());
         return false;
     });
 
+    //set value of a progress bar
     $(".progressBar").progressbar({
         value: parseInt(metadata.progress)
     });
@@ -251,7 +270,8 @@ function onGetExperimentDataSuccess(data) {
     $('.progress_value').text(metadata.progress + "%");
 }
 
-function getComputedDataForModel(model) {
+//this function loads data for every computed curve to an array of arrays with 2 values - 'q_value' and 'intensity'
+function getComputedCurveForModel(model) {
     var data = [];
     $.each(computedCurves[model].values.model, function (i, o) {
         data.push([o.q_value, Math.log(o.intensity)]);
@@ -276,6 +296,7 @@ function onError(xhr, errorType, exception) {
     }
 }
 
+//this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
   pv.io.fetchPdb('/static/uploads/final.pdb', function(structures) {
     for (var i = 0; i < structures.length; ++i) {
@@ -283,11 +304,9 @@ function viewFile() {
     }
     viewer.autoZoom();
   }, { loadAllModels : true } );
-
-  createButtons();
 }
 
-//create control buttons and buttons that represent each model in a given file
+//create buttons that represent each model with weight value in a given file
 function createButtons() {
     var targetElement1 = $('.model_buttons');
     for (var i = 0; i < weights.length; i++) {
@@ -296,7 +315,7 @@ function createButtons() {
     }
 }
 
-//this function displays selected models
+////this function displays models in PV viewer sleected by model buttons or select radio buttons
 function displayModelsButton() {
     var displayedModels = [];
 
@@ -317,8 +336,9 @@ function displayModelsButton() {
     viewer.requestRedraw();
 }
 
+//this function displays models in PV viewer sleected by slider
 function displayModelsSlider(weight) {
-        var displayedModels = [];
+     var displayedModels = [];
 
     //get selected models whose weight is >= selected weight on a slider
     for (var i = 0; i < weights.length; i++) {
@@ -339,29 +359,30 @@ function displayModelsSlider(weight) {
     viewer.requestRedraw();
 }
 
-function displayCharts() {
-    var displayedCharts = [];
-    var hiddenCharts = [];
+// this function displays curves for selected models on the chart
+function displayCurves() {
+    var displayedCurves = [];
+    var hiddenCurves = [];
 
     //get selected models
     $('.model_buttons input.btnModel').each(function () {
         if ($(this).hasClass('selected')) {
-            displayedCharts.push(parseInt($(this).attr('id'), 10));
+            displayedCurves.push(parseInt($(this).attr('id'), 10));
         } else {
-            hiddenCharts.push(parseInt($(this).attr('id'), 10));
+            hiddenCurves.push(parseInt($(this).attr('id'), 10));
         }
     });
 
     //execute a script
     var chart = $('#chart').highcharts();
-    for (var i = 0; i < displayedCharts.length; i++) {
-        var series = chart.series[displayedCharts[i]];
+    for (var i = 0; i < displayedCurves.length; i++) {
+        var series = chart.series[displayedCurves[i]];
         if (!series.visible) {
             series.setVisible(true, false);
         }
     }
-    for (var j = 0; j < hiddenCharts.length; j++) {
-        series = chart.series[hiddenCharts[j]];
+    for (var j = 0; j < hiddenCurves.length; j++) {
+        series = chart.series[hiddenCurves[j]];
         if (series.visible) {
             series.setVisible(false, false);
         }
@@ -369,6 +390,7 @@ function displayCharts() {
     chart.redraw();
 }
 
+//this function selects buttons , which weight is equal to orbigger to a selected weight on a slider
 function selectButtons(weight) {
     $('.model_buttons input').each(function () {
         if (parseFloat($(this).next().text()) >= (parseFloat(weight) / 100)) {

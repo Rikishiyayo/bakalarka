@@ -14,7 +14,7 @@ def login():
 
     if l_form.validate_on_submit():
         user = User.query.filter_by(email=l_form.login_email.data).first()
-        if user is not None and user.verify_password(l_form.login_password.data):
+        if user is not None and user.verify_password(l_form.login_password.data):       #if user with specified email exists and submited password is correct
             login_user(user, l_form.remember_me.data)
             target = request.args.get("next")
             if target is not None:
@@ -25,7 +25,7 @@ def login():
         flash(current_app.config['LOGIN_ERROR'], "login_error")
 
     return render_template('main_page.html', l_form=l_form, r_form=RegistrationForm(),
-                           pr_form=PasswordResetRequestForm())
+                            pr_form=PasswordResetRequestForm())
 
 
 @userMngmt.route('/logout')
@@ -51,18 +51,17 @@ def register():
     return render_template('main_page.html', l_form=LoginForm(), r_form=r_form,
                            pr_form=PasswordResetRequestForm())
 
-
 @userMngmt.route('/confirm/<token>')
 @login_required
 def confirm(token):
-    if current_user.confirmed:
+    if current_user.confirmed:      #if user is already confirmed, redirect him to his home page
         return redirect('/home')
 
-    if current_user.confirm(token):
+    if current_user.confirm(token):     #succesfully confirmed user
         flash(current_app.config['ACCOUNT_CONFIRMATION'], "info")
         DirectoryAndFileWriter.create_user_directory(current_user.id)
         return redirect('/home')
-    else:
+    else:       #confirmation wasnt successfull
         flash(current_app.config['ACCOUNT_FAILED_CONFIRMATION'], "info")
         return redirect(url_for('userManagement.unconfirmed'))
 
@@ -87,8 +86,8 @@ def resend_confirmation():
 
 @userMngmt.route('/reset', methods=['POST'])
 def password_reset_request():
-    if not current_user.is_anonymous:
-        return redirect('/main_page')
+    if not current_user.is_anonymous:       #if current user is not anonymous, redirect him to home page
+        return redirect('/home')
     form = PasswordResetRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.user_email.data).first()
@@ -106,11 +105,11 @@ def password_reset_request():
 
 @userMngmt.route('/password_reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-    if not current_user.is_anonymous:
-        return redirect('/main_page')
+    if not current_user.is_anonymous:        #if current user is not anonymous, redirect him to home page
+        return redirect('/home')
 
     form = PasswordResetForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit():       #tries to reset password
         user = User.query.filter_by(email=form.user_email.data).first()
         if user is None:
             flash(current_app.config['PASSWORD_RESET_FAILED_USER_DOESNT_EXIST'], 'info')
@@ -123,4 +122,4 @@ def password_reset(token):
             flash(current_app.config['PASSWORD_RESET_FAILED'], 'info')
             return redirect('/main_page')
 
-    return render_template('password_reset.html', form=form)
+    return render_template('password_reset.html', form=form)        #render password_reset page for GET request

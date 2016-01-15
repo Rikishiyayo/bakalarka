@@ -3,8 +3,9 @@ from wtforms import ValidationError, StringField, SubmitField, FileField, TextAr
 from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp, EqualTo, Optional
 from app.models import User, Role
 
-
-class SaxsExperimentForm(Form):
+# A form for computation
+#
+class Computation(Form):
     title = StringField('Title:', validators=[DataRequired("Required a title!"), Length(1, 35)])
     description = TextAreaField('Description:')
     models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models")])
@@ -19,8 +20,10 @@ class SaxsExperimentForm(Form):
     beta = FloatField('Beta:', validators=[DataRequired("Required a float number!")])
     gama = FloatField('Gama:', validators=[DataRequired("Required a float number!")])
     submit = SubmitField('Submit')
-    
-    
+
+
+# A login form
+#
 class LoginForm(Form):
     login_email = StringField('Email', validators=[DataRequired("Enter a valid email address!"), Email()])
     login_password = PasswordField('Password', validators=[DataRequired('Enter a password!')])
@@ -28,6 +31,8 @@ class LoginForm(Form):
     submit = SubmitField('Log In')
 
 
+# A register form
+#
 class RegistrationForm(Form):
     register_email = StringField('Email:', validators=[DataRequired("Enter a valid email address!"), Email()])
     username = StringField('Username:', validators=[DataRequired("Minimum of 5 characters required!"),
@@ -50,11 +55,15 @@ class RegistrationForm(Form):
             raise ValidationError('Username already in use.')
 
 
+# A password reset request form
+#
 class PasswordResetRequestForm(Form):
     user_email = StringField('Email', validators=[DataRequired("Enter a valid email address!"), Email()])
     submit = SubmitField('Confirm')
 
 
+# A password reset form
+#
 class PasswordResetForm(Form):
     user_email = StringField('Email', validators=[DataRequired("Enter a valid email address!"), Email()])
     new_password = PasswordField('New password:', validators=[DataRequired("Minimum of 8 characters required!"),

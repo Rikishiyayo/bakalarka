@@ -1,7 +1,7 @@
 from flask import render_template, redirect, flash, jsonify, request, current_app, url_for
 from flask.ext.login import login_required, current_user
 from . import main
-from app.forms import SaxsExperimentForm, LoginForm, RegistrationForm, PasswordResetRequestForm
+from app.forms import Computation, LoginForm, RegistrationForm, PasswordResetRequestForm
 from app.bussinesLogic import DirectoryAndFileReader, DirectoryAndFileWriter
 from app.models import User
 
@@ -9,13 +9,13 @@ from app.models import User
 @main.route('/')
 @main.route('/main_page')
 def main_page():
-    if current_user.is_authenticated:
-        if current_user.confirmed and current_user.active:
+    if current_user.is_authenticated:       # if current user is authenticated
+        if current_user.confirmed and current_user.active:      # if current user is confirmed and active, redirect him to a home page
             return redirect('/home')
         else:
-            return redirect(url_for('userManagement.unconfirmed'))
+            return redirect(url_for('userManagement.unconfirmed'))      # redirect him to a unconfirmed page
 
-    if request.args.get("next"):
+    if request.args.get("next"):        # if user is trying to get to a page which requires users to be authenticated, he is redirected to a main page and asked to log in
         flash(current_app.config['LOGIN_BEFORE_CONFIRMATION'], "info")
 
     return render_template('main_page.html', l_form=LoginForm(), r_form=RegistrationForm(),
@@ -25,15 +25,15 @@ def main_page():
 @main.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    form = SaxsExperimentForm()
+    form = Computation()
 
-    if form.validate_on_submit():
+    if form.validate_on_submit():       #this block of code is executed when browser sent GET request(user submitted form)
         DirectoryAndFileWriter.create_experiment(form, str(current_user.id))
         flash(current_app.config['EXPERIMENT_SUBMITTED'], "info")
         return redirect('/home')
 
     return render_template('home.html', form=form,
-                           pages=DirectoryAndFileReader.get_experiments_count(current_user.id),
+                           pages=DirectoryAndFileReader.get_experiments_pages_count(current_user.id),
                            exps=DirectoryAndFileReader.get_experiments(current_user.id, 0))
 
 
@@ -75,10 +75,10 @@ def view_experiment(user_id, exp_guid):
 def get_experiment_data():
     user_id = request.args.get("user_id")
     exp_guid = request.args.get("exp_guid")
-    return jsonify(weights=DirectoryAndFileReader.get_weights(user_id, exp_guid),
-                   computedCurves=DirectoryAndFileReader.get_computed_values_for_models(user_id, exp_guid),
-                   metadata=DirectoryAndFileReader.get_experiment_result_data(user_id, exp_guid))
-
+    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, exp_guid),
+                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, exp_guid),
+                    metadata=DirectoryAndFileReader.get_computations_result_data(user_id, exp_guid))
+    return json
 
 @main.before_request
 def before_request():

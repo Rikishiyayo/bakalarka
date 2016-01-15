@@ -1,4 +1,5 @@
 $(function(){
+    //messages are shown for 8 seconds
     setTimeout(function(){
         $('.flash-message').fadeOut();
     }, 8000);
@@ -6,6 +7,7 @@ $(function(){
     showMailAddress();
 });
 
+//hover effect over facebook and gmail icon
 function iconHover(){
     //hover effect over facebook and gmail icon in footer
     $('footer div img').on('mouseover', function () {
@@ -21,6 +23,7 @@ function iconHover(){
     });
 }
 
+//this function shows mail address upon clicking on a mail button
 function showMailAddress(){
     $('.gmail-icon').on('click', function(){
         $('.mail-address').toggle();

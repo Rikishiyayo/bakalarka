@@ -2,11 +2,12 @@ import os
 from flask import current_app
 
 
-# reads a directory for a current logged in user and return his experiments
+# reads a directory for a current logged in user and return his computations
 #
-# user_id - id of a user which matches a directory on a server where this user has his experiments saved
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# page - a list of computations shows a certain number of them on 1 page. This parameter represents which page should be displayed
 #
-# returns an array of dictionaries - dictionary has 4 keys: title, date, status and progress
+# returns an subarray of dictionaries - each dictionary has 4 keys - title, date, status and progress, which hold informations about an computation
 def get_experiments(user_id, page):
     experiments = []
     count = current_app.config['EXPERIMENTS_ON_ONE_PAGE']
@@ -23,11 +24,11 @@ def get_experiments(user_id, page):
 
 
 
+# reads a directory with computations for a current logged in user and return number of pages
 #
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
 #
-#
-#
-def get_experiments_count(user_id):
+def get_experiments_pages_count(user_id):
     exps_count = len(os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))))
     pages = exps_count / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
 
@@ -39,19 +40,21 @@ def get_experiments_count(user_id):
     return pages_array
 
 
+# reads a directory with computed curves of specified experiment
 #
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# comp_guid - id of a computation
 #
-#
-#
-#
-def get_computed_values_for_models(user_id, exp_guid):
-    directory = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid)
+# returns an array of objects where object represents a computed curves for one model. It has one attribute 'model' with value 'points'.
+# 'points' is an array of objects, which represents a single point on a chart. It has attributes 'q_value' and 'intensity'
+def get_computed_curves(user_id, comp_guid):
+    directory = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid)
     models = []
 
-    for item in os.listdir(os.path.join(directory, "DemoValues")):
+    for index in range(len(os.listdir(os.path.join(directory, "DemoValues")))):
         points = []
         # Open the text file for reading
-        file = open(os.path.join(directory, "DemoValues", item))
+        file = open(os.path.join(directory, "DemoValues", "final_m" + str(index + 1) + ".pdb.dat"))
         lines = file.readlines()
 
         for line in lines[2:]:
@@ -65,13 +68,14 @@ def get_computed_values_for_models(user_id, exp_guid):
     return models
 
 
+# reads a file 'result.dat' of specified computation and gets its computed weights for every model
 #
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# comp_guid - id of a computation
 #
-#
-#
-#
-def get_weights(user_id, exp_guid):
-    filepath = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "result.dat")
+# returns an array of weights
+def get_weights(user_id, comp_guid):
+    filepath = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
     weights = []
     # Open the text file for reading
     file = open(filepath)
@@ -85,10 +89,14 @@ def get_weights(user_id, exp_guid):
     return weights
 
 
+# reads a file 'result.dat' of specified computation and gets its result data 'status' and 'progress'
 #
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# comp_guid - id of a computation
 #
-def get_experiment_result_data(user_id, exp_guid):
-    result_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "result.dat")
+# returns an object with 2 attributes - 'status' and 'progress'
+def get_computations_result_data(user_id, comp_guid):
+    result_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
 
     info = {}
     read_file(result_file_path, info, ["status", "progress"])
@@ -96,10 +104,14 @@ def get_experiment_result_data(user_id, exp_guid):
     return info
 
 
+# reads a file 'params.txt' of specified computation and gets its parameters
 #
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# comp_guid - id of a computation
 #
-def get_experiment_parameters(user_id, exp_guid):
-    parameters_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "params.txt")
+# returns an object with 8 attributes - "title", "date", "comment", "steps", "sync", "alpha", "beta" and "gama"
+def get_experiment_parameters(user_id, comp_guid):
+    parameters_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "params.txt")
 
     info = {}
     read_file(parameters_file_path, info, ["title", "date", "comment", "steps", "sync", "alpha", "beta", "gama"])
@@ -107,19 +119,19 @@ def get_experiment_parameters(user_id, exp_guid):
     return info
 
 
-# reads a file and adds key:value pairs into a dictionary - finds a key string in a file
+# reads a file and adds attribute:value pairs into an object - finds a key string in a file
 # and gets its value(a substring after ':' char)
 #
 # filePath - path of the file to read
-# dictionary - reference to a dictionary to which new key:value pairs will be appended
+# object - reference to a dictionary to which new attribute:value pairs will be appended
 # keys - a list of strings to find in a file. Each string represents a key in dictionary
-def read_file(file_path, dictionary, keys):
+def read_file(file_path, object, keys):
     file = open(file_path)
     lines = file.readlines()
     for key in keys:
         for line in lines:
             if key in line:
-                dictionary[key] = line.split(':')[1].strip()
+                object[key] = line.split(':')[1].strip()
 
     file.close()
     

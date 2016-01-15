@@ -1,7 +1,7 @@
 $(function () {
     validation();
-    showDropdownForm();
-    hideLoginFormWhenRegisterFieldFocus();
+    showDropdownElement();
+    hideDropdownElementWhenRegisterFieldHasFocus;
     showPasswordResetRequestForm();
     showLoginForm();
     setPlaceholders();
@@ -9,6 +9,7 @@ $(function () {
     passwordResetRequestFormVisibility();
 });
 
+//sets HTML placeholder attribute for specified textboxes
 function setPlaceholders(){
     $('#user_email').prop('placeholder', "Email");
     $('#login_email').prop('placeholder', "Email");
@@ -16,12 +17,14 @@ function setPlaceholders(){
 
 }
 
-function showDropdownForm(){
+//this function shows dropdown element, which displays either login form or password reset request form
+function showDropdownElement(){
     $('a.dropdown_toggle').on('click', function(){
         $('div.dropdown-form-wrapper').slideToggle(100);
     })
 }
 
+//this function shows login form
 function showLoginForm(){
     $('#cancel').on('click', function(){
         $('.dropdown-login-form-wrapper').show();
@@ -29,6 +32,7 @@ function showLoginForm(){
     });
 }
 
+//this function shows password reset request form
 function showPasswordResetRequestForm(){
     $('.toggle-password-reset-request-form').on('click', function(){
         $('.dropdown-login-form-wrapper').hide();
@@ -36,17 +40,20 @@ function showPasswordResetRequestForm(){
     });
 }
 
-function hideLoginFormWhenRegisterFieldFocus(){
+//this function hides dropdown element when field in register form has focus
+function hideDropdownElementWhenRegisterFieldHasFocus(){
     $('#register_form input').on('focus', function(){
         $('div.dropdown-form-wrapper').slideUp(100);
     });
 }
 
+//show login form when it has validation errors
 function loginFormVisibility(){
     if($('.login_errors').children().length != 0)
         $('.dropdown-form-wrapper').show();
 }
 
+//show password reset request form when it has validation errors
 function passwordResetRequestFormVisibility(){
     if($('.password-reset-request-errors').children().length != 0) {
         $('.dropdown-form-wrapper').show();

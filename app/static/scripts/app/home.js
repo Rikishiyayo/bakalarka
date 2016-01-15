@@ -7,13 +7,17 @@ $(function () {
     changePageOnPageClick();
     changePageOnNextClick();
     changePageOnPreviousClick();
+    reloadList();
+});
 
+//this function reloads list with computations - it asynchronously calls server method that returns list of computations in JSON
+function reloadList(){
     $('.img_reload_list').on('click', function(){
         $('.experiment_list_overlay').show();
         $.get("/get_experiments/0", onGetExperimentsSuccess);
         selectPageControl(1);
     });
-});
+}
 
 //
 function setPages(){
@@ -21,7 +25,7 @@ function setPages(){
     $('span.page:not(.previous, .next)').slice(13).addClass('hiddenAfter')
 }
 
-//
+//this function displays computations for clicked page
 function changePageOnPageClick(){
     $('span.page:not(.previous, .next)').on('click', function(){
        if ( !$(this).hasClass('selected') ){
@@ -31,7 +35,7 @@ function changePageOnPageClick(){
     });
 }
 
-//
+//this function displays computation for selected page when user clicked 'next' button
 function changePageOnNextClick(){
     $('span.next').on('click', function(){
        selectedPage = $('span.page.selected');
@@ -49,7 +53,7 @@ function changePageOnNextClick(){
     });
 }
 
-//
+//this function displays computation for selected page when user clicked 'previous' button
 function changePageOnPreviousClick(){
     $('span.previous').on('click', function(){
        selectedPage = $('span.page.selected');
@@ -67,7 +71,7 @@ function changePageOnPreviousClick(){
     });
 }
 
-//
+//this function erases current list of computations and replaces it with new list
 function onGetExperimentsSuccess(data) {
     $('.experiment_list p.experiment_row').detach();
     var exps = data.exps;
@@ -124,7 +128,7 @@ function experimentRowHover(){
         });
 }
 
-//
+//this function highlights selected page
 function selectPageControl(page){
    $('span.page').each(function(){
        $(this).removeClass('selected');
