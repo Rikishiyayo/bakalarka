@@ -298,7 +298,7 @@ function onError(xhr, errorType, exception) {
 
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
-  pv.io.fetchPdb('/static/uploads/final.pdb', function(structures) {
+  pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/final.pdb', function(structures) {
     for (var i = 0; i < structures.length; ++i) {
       models.push(viewer.cartoon('model'+ (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
     }

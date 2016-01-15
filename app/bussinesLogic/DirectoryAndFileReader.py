@@ -30,7 +30,7 @@ def get_experiments(user_id, page):
 #
 def get_experiments_pages_count(user_id):
     exps_count = len(os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))))
-    pages = exps_count / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
+    pages = 1.0 * exps_count / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
 
     if pages.is_integer():
         pages_array = [0] * int(pages)
@@ -51,10 +51,10 @@ def get_computed_curves(user_id, comp_guid):
     directory = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid)
     models = []
 
-    for index in range(len(os.listdir(os.path.join(directory, "DemoValues")))):
+    for index in range(len(os.listdir(os.path.join(directory, "ComputedCurves")))):
         points = []
         # Open the text file for reading
-        file = open(os.path.join(directory, "DemoValues", "final_m" + str(index + 1) + ".pdb.dat"))
+        file = open(os.path.join(directory, "ComputedCurves", "final_m" + str(index + 1) + ".pdb.dat"))
         lines = file.readlines()
 
         for line in lines[2:]:
