@@ -11,14 +11,17 @@
 {% endblock %}
 
 {% block content %}
+    <div class="loading-screen">
+        <div></div>
+        <span>loading...</span>
+    </div>
     <div class="flash-message">
         {% for message in get_flashed_messages(category_filter=["info"]) %}
             <span>{{ message }}</span>
         {% endfor %}
     </div>
-    <div class="fullscreen_window"></div>
     <div class="submit_experiment">
-        <h1>Submit a new Saxs Experiment</h1>
+        <h1>Submit a new computation</h1>
         <form action="" method="post" enctype="multipart/form-data" id="new_experiment_form">
             {{ form.hidden_tag() }}
             <p>
@@ -33,15 +36,44 @@
                     <span>{{ error }}</span>
                 {% endfor %}
             </p>
-            <p>
-                {{ form.models.label}}{{ form.models }}
+            <p class="row-models">
+                {{ form.models.label}}
+                <label class="file-upload">
+                    {{ form.models }}
+                    <span class="title">Choose File</span>
+                </label>
+                <span class="filename"></span>
                 {% for error in form.models.errors %}
                     <span>{{ error }}</span>
                 {% endfor %}
             </p>
-            <p>
-                {{ form.expData.label }}{{ form.expData }}
+            <p class="row-expData">
+                {{ form.expData.label }}
+                <label class="file-upload">
+                    {{ form.expData }}
+                    <span class="title">Choose File</span>
+                </label>
+                <span class="filename"></span>
                 {% for error in form.expData.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.qRange.label }}{{ form.qRange(min=0.5, max=1, step=0.01) }}
+                {% for error in form.qRange.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+                <label class="qRange-value">0.5</label>
+            </p>
+            <p>
+                {{ form.calcType.label }}
+                <span class="calcType">
+                    {% for subfield in form.calcType %}
+                        {{ subfield }}
+                        {{ subfield.label }}
+                    {% endfor %}
+                </span>
+                {% for error in form.calcType.errors %}
                     <span>{{ error }}</span>
                 {% endfor %}
             </p>
@@ -51,57 +83,64 @@
                     <span>{{ error }}</span>
                 {% endfor %}
             </p>
-            <p>
-                {{ form.stepsBetweenSync.label }}{{ form.stepsBetweenSync }}
-                {% for error in form.stepsBetweenSync.errors %}
-                    <span>{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>
-                Optimalization parameters
-            </p>
-            <p>
-                {{ form.alpha.label }}{{ form.alpha }}
-                {% for error in form.alpha.errors %}
-                    <span>{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.beta.label }}{{ form.beta }}
-                {% for error in form.beta.errors %}
-                    <span>{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.gama.label }}{{ form.gama }}
-                {% for error in form.gama.errors %}
-                    <span>{{ error }}</span>
-                {% endfor %}
-            </p>
+            <div class="advanced-settings-toggle">
+                <div class="advanced-settings-toggle-content-wrapper">
+                    <span>Advanced settings</span>
+                    <img src=/static/styles/icons/arrow_right.png>
+                </div>
+            </div>
+            <div class="advanced-settings">
+                <p>
+                    {{ form.stepsBetweenSync.label }}{{ form.stepsBetweenSync }}
+                    {% for error in form.stepsBetweenSync.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.alpha.label }}{{ form.alpha }}
+                    {% for error in form.alpha.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.beta.label }}{{ form.beta }}
+                    {% for error in form.beta.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.gama.label }}{{ form.gama }}
+                    {% for error in form.gama.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </p>
+            </div>
             <p class="form_buttons">
-                <input type="reset" value="Clear">
-                {{ form.submit }}
+                    <input type="reset" value="Clear">
+                    {{ form.submit }}
             </p>
         </form>
     </div>
     <div class="experiment_list">
         <div class="experiment_list_overlay">
-            <img class="img_reload_list" src="/static/styles/icons/gears.gif" title="reload">
+            <img src="/static/styles/icons/gears.gif" title="reload">
         </div>
         <img class="img_reload_list" src="/static/styles/icons/reload.png" title="reload">
-        <h1>View a Saxs Experiment</h1>
+        <h1>View a computation</h1>
         {% for item in exps %}
-            <p title="its working" class="experiment_row">
-                <a href={{ url_for('main.view_experiment', user_id=item.user_id, exp_guid=item.exp_guid) }}></a>
+            <p class="experiment_row">
+                {% if item.progress != '0' %}
+                    <a href="{{ url_for('main.view_experiment', user_id=item.user_id, comp_guid=item.comp_guid) }}"></a>
+                {% endif %}
                 <span class="date">{{ item.date }}</span>
                 <span class="name">{{ item.title }}</span>
-                <span class="progress">{{ item.progress }}</span>
+                <span class="progress">{{ item.progress }}%</span>
                 <span class="status">{{ item.status }}</span>
                 <img src="{{ url_for('static', filename='styles/icons/eye_grey.png') }}">
             </p>    
         {% endfor %}
         <div class="pagination-controls">
-            {% if pages|length > 1%}
+            {% if pages|length > 1 %}
                 <span class="page previous"> < </span>
                     {% for item in pages %}
                         <span class="page _{{ loop.index }}">{{ loop.index }}</span>
