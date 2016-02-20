@@ -1,24 +1,28 @@
 from flask.ext.wtf import Form
-from wtforms import ValidationError, StringField, SubmitField, FileField, TextAreaField, IntegerField, FloatField, BooleanField, PasswordField, SelectField
-from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp, EqualTo, Optional
-from app.models import User, Role
+from wtforms import ValidationError, StringField, SubmitField, TextAreaField, IntegerField, FloatField, BooleanField, PasswordField, RadioField
+from wtforms.fields.html5 import DecimalRangeField
+from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp, EqualTo
+from flask_wtf.file import FileAllowed, FileField
+from app.models import User
 
 # A form for computation
 #
 class Computation(Form):
     title = StringField('Title:', validators=[DataRequired("Required a title!"), Length(1, 35)])
     description = TextAreaField('Description:')
-    models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models")])
-    expData = FileField('File with experiment data:', validators=[DataRequired("Required a file with experiment data!")])
+    models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models. Allowed formats are 'pdb', 'zip' or 'tar.gz'"),
+                                                              FileAllowed(['pdb', 'zip', 'tar.gz'])])
+    expData = FileField('File with experiment data:', validators=[DataRequired("Required a text file with experiment data!")])
+    qRange = DecimalRangeField('q range:', validators=[DataRequired("Required parameter")], default=0.1)
+    calcType = RadioField('Calculation type:', choices=[('random_walk', 'Random walk'), ('stunnel', 'Stochastic tunneling')], default='random_walk')
     calcSteps = IntegerField('Calculation steps:',
                              validators=[DataRequired("Required an integer number!"),
-                                         NumberRange(10000, 1000000, "Minimum value is 10 000, maximum value is 1000000!")], default=10000)
+                                         NumberRange(500, 1000000, "Minimum value is 10 000, maximum value is 1000000!")], default=500)
     stepsBetweenSync = IntegerField('Steps between synchronization:',
-                                    validators=[DataRequired("Required an integer number!"),
-                                                NumberRange(100, 10000, "Minimum value is 100, maximum value is 10000!")], default=100)
-    alpha = FloatField('Alpha:', validators=[DataRequired("Required a float number!")])
-    beta = FloatField('Beta:', validators=[DataRequired("Required a float number!")])
-    gama = FloatField('Gama:', validators=[DataRequired("Required a float number!")])
+                                    validators=[NumberRange(100, 10000, "Minimum value is 100, maximum value is 10000!")], default=100)
+    alpha = FloatField('alpha - max. random step:', default=0.01)
+    beta = FloatField('beta - chi2 acceptance:', default=0.005)
+    gama = FloatField('gama - tunel scaling:', default=500)
     submit = SubmitField('Submit')
 
 

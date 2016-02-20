@@ -27,7 +27,7 @@ def main_page():
 def home():
     form = Computation()
 
-    if form.validate_on_submit():       #this block of code is executed when browser sent GET request(user submitted form)
+    if form.validate_on_submit():       #this block of code is executed when browser sent POST request(user submitted form)
         DirectoryAndFileWriter.create_experiment(form, str(current_user.id))
         flash(current_app.config['EXPERIMENT_SUBMITTED'], "info")
         return redirect('/home')
@@ -62,22 +62,23 @@ def is_username_available():
     return "true"
 
 
-@main.route('/view_experiment/<user_id>/<exp_guid>')
+@main.route('/view_experiment/<user_id>/<comp_guid>')
 @login_required
-def view_experiment(user_id, exp_guid):
-    DirectoryAndFileWriter.get_model_data(user_id, exp_guid)
-    return render_template("view_experiment.html", exp_details=DirectoryAndFileReader.get_experiment_parameters(
-        user_id, exp_guid))
+def view_experiment(user_id, comp_guid):
+    DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
+    return render_template("view_experiment.html", computation_details=DirectoryAndFileReader.get_computation_parameters(
+        user_id, comp_guid))
 
 
 @main.route('/get_experiment_data')
 @login_required
 def get_experiment_data():
     user_id = request.args.get("user_id")
-    exp_guid = request.args.get("exp_guid")
-    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, exp_guid),
-                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, exp_guid),
-                    metadata=DirectoryAndFileReader.get_computations_result_data(user_id, exp_guid))
+    comp_guid = request.args.get("comp_guid")
+    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
+                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
+                    experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid),
+                    metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
     return json
 
 @main.before_request

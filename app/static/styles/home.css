@@ -1,14 +1,40 @@
-.fullscreen_window{
-    box-sizing: border-box;
+.loading-screen{
     width: 100%;
     height: 100%;
-    padding: 100px;
     top: 0;
     left: 0;
-    background-color: green;
+    background-color: whitesmoke;
+    position: fixed;
+    z-index: 10000;
+    color: #4c4c4c;
+    text-align: center;
+    opacity: 1;
+    font-size: 40px;
     display: none;
 }
 
+    .loading-screen:after{
+        content: "";
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+    }
+
+    .loading-screen div{
+        background-color: black;
+        width: 200px;
+        height: 80px;
+        vertical-align: middle;
+        transition: width 3s;
+    }
+
+    .loading-screen span{
+        vertical-align: middle;
+    }
+
+.loading-screen div:hover {
+    width: 500px;
+}
 
 div.submit_experiment{
     width: 47%;
@@ -22,30 +48,70 @@ div.submit_experiment{
         text-align: center;
     }
 
-        div.submit_experiment form p {
-            width: 100%;
-            margin: 0 auto 10px;
-            font-size: 26px;
+        div.submit_experiment form div:not(.img) {
             text-align: center;
-            position: relative;
+            font-size: 25px;
+            margin: 40px 0 10px 0;
+        }
+
+        div.submit_experiment form div.advanced-settings-toggle-content-wrapper {
+            margin: auto;
+            display: inline-block;
+            border-radius: 4px;
+            padding: 4px 5px 5px 5px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+            div.submit_experiment form div.advanced-settings-toggle-content-wrapper:hover {
+                background-color: lightgray;
+                cursor: pointer;
+            }
+
+            div.submit_experiment form div.advanced-settings-toggle-content-wrapper span {
+                vertical-align: middle;
+            }
+
+            div.submit_experiment form div.advanced-settings-toggle-content-wrapper .img {
+                display: inline-block;
+                vertical-align: middle;
+                height: 25px;
+                width: 25px;
+                background-size: contain;
+                background-image: url(/static/styles/icons/arrow_right.png);
+            }
+
+        div.submit_experiment form div.advanced-settings {
+            display: none;
+            margin-top: 10px;
+        }
+
+        div.submit_experiment form p {
+            margin: 0 auto 10px;
+            font-size: 0;
+            text-align: center;
+            display: inline-block;
+            width: 100%;
         }
         
         div.submit_experiment form p.form_buttons {
             text-align: right;
             font-size: 0;
-            margin-bottom: 0;
+            margin: 40px 0 0 0;
         }
 
         div.submit_experiment form input {
             box-sizing: border-box !important;
             vertical-align: middle;
-            font-size: 20px;
+            font-size: 17px;
             width: 51%;
             padding: 3px 10px;
             color: #4c4c4c;
             border-radius: 4px;
             border: 1px solid lightgrey;
-            height: 45px;
+            height: 40px;
         }
         
 /*            div.submit_experiment form input:not([type="file"]){
@@ -59,11 +125,8 @@ div.submit_experiment{
 
             div.submit_experiment form input[type="submit"] {
                 display: inline-block;
-                width: 51%;
                 border: 1px solid lightskyblue !important;
                 background-color: lightskyblue;
-                border-radius: 4px;
-                height: 45px;
                 margin: 0;
             }
 
@@ -78,8 +141,6 @@ div.submit_experiment{
                 width: 47%;
                 border: 1px solid #f65858 !important;
                 background-color: #f65858;
-                border-radius: 4px;
-                height: 45px;
                 margin: 0;
                 margin-right: 2%;
             }
@@ -91,7 +152,14 @@ div.submit_experiment{
                 }
 
             div.submit_experiment form input[type="file"] {
+                display: none;
+            }
+
+            div.submit_experiment form input[type="range"] {
                 padding: 0;
+                border: none;
+                margin: 0 2% 0 0;
+                width: 44%;
             }
 
             div.submit_experiment form input:focus {
@@ -99,19 +167,44 @@ div.submit_experiment{
                 border-width: 2px;
             }
 
+        div.submit_experiment form span.calcType {
+            display: inline-block;
+            width: 51%;
+            vertical-align: middle;
+        }
+
+            div.submit_experiment form span.calcType input {
+                box-sizing: border-box !important;
+                vertical-align: middle;
+                font-size: 17px;
+                width: 5%;
+                padding: 3px 10px;
+                height: 40px;
+                margin: 0;
+            }
+
+            div.submit_experiment form span.calcType label {
+                font-size: 17px;
+                width: 43%;
+                vertical-align: middle;
+                display: inline-block;
+                text-align: left;
+                margin: 0 0 0 2%;
+            }
+
         div.submit_experiment form textarea {
             box-sizing: border-box;
             border: 1px solid lightgrey;
             border-radius: 4px;
             vertical-align: middle;
-            font-size: 20px;
+            font-size: 17px;
             font-family: Arial;
             color: #4c4c4c;
             width: 51%;
-            height: 240px;
+            height: 170px;
             padding: 3px 10px;
             resize: vertical;
-            max-height: 650px;
+            max-height: 500px;
         }
 
             div.submit_experiment form textarea:focus {
@@ -119,13 +212,63 @@ div.submit_experiment{
                 border-width: 2px;
             }
 
-        div.submit_experiment form label {
+        div.submit_experiment form label:not(.file-upload) {
             margin-right: 2%;
-            font-size: 20px;
+            font-size: 17px;
             display: inline-block;
             width: 47%;
             vertical-align: middle;
             text-align: right;
+        }
+
+            div.submit_experiment form label.qRange-value {
+                width: 5%;
+                margin: 0;
+                text-align: left;
+            }
+
+           div.submit_experiment form label.file-upload {
+                cursor: pointer;
+                line-height: 40px;
+                width: 18%;
+                display: inline-block;
+                box-sizing: border-box;
+           }
+
+            div.submit_experiment form label.file-upload span.title {
+                background-color: lightgray;
+                padding: 0 5px;
+                display: inline-block;
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                font-size: 17px;
+                vertical-align: middle;
+            }
+
+            div.submit_experiment form label.file-upload span.title:hover {
+                cursor: pointer;
+                background-color: darkgrey;
+            }
+
+        div.submit_experiment form span.filename {
+            height: 40px;
+            padding: 0 5px;
+            text-align: center;
+            display: inline-block;
+            width: 33%;
+            box-sizing: border-box;
+            border: 1px solid lightgray;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            vertical-align: middle;
+            font-size: 17px;
+            line-height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: pre;
         }
 
 div.experiment_list{
@@ -192,15 +335,10 @@ div.experiment_list{
         box-sizing: border-box;
         width: 95%;
         margin-left: 5%;
-        height: 45px;
+        height: 40px;
         font-size: 0;
         border-radius: 4px;
     }
-
-        div.experiment_list .experiment_row:hover {
-             background-color: lightgrey;
-             cursor: pointer;
-        }
 
     div.experiment_list .pagination-controls{
         text-align: center;
@@ -214,10 +352,10 @@ div.experiment_list{
 
         div.experiment_list .pagination-controls span{
             display: inline-block;
-            font-size: 20px;
+            font-size: 17px;
             box-sizing: border-box;
             vertical-align: middle;
-            line-height: 45px;
+            line-height: 40px;
             height: 45px;
             background-color: lightgray;
             width: 6%;
@@ -248,10 +386,10 @@ div.experiment_list{
 
     div.experiment_list .experiment_row span{
         display: inline-block;
-        font-size: 20px;
+        font-size: 17px;
         box-sizing: border-box;
         vertical-align: middle;
-        line-height: 45px;
+        line-height: 40px;
         margin-left: 1%;
     }
 
@@ -285,7 +423,7 @@ div.experiment_list{
 .ui-tooltip {
     background: #4c4c4c !important;
     box-sizing: border-box !important;
-    height: 45px;
+    height: 40px;
     padding: 0 5px !important;
     margin: 0 !important;
     line-height: 40px;
@@ -293,6 +431,7 @@ div.experiment_list{
     box-shadow: 0 0 0 !important;
     border-radius: 4px !important;
     color: whitesmoke;
+    max-width: 800px;
 }
 
 .ui-tooltip-content {
@@ -305,4 +444,12 @@ div.experiment_list{
 
 .hiddenBefore, .hiddenAfter{
     display: none !important;
+}
+
+.file-extension-validation-error {
+    background-color: #f65858;
+}
+
+.advanced-settings-toggle-clicked {
+    background-image: url(/static/styles/icons/arrow_down.png) !important;
 }

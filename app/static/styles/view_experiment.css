@@ -8,12 +8,20 @@
     z-index: 10000;
     color: #4c4c4c;
     text-align: center;
-    padding-top: 480px;
     opacity: 1;
     font-size: 40px;
-    vertical-align: middle;
-    display: none;
 }
+
+    .loading-screen:after{
+        content: "";
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+    }
+
+    .loading-screen span{
+        vertical-align: middle;
+    }
 
 .chart-fullscreen{
     box-sizing: border-box;
@@ -162,6 +170,7 @@
 #PresentationPanel {
     font-size: 0;
     margin: 0;
+    position: relative;
 }
 
     #PresentationPanel .DataViewerPanel {
@@ -240,7 +249,18 @@
 .ControlsPanel {
     margin: auto;
     font-size: 0px; /*remove white space between buttons*/
+    position: relative;
 }
+
+    .ControlsPanel #controls-panel-overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        opacity: 0.6;
+        display: none;
+        background-color: whitesmoke;
+    }
 
     .ControlsPanel .Wrapper {
         margin: auto;

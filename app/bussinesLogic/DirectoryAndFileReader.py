@@ -13,7 +13,7 @@ def get_experiments(user_id, page):
     count = current_app.config['EXPERIMENTS_ON_ONE_PAGE']
 
     for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
-        info = { "exp_guid": item, "user_id": user_id }
+        info = { "comp_guid": item, "user_id": user_id }
         read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "params.txt"), info, ["title", "date"])
         read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat"), info, ["status", "progress"])
         experiments.append(info)
@@ -51,6 +51,7 @@ def get_computed_curves(user_id, comp_guid):
     directory = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid)
     models = []
 
+    r = len(os.listdir(os.path.join(directory, "ComputedCurves")))
     for index in range(len(os.listdir(os.path.join(directory, "ComputedCurves")))):
         points = []
         # Open the text file for reading
@@ -103,6 +104,26 @@ def get_computations_result_data(user_id, comp_guid):
 
     return info
 
+#
+#
+#
+#
+def get_experiment_data(user_id, comp_guid):
+    exp_data = []
+    points = []
+
+    # Open the text file for reading
+    file = open(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "exp_data.dat"))
+    lines = file.readlines()
+
+    for line in lines[3:]:
+        values_in_line = line.split()
+        points.append({ "q_value" : float(values_in_line[0].strip()),
+                        "intensity" : float(values_in_line[1].strip())
+                      })
+
+    return points
+
 
 # reads a file 'params.txt' of specified computation and gets its parameters
 #
@@ -110,11 +131,11 @@ def get_computations_result_data(user_id, comp_guid):
 # comp_guid - id of a computation
 #
 # returns an object with 8 attributes - "title", "date", "comment", "steps", "sync", "alpha", "beta" and "gama"
-def get_experiment_parameters(user_id, comp_guid):
+def get_computation_parameters(user_id, comp_guid):
     parameters_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "params.txt")
 
     info = {}
-    read_file(parameters_file_path, info, ["title", "date", "comment", "steps", "sync", "alpha", "beta", "gama"])
+    read_file(parameters_file_path, info, ["title", "date", "description", "optim_steps", "optim_sync", "optim_alpha", "optim_beta", "optim_gama", "optim_algorithm", "max_q"])
 
     return info
 
@@ -131,7 +152,7 @@ def read_file(file_path, object, keys):
     for key in keys:
         for line in lines:
             if key in line:
-                object[key] = line.split(':')[1].strip()
+                object[key] = line.split('=')[1].strip()
 
     file.close()
     

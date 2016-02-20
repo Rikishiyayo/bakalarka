@@ -16,15 +16,15 @@ def create_experiment(form, user_id):
     os.mkdir(exp_identificator)
 
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), form)
-    create_result_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
-    upload_file(form.models.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator),'final.pdb')
-    upload_file(form.expData.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator),'exp_data.dat')
+    create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
+    upload_file(form.models.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "model")
+    upload_file(form.expData.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "saxs.dat")
 
 
 # uploads a file to a specified directory
 # file - a reference to a file to upload
 # path - a path to a directory where the  file will be uploaded
-def upload_file(file, path,name):
+def upload_file(file, path, name):
     file.save(os.path.join(path, name))
 
 
@@ -34,23 +34,26 @@ def upload_file(file, path,name):
 def create_params_file(path, form):
     params = open(os.path.join(path, "params.txt"), "a+")
 
-    params.write(form.title.name + ':' + form.title.data + '\n')
-    params.write("date:" + time.strftime("%d/%m/%Y") + '\n')
-    params.write(form.description.name + ':' + form.description.data + '\n')
-    params.write(form.calcSteps.name + ':' + str(form.calcSteps.data) + '\n')
-    params.write(form.stepsBetweenSync.name + ':' + str(form.stepsBetweenSync.data) + '\n')
-    params.write(form.alpha.name + ':' + str(form.alpha.data) + '\n')
-    params.write(form.beta.name + ':' + str(form.beta.data) + '\n')
-    params.write(form.gama.name + ':' + str(form.gama.data))
+    params.write(form.title.name + '="' + form.title.data + '"\n')
+    params.write('date="' + time.strftime("%d/%m/%Y") + '"\n')
+    params.write(form.description.name + '="' + form.description.data + '"\n')
+    params.write('structures_file="' + form.models.data.filename + '"\n')
+    params.write('optim_steps="' + str(form.calcSteps.data) + '"\n')
+    params.write('optim_sync="' + str(form.stepsBetweenSync.data) + '"\n')
+    params.write('optim_alpha="' + str(form.alpha.data) + '"\n')
+    params.write('optim_beta="' + str(form.beta.data) + '"\n')
+    params.write('optim_gama="' + str(form.gama.data) + '"\n')
+    params.write('optim_algorithm="' + str(form.calcType.data) + '"\n')
+    params.write('max_q="' + str(form.qRange.data) + '"')
 
     params.close()
 
 
 # creates file result.dat in specified directory
 # path - a path to a directory where the result.dat file will be created
-def create_result_file(path):
-    result = open(os.path.join(path, "result.dat"), "a+")
-    result.write("status:accepted\nprogress:40%")
+def create_status_file(path):
+    result = open(os.path.join(path, "status.txt"), "a+")
+    result.write("accepted")
     result.close()
     
 
@@ -62,19 +65,15 @@ def get_model_data(user_id, exp_guid):
     src_file_path_models = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "final.pdb")
     dst_dir = os.path.join(current_app.config['APP_ROOT'], "app/static/uploads")
     dst_dir = os.path.join(dst_dir,exp_guid)
-    
+
     try:
-        os.mkdir(dst_dir,0700)
+        os.mkdir(dst_dir)
     except OSError as e:
         if e.errno != 17:
             raise e
 
-    dst_file_path_models = os.path.join(dst_dir,"final.pdb")
+    dst_file_path_models = os.path.join(dst_dir, "final.pdb")
     shutil.copyfile(src_file_path_models, dst_file_path_models)
-
-#    src_file_path_exp_data = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "exp_data.dat")
-#    dst_file_path_exp_data = os.path.join(dst_dir,"exp_data.dat")
-#    shutil.copyfile(src_file_path_exp_data, dst_file_path_exp_data)
 
 
 # create a directory for a new user

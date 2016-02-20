@@ -1,14 +1,81 @@
 $(function () {
+//    $('.loading-screen div').addClass('animate');
+//    setTimeout(function(){
+//        $('.loading-screen').hide();
+//    }, 4000);
+    setSliderValue();
+    changeSliderValue();
+    setOptParamsVisibility(0);
+    setDefaultCalcStepsValue('random_walk');
+    changeDefaultCalcStepsValueOnCalcTypeChange();
+    fileUploadButtonsBehaviour();
+    tooltips();
+    advancedSettingsToggleClick();
     validation();
+    fileFormatValidation();
     setPages();
     changeStatusColor();
-    experimentRowHover();
-    tooltips();
+    computationRowHoverAndClick();
     changePageOnPageClick();
     changePageOnNextClick();
     changePageOnPreviousClick();
     reloadList();
 });
+
+function setSliderValue(){
+    $('.qRange-value').text($('#qRange').val());
+}
+
+function changeSliderValue(){
+    $('#qRange').on('mousemove mouseup', function(){
+        $('.qRange-value').text($(this).val());
+    });
+}
+
+function changeDefaultCalcStepsValueOnCalcTypeChange(){
+    $('input[name=calcType]').on('change', function(){
+        var value = $('input[name=calcType]:checked').val();
+        setDefaultCalcStepsValue(value);
+
+        if (value == 'random_walk') {
+            setOptParamsVisibility(0);
+        } else {
+            setOptParamsVisibility(1);
+        }
+    });
+}
+
+function setDefaultCalcStepsValue(value){
+    if (value == 'random_walk')
+        $('#calcSteps').val(500);
+    else
+        $('#calcSteps').val(10000);
+}
+
+function setOptParamsVisibility(visible){
+    if (visible == 0) {
+        $('#alpha, #beta, #gama').attr('disabled', true).css('color', '#a8a8a8').prev().css('color', '#a8a8a8');
+    }
+    else {
+        $('#alpha, #beta, #gama').attr('disabled', false).css('color', '#4c4c4c').prev().css('color', '#4c4c4c');
+    }
+}
+
+function fileUploadButtonsBehaviour(){
+    $('#models').on('change', function(){
+        $(this).parent().next().text(modifyFilename($(this).val()));
+    });
+    $('#expData').on('change', function(){
+        $(this).parent().next().text(modifyFilename($(this).val()));
+    });
+}
+
+function advancedSettingsToggleClick(){
+    $('.advanced-settings-toggle-content-wrapper').on('click', function(){
+        $('.advanced-settings').slideToggle(150);
+        $(this).find('div.img').toggleClass('advanced-settings-toggle-clicked');
+    });
+}
 
 //this function reloads list with computations - it asynchronously calls server method that returns list of computations in JSON
 function reloadList(){
@@ -88,7 +155,7 @@ function onGetExperimentsSuccess(data) {
     }
     
     changeStatusColor();
-    experimentRowHover();
+    computationRowHoverAndClick();
     setTimeout(function(){
         $('.experiment_list_overlay').hide();
     }, 500);
@@ -116,15 +183,21 @@ function changeStatusColor() {
     });
 }
 
-//hovering over row with experiment
-function experimentRowHover(){
+//hovering effect over a row with a computation. Clicking on a row will sent player to a page with results of a clicked computation
+function computationRowHoverAndClick(){
         $('.experiment_row').on('mouseover', function () {
-            $(this).find('img').css('display', 'inline-block');
+            if ($(this).find('a').length != 0) {
+                $(this).css({'background-color': 'lightgrey', 'cursor': 'pointer'});
+                $(this).find('img').css('display', 'inline-block');
+            }
         }).on('mouseout', function () {
+            $(this).css({'background-color': 'whitesmoke', 'cursor': 'default'});
             $('.experiment_row img').css('display', 'none');
         }).on('click', function () {
-            var href = $(this).children('a').attr('href');
-            window.location.href = href;
+            if ($(this).find('a').length != 0) {
+                var href = $(this).children('a').attr('href');
+                window.location.href = href;
+            }
         });
 }
 
@@ -140,45 +213,90 @@ function validation() {
     $('#new_experiment_form').validate({
         rules: {
             title: {
-                required: true,
-                maxlength: 35
-
+                required: true
             },
-            models: "required",
-            expData: "required",
+            models: {
+                required: true
+            },
+            expData: {
+                required: true
+            },
+            qRange: {
+                required: true,
+                number: true
+            },
             calcSteps: {
                 required: true,
-                range: [10000, 1000000],
+                range: [500, 1000000],
                 number: true
             },
             stepsBetweenSync: {
-                required: true,
                 range: [100, 10000],
                 number: true
             },
             alpha: {
-                required: true,
                 number: true
             },
             beta: {
-                required: true,
                 number: true
             },
             gama: {
-                required: true,
                 number: true
             }
-        },
-        errorElement: 'span',
-        errorLabelContainer: '.error_span',
-        wrapper: 'div',
-        invalidHandler: function(){
-
         },
         errorPlacement: function(error, element) {
                return true;
         }
     });
+}
+
+//jquery validation plugin does not validate allowed extension for some reason mysterious to me
+//this method validates selected file for models
+//it validates file on form submit and when any input(textarea) control in a form recevies a focus(to simulate jquery validation plugin extension behaviour of validating forms
+//when user types in a value and then clicks on a different input control )
+function fileFormatValidation() {
+    $('form textarea').on('focus', function(){
+        if ($('#models').val() != "")
+            validateFileFormatForModels();
+        if ($('#expData').val() != "")
+            validateFileFormatForExpData();
+    });
+    $('form input').not('input[type=submit]').not('input[type=reset]').on('focus', function(){
+        if ($('#models').val() != "")
+            validateFileFormatForModels();
+        if ($('#expData').val() != "")
+            validateFileFormatForExpData();
+    });
+    $('#new_experiment_form').on('submit', function(){
+        var bool1 = validateFileFormatForModels();
+        var bool2 = validateFileFormatForExpData();
+        if (bool1 && bool2 != true)
+            return false;
+    });
+}
+
+function validateFileFormatForModels(){
+    var allowedExtensions = ["zip", "tar.gz", "pdb"];
+    var extension = $('#models').val().split('.');
+    if(extension.length == 1 || allowedExtensions.indexOf(extension[1]) == -1) {
+        $('#models').parent().next().addClass('file-extension-validation-error');
+        return false;
+    } else {
+        $('#models').parent().next().removeClass('file-extension-validation-error');
+        return true;
+    }
+}
+
+function validateFileFormatForExpData(){
+    var allowedExtensions = ["dat"];
+    var extension = $('#expData').val().split('.');
+    if(extension.length == 1 || allowedExtensions.indexOf(extension[1]) == -1) {
+        $('#expData').parent().next().addClass('file-extension-validation-error');
+        return false;
+    } else {
+        $('#expData').parent().next().removeClass('file-extension-validation-error');
+        return true;
+    }
 }
 
 function tooltips() {
@@ -187,21 +305,50 @@ function tooltips() {
         at: "right+25 center",
         collision: "none"
     }
+    $( ".row-models" ).tooltip({
+        content: "Allowed file formats: 'zip', 'tar.gz' and 'pdb'.",
+        position: position,
+        items: ".row-models"
+    });
+    $( ".row-expData" ).tooltip({
+        content: "Allowed file formats: 'dat'.",
+        position: position,
+        items: ".row-expData"
+    });
     $( "#calcSteps" ).tooltip({
-        content: "Integer number between 10 000 - 1 000 000",
+        content: "Integer number between 500 - 1 000 000.",
         position: position,
         items: "#calcSteps"
     });
     $( "#stepsBetweenSync" ).tooltip({
-        content: "Integer number between 100 - 10 000",
+        content: "Integer number between 100 - 10 000.",
         position: position,
         items: "#stepsBetweenSync"
     });
-    $( "#alpha, #beta, #gama" ).tooltip({
-        content: "Float number",
+    $( "#alpha" ).tooltip({
+        content: "Maximal length of random walk step, 1 is whole range. Float number.",
         position: position,
-        items: "#alpha, #beta, #gama"
+        items: "#alpha"
     });
+    $( "#beta" ).tooltip({
+        content: "This increase of chi2 is accepted with 10% probability by Metropolis criterion. Float number.",
+        position: position,
+        items: "#beta"
+    });
+    $( "#gama" ).tooltip({
+        content: "chi2 difference scaling in stochastic tunneling transformation. Float number.",
+        position: position,
+        items: "#gama"
+    });
+}
+
+//this function modifies name of the selected file to show only filename
+function modifyFilename(filename){
+    var index = filename.indexOf("fakepath");
+
+    if (index == -1)
+        return filename;
+    return filename.substring(index + 9);
 }
 
 
