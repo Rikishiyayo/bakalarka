@@ -51,42 +51,46 @@ div.submit_experiment{
         div.submit_experiment form div:not(.img) {
             text-align: center;
             font-size: 25px;
-            margin: 40px 0 10px 0;
+            margin: 40px 0 0 0;
         }
 
-        div.submit_experiment form div.advanced-settings-toggle-content-wrapper {
-            margin: auto;
-            display: inline-block;
-            border-radius: 4px;
-            padding: 4px 5px 5px 5px;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-            div.submit_experiment form div.advanced-settings-toggle-content-wrapper:hover {
-                background-color: lightgray;
-                cursor: pointer;
+            div.submit_experiment form div.advanced-settings-toggle {
+                margin-top: 30px;
             }
 
-            div.submit_experiment form div.advanced-settings-toggle-content-wrapper span {
-                vertical-align: middle;
-            }
+                div.submit_experiment form div.advanced-settings-toggle-content-wrapper {
+                    margin: auto;
+                    display: inline-block;
+                    border-radius: 4px;
+                    padding: 4px 5px 5px 5px;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                }
 
-            div.submit_experiment form div.advanced-settings-toggle-content-wrapper .img {
-                display: inline-block;
-                vertical-align: middle;
-                height: 25px;
-                width: 25px;
-                background-size: contain;
-                background-image: url(/static/styles/icons/arrow_right.png);
-            }
+                    div.submit_experiment form div.advanced-settings-toggle-content-wrapper:hover {
+                        background-color: lightgray;
+                        cursor: pointer;
+                    }
 
-        div.submit_experiment form div.advanced-settings {
-            display: none;
-            margin-top: 10px;
-        }
+                    div.submit_experiment form div.advanced-settings-toggle-content-wrapper span {
+                        vertical-align: middle;
+                    }
+
+                    div.submit_experiment form div.advanced-settings-toggle-content-wrapper .img {
+                        display: inline-block;
+                        vertical-align: middle;
+                        height: 25px;
+                        width: 25px;
+                        background-size: contain;
+                        background-image: url(/static/styles/icons/arrow_right.png);
+                    }
+
+            div.submit_experiment form div.advanced-settings {
+                display: none;
+                margin-top: 10px;
+            }
 
         div.submit_experiment form p {
             margin: 0 auto 10px;
@@ -94,6 +98,10 @@ div.submit_experiment{
             text-align: center;
             display: inline-block;
             width: 100%;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
         div.submit_experiment form p.form_buttons {
@@ -106,7 +114,7 @@ div.submit_experiment{
             box-sizing: border-box !important;
             vertical-align: middle;
             font-size: 17px;
-            width: 51%;
+            width: 54%;
             padding: 3px 10px;
             color: #4c4c4c;
             border-radius: 4px;
@@ -138,7 +146,7 @@ div.submit_experiment{
 
             div.submit_experiment form input[type="reset"] {
                 display: inline-block;
-                width: 47%;
+                width: 44%;
                 border: 1px solid #f65858 !important;
                 background-color: #f65858;
                 margin: 0;
@@ -159,7 +167,7 @@ div.submit_experiment{
                 padding: 0;
                 border: none;
                 margin: 0 2% 0 0;
-                width: 44%;
+                width: 47%;
             }
 
             div.submit_experiment form input:focus {
@@ -169,28 +177,39 @@ div.submit_experiment{
 
         div.submit_experiment form span.calcType {
             display: inline-block;
-            width: 51%;
+            width: 54%;
             vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
             div.submit_experiment form span.calcType input {
-                box-sizing: border-box !important;
-                vertical-align: middle;
-                font-size: 17px;
-                width: 5%;
-                padding: 3px 10px;
-                height: 40px;
-                margin: 0;
+                display: none;
             }
 
             div.submit_experiment form span.calcType label {
                 font-size: 17px;
-                width: 43%;
+                width: 54%;
                 vertical-align: middle;
                 display: inline-block;
-                text-align: left;
-                margin: 0 0 0 2%;
+                text-align: center;
+                line-height: 40px;
+                border-radius: 4px;
+                margin: 0;
             }
+
+            div.submit_experiment form span.calcType label:first-of-type {
+                width: 46%;
+            }
+
+                div.submit_experiment form span.calcType label:not(.selected-radio-button):hover {
+                    cursor: pointer;
+                    color: black;
+                }
+
+
 
         div.submit_experiment form textarea {
             box-sizing: border-box;
@@ -200,7 +219,7 @@ div.submit_experiment{
             font-size: 17px;
             font-family: Arial;
             color: #4c4c4c;
-            width: 51%;
+            width: 54%;
             height: 170px;
             padding: 3px 10px;
             resize: vertical;
@@ -216,7 +235,7 @@ div.submit_experiment{
             margin-right: 2%;
             font-size: 17px;
             display: inline-block;
-            width: 47%;
+            width: 44%;
             vertical-align: middle;
             text-align: right;
         }
@@ -230,7 +249,7 @@ div.submit_experiment{
            div.submit_experiment form label.file-upload {
                 cursor: pointer;
                 line-height: 40px;
-                width: 18%;
+                width: 21%;
                 display: inline-block;
                 box-sizing: border-box;
            }
@@ -452,4 +471,8 @@ div.experiment_list{
 
 .advanced-settings-toggle-clicked {
     background-image: url(/static/styles/icons/arrow_down.png) !important;
+}
+
+.selected-radio-button{
+    background-color: greenyellow;
 }

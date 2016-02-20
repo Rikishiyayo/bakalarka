@@ -153,6 +153,7 @@ def read_file(file_path, object, keys):
         for line in lines:
             if key in line:
                 object[key] = line.split('=')[1].strip()
+                # object[key] = line.split('=')[1].strip()[1:-1]
 
     file.close()
     

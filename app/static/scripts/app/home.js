@@ -8,6 +8,7 @@ $(function () {
     setOptParamsVisibility(0);
     setDefaultCalcStepsValue('random_walk');
     changeDefaultCalcStepsValueOnCalcTypeChange();
+    highlightSelectedRadioButton();
     fileUploadButtonsBehaviour();
     tooltips();
     advancedSettingsToggleClick();
@@ -34,6 +35,7 @@ function changeSliderValue(){
 
 function changeDefaultCalcStepsValueOnCalcTypeChange(){
     $('input[name=calcType]').on('change', function(){
+        highlightSelectedRadioButton();
         var value = $('input[name=calcType]:checked').val();
         setDefaultCalcStepsValue(value);
 
@@ -59,6 +61,11 @@ function setOptParamsVisibility(visible){
     else {
         $('#alpha, #beta, #gama').attr('disabled', false).css('color', '#4c4c4c').prev().css('color', '#4c4c4c');
     }
+}
+
+function highlightSelectedRadioButton(){
+    $('span.calcType label').removeClass('selected-radio-button');
+    $('input[name=calcType]:checked').next().addClass('selected-radio-button');
 }
 
 function fileUploadButtonsBehaviour(){
