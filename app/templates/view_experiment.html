@@ -68,17 +68,24 @@
                     <label class="progressLabel">Progress:</label>
                     <div class="progressBar"></div>
                     <span class="progress_value"></span>
+
                     <label class="sliderLabel">Weight:</label>
-                    <input type="range" id="slider" class="btnSlider" value="0" min="0" max="100" step="1" title="Weight" />
-                    <span class="sliderValue">0%</span>
+                    <input type="range" id="sliderWeight" class="btnSlider" value="0" min="0" max="100" step="1" title="Weight" />
+                    <span class="sliderWeightValue">-</span>
+
+                    <label class="sliderLabel">SWeight:</label>
+                    <input type="range" id="sliderSummation" class="btnSlider" value="0" min="0" max="100" step="1" title="SWeight" />
+                    <span class="sliderSummationValue">-</span>
+
                     <label class="select-label">Select:</label>
-                    <input type="radio" id="radioAll" name="select" value="1"><label for="radioAll" class="select-val option-selected radioAll">All</label>
-                    <input type="radio" id="radioNone" name="select"  value="2"><label for="radioNone" class="select-val radioNone">None</label>
-                    <input type="radio" id="radioHigh" name="select" value="3"><label for="radioHigh" class="select-val radioHigh">Highest weight</label>
-                    <input type="radio" id="radioLow" name="select" value="4"><label for="radioLow" class="select-val radioLow">Lowest weight</label>
+                    <input type="radio" id="radioSelectAll" name="select" value="1"><label for="radioSelectAll" class="select-val option-selected radioSelectAll">All</label>
+                    <input type="radio" id="radioSelectNone" name="select"  value="2"><label for="radioSelectNone" class="select-val radioSelectNone">None</label>
+                    <input type="radio" id="radioHighestValue" name="select" value="3"><label for="radioHighestValue" class="select-val radioHighestValue">Highest weight</label>
+
                     <label class="sort-label">Sort by weight:</label>
-                    <input type="radio" id="radioAsc" name="sort" value="1"><label for="radioAsc" class="sort-val radioAsc">Ascending</label>
-                    <input type="radio" id="radioDesc" name="sort" value="2"><label for="radioDesc" class="sort-val radioDesc">Descending</label>
+                    <input type="radio" id="radioSortAsc" name="sort" value="1"><label for="radioSortAsc" class="sort-val radioSortAsc">Ascending</label>
+                    <input type="radio" id="radioSortDesc" name="sort" value="2"><label for="radioSortDesc" class="sort-val radioSortDesc">Descending</label>
+                    <input type="radio" id="radioSortDefault" name="sort" value="3"><label for="radioSortDefault" class="sort-val option-selected radioSortDefault">Default</label>
                 </div>
                 <div class="model_buttons"></div>
             </div>

@@ -412,16 +412,16 @@
                     background-color: #9498a1;
                 }
 
-            .ControlsPanel .Wrapper .Controls .radioAll, .ControlsPanel .Wrapper .Controls .radioNone{
+            .ControlsPanel .Wrapper .Controls .radioSelectAll, .ControlsPanel .Wrapper .Controls .radioSelectNone{
                 width: 9%;
             }
 
-            .ControlsPanel .Wrapper .Controls .radioLow, .ControlsPanel .Wrapper .Controls .radioHigh{
+            .ControlsPanel .Wrapper .Controls .radioHighestValue{
                 width: 22.5%;
             }
 
-            .ControlsPanel .Wrapper .Controls .radioAsc, .ControlsPanel .Wrapper .Controls .radioDesc{
-                width: 32.5%;
+            .ControlsPanel .Wrapper .Controls .radioSortAsc, .ControlsPanel .Wrapper .Controls .radioSortDesc, .ControlsPanel .Wrapper .Controls .radioSortDefault{
+                width: 25%;
             }
 
 .option-selected{

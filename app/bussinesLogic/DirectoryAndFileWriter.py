@@ -17,7 +17,7 @@ def create_experiment(form, user_id):
 
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), form)
     create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
-    upload_file(form.models.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "model")
+    upload_file(form.models.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "model.pdb")
     upload_file(form.expData.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "saxs.dat")
 
 
@@ -62,9 +62,9 @@ def create_status_file(path):
 # user_id - an id of a user that represents a directory where experiment data are stored
 # exp_guid - an identificator of a experiment
 def get_model_data(user_id, exp_guid):
-    src_file_path_models = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "final.pdb")
+    src_file_path_models = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "model.pdb")
     dst_dir = os.path.join(current_app.config['APP_ROOT'], "app/static/uploads")
-    dst_dir = os.path.join(dst_dir,exp_guid)
+    dst_dir = os.path.join(dst_dir, exp_guid)
 
     try:
         os.mkdir(dst_dir)
@@ -72,7 +72,7 @@ def get_model_data(user_id, exp_guid):
         if e.errno != 17:
             raise e
 
-    dst_file_path_models = os.path.join(dst_dir, "final.pdb")
+    dst_file_path_models = os.path.join(dst_dir, "model.pdb")
     shutil.copyfile(src_file_path_models, dst_file_path_models)
 
 
@@ -80,6 +80,26 @@ def get_model_data(user_id, exp_guid):
 def create_user_directory(user_id):
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY']))
     os.mkdir(str(user_id))
+
+
+# def create_different_curves(computed_curves):
+#     for i in range(1, 12):
+#         path = os.path.join(current_app.config['EXP_DIRECTORY'], '11', 'db30dba9-1084-4a00-9846-5f4761792453', str(i))
+#         counter = 1
+#         for curve in computed_curves:
+#             new_file = open(os.path.join(path, "final_m" + str(counter) + ".pdb.dat"), "a+")
+#             new_file.write("# SAXS profile: number of points = 501, q_min = 0, q_max = 0.5, delta_q = 0.001\n")
+#             new_file.write("#    q    intensity    error\n")
+#             for point in curve['model']:
+#                 new_file.write(str(point['q_value']) + "    " + str(point['intensity'] + i * 1000000) + " random_error_number\n")
+#             counter += 1
+
+
+
+
+
+
+
 
 
 

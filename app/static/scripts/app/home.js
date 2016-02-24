@@ -313,7 +313,7 @@ function tooltips() {
         collision: "none"
     }
     $( ".row-models" ).tooltip({
-        content: "Allowed file formats: 'zip', 'tar.gz' and 'pdb'.",
+        content: "Allowed file formats: 'zip', 'tar.gz', 'pdb'.",
         position: position,
         items: ".row-models"
     });

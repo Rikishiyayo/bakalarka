@@ -42,6 +42,26 @@ def get_experiments(page):
     return jsonify(exps = DirectoryAndFileReader.get_experiments(current_user.id, int(page)))
 
 
+@main.route('/view_experiment/<user_id>/<comp_guid>')
+@login_required
+def view_experiment(user_id, comp_guid):
+    DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
+    return render_template("view_experiment.html", computation_details=DirectoryAndFileReader.get_computation_parameters(
+        user_id, comp_guid))
+
+
+@main.route('/get_experiment_data')
+@login_required
+def get_experiment_data():
+    user_id = request.args.get("user_id")
+    comp_guid = request.args.get("comp_guid")
+    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
+                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
+                    experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
+                    # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
+    return json
+
+
 @main.route('/is_email_available')
 def is_email_available():
     user = User.query.filter_by(email=request.args.get("register_email")).first()
@@ -61,25 +81,6 @@ def is_username_available():
 
     return "true"
 
-
-@main.route('/view_experiment/<user_id>/<comp_guid>')
-@login_required
-def view_experiment(user_id, comp_guid):
-    DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
-    return render_template("view_experiment.html", computation_details=DirectoryAndFileReader.get_computation_parameters(
-        user_id, comp_guid))
-
-
-@main.route('/get_experiment_data')
-@login_required
-def get_experiment_data():
-    user_id = request.args.get("user_id")
-    comp_guid = request.args.get("comp_guid")
-    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
-                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
-                    experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid),
-                    metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
-    return json
 
 @main.before_request
 def before_request():

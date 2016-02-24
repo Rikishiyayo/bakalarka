@@ -1,5 +1,6 @@
 import os
 from flask import current_app
+from math import log
 
 
 # reads a directory for a current logged in user and return his computations
@@ -15,7 +16,7 @@ def get_experiments(user_id, page):
     for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
         info = { "comp_guid": item, "user_id": user_id }
         read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "params.txt"), info, ["title", "date"])
-        read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat"), info, ["status", "progress"])
+        read_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "status.txt"), info, "status")
         experiments.append(info)
 
     start = page * count
@@ -40,33 +41,36 @@ def get_experiments_pages_count(user_id):
     return pages_array
 
 
-# reads a directory with computed curves of specified experiment
+# reads a directory with computed curves of specified computation
 #
 # user_id - id of an user which matches a directory on a server where this user has his computations saved
 # comp_guid - id of a computation
 #
-# returns an array of objects where object represents a computed curves for one model. It has one attribute 'model' with value 'points'.
+# returns an array of objects where object represents a computed curve for one model. It has one attribute 'model' with value 'points'.
 # 'points' is an array of objects, which represents a single point on a chart. It has attributes 'q_value' and 'intensity'
 def get_computed_curves(user_id, comp_guid):
     directory = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid)
-    models = []
+    solutions = {}
 
-    r = len(os.listdir(os.path.join(directory, "ComputedCurves")))
-    for index in range(len(os.listdir(os.path.join(directory, "ComputedCurves")))):
-        points = []
-        # Open the text file for reading
-        file = open(os.path.join(directory, "ComputedCurves", "final_m" + str(index + 1) + ".pdb.dat"))
-        lines = file.readlines()
+    for i in range(len(os.listdir(os.path.join(directory, "ComputedCurves")))):
+        models = {}
 
-        for line in lines[2:]:
-            values_in_line = line.split()
-            points.append({ "q_value" : float(values_in_line[0].strip()),
-                            "intensity" : float(values_in_line[1].strip())
-                          })
+        for j in range(len(os.listdir(os.path.join(directory, "ComputedCurves", str(i + 1))))):
+            file = open(os.path.join(directory, "ComputedCurves", str(i + 1), "final_m" + str(j + 1) + ".pdb.dat"))  # Open the text file for reading
+            lines = file.readlines()
+            points = []
 
-        models.append({ "model" : points})
+            for line in lines[2:]:
+                values_in_line = line.split()
+                points.append({"q_value": float(values_in_line[0].strip()),
+                               "intensity": float(values_in_line[1].strip())})
 
-    return models
+            models[str(j + 1)] = points
+            file.close()
+
+        solutions['solution' + str(i + 1)] = models
+
+    return solutions
 
 
 # reads a file 'result.dat' of specified computation and gets its computed weights for every model
@@ -77,17 +81,44 @@ def get_computed_curves(user_id, comp_guid):
 # returns an array of weights
 def get_weights(user_id, comp_guid):
     filepath = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
-    weights = []
-    # Open the text file for reading
-    file = open(filepath)
-    lines = file.readlines()
-    values_in_line = lines[2].split()
+    solutions = {}
 
-    for value in values_in_line[1:]:
-        weights.append(value.replace(",", "").strip())
+    file = open(filepath)   # Open the text file for reading
+    lines = file.readlines()
+    lines.pop(0)  # first line removed
+
+    for i, line in enumerate(lines, start=1):
+        weights = {}
+        values_in_line = line.split(',')
+
+        for j, value in enumerate(values_in_line[4:], start=1):
+            weights[str(j)] = value.strip()
+
+        solutions['solution' + str(i)] = weights
 
     file.close()
-    return weights
+    return solutions
+
+
+# reads a file 'saxs.dat' with experimental data of specified computation
+#
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# comp_guid - id of a computation
+#
+# returns an array of objects where object represents a single point on a chart with attributes 'q_value' (point x of a curve) and 'intensity' (point y of a curve)
+
+def get_experiment_data(user_id, comp_guid):
+    points = []
+
+    # Open the text file for reading
+    file = open(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "saxs.dat"))
+    lines = file.readlines()
+
+    for line in lines[3:]:
+        values_in_line = line.split()
+        points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip())) + 15])
+
+    return points
 
 
 # reads a file 'result.dat' of specified computation and gets its result data 'status' and 'progress'
@@ -103,26 +134,6 @@ def get_computations_result_data(user_id, comp_guid):
     read_file(result_file_path, info, ["status", "progress"])
 
     return info
-
-#
-#
-#
-#
-def get_experiment_data(user_id, comp_guid):
-    exp_data = []
-    points = []
-
-    # Open the text file for reading
-    file = open(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "exp_data.dat"))
-    lines = file.readlines()
-
-    for line in lines[3:]:
-        values_in_line = line.split()
-        points.append({ "q_value" : float(values_in_line[0].strip()),
-                        "intensity" : float(values_in_line[1].strip())
-                      })
-
-    return points
 
 
 # reads a file 'params.txt' of specified computation and gets its parameters
@@ -155,6 +166,12 @@ def read_file(file_path, object, keys):
                 object[key] = line.split('=')[1].strip()
                 # object[key] = line.split('=')[1].strip()[1:-1]
 
+    file.close()
+
+
+def read_status_file(file_path, object, key):
+    file = open(file_path)
+    object[key] = file.readline()
     file.close()
     
     
