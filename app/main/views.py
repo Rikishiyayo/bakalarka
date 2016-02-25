@@ -25,6 +25,7 @@ def main_page():
 @main.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
+    # DirectoryAndFileWriter.create_different_curves(DirectoryAndFileReader.get_computed_curves('11', 'db30dba9-1084-4a00-9846-5f4761792453')['solution1'])
     form = Computation()
 
     if form.validate_on_submit():       #this block of code is executed when browser sent POST request(user submitted form)
@@ -46,8 +47,8 @@ def get_experiments(page):
 @login_required
 def view_experiment(user_id, comp_guid):
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
-    return render_template("view_experiment.html", computation_details=DirectoryAndFileReader.get_computation_parameters(
-        user_id, comp_guid))
+    return render_template("view_experiment.html", best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
+                         computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
 
 
 @main.route('/get_experiment_data')
@@ -55,7 +56,7 @@ def view_experiment(user_id, comp_guid):
 def get_experiment_data():
     user_id = request.args.get("user_id")
     comp_guid = request.args.get("comp_guid")
-    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
+    json = jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
                     computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
                     experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
                     # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))

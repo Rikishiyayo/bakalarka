@@ -67,94 +67,87 @@
             color: white;
             cursor: pointer;
         }
-        
-.experiment_details{
-    width: 100%;
-    margin-top: 20px;
+
+div.best-results-table {
+    width:74%;
+    margin-bottom: 10px;
+    display: inline-block;
+    position: relative;
 }
 
-    .experiment_details .wrapper{
-        margin: auto;
+    div.best-results-table #best-results-table-overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        opacity: 0.6;
+        display: none;
+        background-color: whitesmoke;
+    }
+
+    div.best-results-table p {
+        width: 99%;
+        margin-right: 1%;
+    }
+
+        div.best-results-table p span {
+            display: inline-block;
+            vertical-align: middle;
+            width: 2%;
+            font-size: 12px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+        }
+
+        div.best-results-table p.header-row span {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        div.best-results-table p span:last-child {
+            width: 92%;
+        }
+
+        div.best-results-table p.result-row {
+            border-radius: 4px;
+        }
+
+        div.best-results-table p.result-row:nth-child(odd){
+            background-color: #e3e3e3;
+        }
+
+            div.best-results-table p.result-row:hover {
+                background-color: #a9acb3;
+                cursor: pointer;
+            }
+
+            div.best-results-table p.result-row span{
+                font-weight: bold;
+            }
+
+.experiment_details{
+    width: 26%;
+    margin-bottom: 10px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+    .experiment_details p {
         font-size: 0;
     }
 
-        .experiment_details .wrapper p {
-            display: inline-block;
-            vertical-align: top;
-            margin: 0;
-            font-size: 14px;
+        .experiment_details p.home-button {
+            text-align: right;
         }
-        
-            .experiment_details .wrapper span {
-                display: inline-block;
-                font-size: 14px;
-            }
-        
-            .experiment_details .wrapper p.exp_details {
-                width: 40%;
-                margin-right: 3%
-            }
-            
-                .experiment_details .wrapper p.exp_details span.date {
-                    width: 15%;
-                }
-                
-               .experiment_details .wrapper p.exp_details span.title {
-                    width: 65%;
-                }
-                
-               .experiment_details .wrapper p.exp_details span.description {
-                    width: 100%;
-                    margin-top: 10px;
-                }
-            
-            .experiment_details .wrapper p.exp_properties {
-                width: 19%;
-                margin-right: 3%;
-                color: black;
-            }
-                
-                .experiment_details .wrapper p.exp_properties span {
-                    width: 75%;
-                    text-align: right;
-                    margin-right: 3%;
-                    color: #4c4c4c;
-                }
-                
-            .experiment_details .wrapper p.exp_uploaded_files {
-                width: 16%;
-                font-size: 0;
-                margin-right: 3%
-            }
-                
-                .experiment_details .wrapper p.exp_uploaded_files span {
-                    width: 52%;
-                    vertical-align: middle;
-                    text-align: right;
-                }
-                
-                .experiment_details .wrapper p.exp_uploaded_files a {
-                    width: 45%;
-                    margin-left: 3%;
-                    display: inline-block;
-                    font-size: 14px;
-                    text-decoration: none;
-                    vertical-align: middle;
-                }
-                
-                .experiment_details .wrapper p.exp_uploaded_files a:hover {
-                    text-decoration: underline;
-                }
 
-        .experiment_details .wrapper a.home_button {
+        .experiment_details p a.home_button {
             box-sizing: border-box;
             display: inline-block;
-            vertical-align: middle;
             border-radius: 4px;
-            background-color: lightskyblue;
+            background-color: #e3e3e3;
             text-decoration: none;
-            width: 8%;
-            margin-left: 8%;
+            width: 30%;
             font-size: 20px;
             text-align: center;
             color: #4c4c4c;
@@ -162,67 +155,60 @@
             height: 31px;
         }
 
-            .experiment_details .wrapper a.home_button:hover {
-                background-color: #6ca4c8;
+            .experiment_details p a.home_button:hover {
+                background-color: #a9acb3;
                 cursor: pointer;
             }
 
+        .experiment_details p span {
+            display: inline-block;
+            font-size: 12px;
+            line-height: 25px;
+            text-align: right;
+            margin-right: 2%;
+            width: 45%;
+            color: #4c4c4c;
+            vertical-align: middle;
+        }
+
+        .experiment_details p span:nth-child(2n + 2) {
+            width: 53%;
+            text-align: left;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .experiment_details p.exp_uploaded_files a {
+            width: 53%;
+            display: inline-block;
+            font-size: 12px;
+            text-decoration: none;
+            vertical-align: middle;
+            line-height: 25px;
+        }
+
+        .experiment_details p.exp_uploaded_files a:hover {
+            text-decoration: underline;
+        }
+
 #PresentationPanel {
     font-size: 0;
-    margin: 0;
+    margin: 10px 0 0;
     position: relative;
 }
 
     #PresentationPanel .DataViewerPanel {
-        margin: 20px auto;
+        width: 74%;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 auto;
     }
-
-        #PresentationPanel .DataViewerPanel .Buttons {
-            display: inline-block;
-            width: 3%;
-            height: 480px;
-            vertical-align: middle;
-        }
-
-            #PresentationPanel .DataViewerPanel .Buttons.jsmolButtons {
-                margin-right: 1%;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-
-            #PresentationPanel .DataViewerPanel .Buttons.chartButtons {
-                margin-left: 1%;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-
-            #PresentationPanel .DataViewerPanel .Buttons input {
-                display: block;
-                width: 100%;
-                margin: auto;
-                background-color: lightgrey;
-                border-radius: 4px;
-                border: none;
-                height: 25px;
-                margin-bottom: 5px;
-                box-sizing: border-box;
-                color: #4c4c4c;
-                font-size: 14px;
-            }
-
-                #PresentationPanel .DataViewerPanel .Buttons input:hover {
-                    background-color: #9498a1;
-                    cursor: pointer;
-                }
 
         #PresentationPanel .DataViewerPanel #jsmolViewer {
             display: inline-block;
-            width: 36%;
-            height: 480px;
+            width: 32%;
+            margin-right: 1%;
+            height: 420px;
             background-color: #cdd0d7;
             vertical-align: middle;
             border: 1px solid #9498a1;
@@ -236,199 +222,194 @@
 
         #PresentationPanel .DataViewerPanel #chart {
             display: inline-block;
-            width: 55%;
-            height: 480px;
+            width: 66%;
+            height: 420px;
             box-sizing: border-box;
             border: 1px solid #9498a1;
             border-radius: 4px;
-            margin-left: 1%;
+            margin-right: 1%;
             overflow: auto;
             vertical-align: middle;
         }
 
-.ControlsPanel {
-    margin: auto;
-    font-size: 0px; /*remove white space between buttons*/
-    position: relative;
-}
-
-    .ControlsPanel #controls-panel-overlay {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        opacity: 0.6;
-        display: none;
-        background-color: whitesmoke;
-    }
-
-    .ControlsPanel .Wrapper {
+    .ControlsPanel {
         margin: auto;
-        font-size: 0;
+        font-size: 0px; /*remove white space between buttons*/
+        position: relative;
+        width: 26%;
+        display: inline-block;
+        vertical-align: middle;
     }
 
-        .ControlsPanel .Wrapper .model_buttons {
-            width: 67%;
-            font-size: 0;
-            vertical-align: middle;
-            display: inline-block;
-            margin-left: 3%;
+        .ControlsPanel #controls-panel-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            opacity: 0.6;
+            display: none;
+            background-color: whitesmoke;
         }
 
-            .ControlsPanel .Wrapper .model_buttons span {
-                font-size: 14px;
-                display: inline-block;
-                height: 25px;
-                line-height: 25px;
-                width: 5%;
-                margin: 0 1.25% 0 0%;
-                margin-bottom: 20px;
-                vertical-align: middle;
-                background-color: lightgrey;
-                border-bottom-right-radius: 4px;
-                border-top-right-radius: 4px;
-                box-sizing: border-box;
-                text-align: center;
+            .ControlsPanel .model_buttons {
+                font-size: 0;
             }
 
-            .ControlsPanel .Wrapper .model_buttons input {
-                box-sizing: border-box;
-                width: 8%;
-                height: 25px;
-                margin-bottom: 20px;
-                text-align: center;
-                border: none;
-                border-bottom-left-radius: 4px;
-                border-top-left-radius: 4px;
-                font-size: 12px;
-                font-weight: bold;
-                padding: 0 6px 0 6px;
-                display: inline-block;
-                vertical-align: middle;
-                color: #4c4c4c;
-                background-color: lightgrey;
+                .ControlsPanel .model_buttons span {
+                    font-size: 12px;
+                    display: inline-block;
+                    height: 25px;
+                    line-height: 25px;
+                    width: 15%;
+                    margin: 0 2% 10px 0%;
+                    vertical-align: middle;
+                    background-color: #e3e3e3;
+                    border-bottom-right-radius: 4px;
+                    border-top-right-radius: 4px;
+                    box-sizing: border-box;
+                    text-align: center;
+                }
+
+                    .ControlsPanel .model_buttons span:nth-of-type(3n + 3) {
+                        margin-right: 0;
+                    }
+
+                .ControlsPanel .model_buttons input {
+                    box-sizing: border-box;
+                    width: 17%;
+                    height: 25px;
+                    margin-bottom: 10px;
+                    text-align: center;
+                    border: none;
+                    border-bottom-left-radius: 4px;
+                    border-top-left-radius: 4px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    padding: 0 6px 0 6px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: #4c4c4c;
+                    background-color: #e3e3e3;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                }
+
+                    .ControlsPanel .model_buttons input:not(.selected):hover {
+                        background-color: #a9acb3 !important;
+                        cursor: pointer;
+                    }
+
+                    .ControlsPanel .model_buttons input.selected {
+                        background-color: greenyellow;
+                    }
+
+                        .ControlsPanel .model_buttons input.selected:hover {
+                            background-color: #8acc25;
+                            cursor: pointer;
+                        }
+
+            .ControlsPanel .Controls {
                 -webkit-user-select: none;
                 -moz-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
             }
 
-                .ControlsPanel .Wrapper .model_buttons input:not(.selected):hover {
-                    background-color: #9498a1 !important;
-                    cursor: pointer;
+            .ControlsPanel .Controls .row{
+                font-size: 0;
+                margin-bottom: 10px;
+            }
+
+                .ControlsPanel .Controls label {
+                    font-size: 12px;
+                    vertical-align: middle;
+                    margin-right: 2%;
+                    display: inline-block;
+                    width: 25%;
+                    text-align: right;
                 }
 
-                .ControlsPanel .Wrapper .model_buttons input.selected {
-                    background-color: greenyellow;
+                .ControlsPanel .Controls span {
+                    font-size: 12px;
+                    vertical-align: middle;
+                    margin-left: 2%;
+                    width: 8%;
+                    display: inline-block;
+                    font-weight: bold;
                 }
 
-                    .ControlsPanel .Wrapper .model_buttons input.selected:hover {
-                        background-color: #8acc25;
-                        cursor: pointer;
+                .ControlsPanel .Controls .progressBar {
+                    display: inline-block;
+                    font-size: 20px;
+                    width: 63%;
+                    height: 25px;
+                    vertical-align: middle;
+                    box-sizing: border-box;
+                }
+
+                    .ControlsPanel .Controls .progressBar.ui-widget-content {
+                        border: 1px solid #9498a1;
                     }
 
-        .ControlsPanel .Wrapper .Controls {
-            font-size: 0;
-            width: 30%;
-            display: inline-block;
-            vertical-align: top;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+                    .ControlsPanel .Controls .progressBar .ui-widget-header {
+                        background: none;
+                        border: 1px solid yellowgreen;
+                    }
 
-            .ControlsPanel .Wrapper .Controls label {
-                font-size: 14px;
-                vertical-align: middle;
-                margin-right: 1.5%;
-                display: inline-block;
-                margin-bottom: 20px;
-                width: 22%;
-                text-align: right;
-            }
+                    .ControlsPanel .Controls .progressBar .ui-progressbar-value {
+                        background-color: greenyellow;
+                    }
 
-            .ControlsPanel .Wrapper .Controls .progressBar {
-                display: inline-block;
-                font-size: 20px;
-                width: 66%;
-                height: 25px;
-                margin-bottom: 20px;
-                vertical-align: middle;
-                box-sizing: border-box;
-            }
-            
-            .ControlsPanel .Wrapper .Controls span {
-                font-size: 14px;
-                vertical-align: middle;
-                margin-left: 1.5%;
-                width: 9%;
-                display: inline-block;
-                margin-bottom: 20px;
-            }            
-
-                .ControlsPanel .Wrapper .Controls .progressBar.ui-widget-content {
-                    border: 1px solid #9498a1;
+                .ControlsPanel .Controls .btnSlider {
+                    width: 63%;
+                    vertical-align: middle;
+                    margin: 0;
+                    height: 25px;
                 }
 
-                .ControlsPanel .Wrapper .Controls .progressBar .ui-widget-header {
-                    background: none;
-                    border: 1px solid yellowgreen;
+                .ControlsPanel .Controls input[type='radio'] {
+                    display: none;
                 }
 
-                .ControlsPanel .Wrapper .Controls .progressBar .ui-progressbar-value {
-                    background-color: greenyellow;
+                .ControlsPanel .Controls .select-val,
+                 .ControlsPanel .Controls .sort-val {
+                    box-sizing: border-box;
+                    height: 25px;
+                    line-height: 25px;
+                    margin: 0 2% 0 0;
+                    border-radius: 4px;
+                    text-align: center;
+                    font-size: 12px;
+                    font-weight: bold;
+                    padding: 0 3px;
+                    color: #4c4c4c;
+                    background-color: #e3e3e3;
                 }
 
-            .ControlsPanel .Wrapper .Controls .btnSlider {
-                width: 66%;
-                vertical-align: middle;
-                margin: 0 0 25px;
-                height: 25px;
-            }
+                    .ControlsPanel .Controls .select-val:hover,
+                     .ControlsPanel .Controls .sort-val:hover{
+                        cursor: pointer;
+                        background-color: #a9acb3;
+                    }
 
-            .ControlsPanel .Wrapper .Controls input[type='radio'] {
-                display: none;
-            }
-
-            .ControlsPanel .Wrapper .Controls .select-val,
-             .ControlsPanel .Wrapper .Controls .sort-val {
-                box-sizing: border-box;
-                height: 25px;
-                line-height: 25px;
-                margin: 0 1% 20px 0;
-                border-radius: 4px;
-                text-align: center;
-                font-size: 12px;
-                font-weight: bold;
-                padding: 0 3px;
-                color: #4c4c4c;
-                background-color: lightgrey;
-            }
-
-                .ControlsPanel .Wrapper .Controls .select-val:hover,
-                 .ControlsPanel .Wrapper .Controls .sort-val:hover{
-                    cursor: pointer;
-                    background-color: #9498a1;
+                .ControlsPanel .Controls .radioSelectAll, .ControlsPanel .Controls .radioSelectNone, .ControlsPanel .Controls .radioHighestValue {
+                    width: 23%;
                 }
 
-            .ControlsPanel .Wrapper .Controls .radioSelectAll, .ControlsPanel .Wrapper .Controls .radioSelectNone{
-                width: 9%;
-            }
+                .ControlsPanel .Controls .radioSortAsc, .ControlsPanel .Controls .radioSortDesc, .ControlsPanel .Controls .radioSortDefault {
+                    width: 23%;
+                }
 
-            .ControlsPanel .Wrapper .Controls .radioHighestValue{
-                width: 22.5%;
-            }
+                .ControlsPanel .Controls .row label:last-child {
+                    margin-right: 0;
+                }
 
-            .ControlsPanel .Wrapper .Controls .radioSortAsc, .ControlsPanel .Wrapper .Controls .radioSortDesc, .ControlsPanel .Wrapper .Controls .radioSortDefault{
-                width: 25%;
-            }
-
-.option-selected{
+.option-selected {
     background-color: lightskyblue !important;
 }
 
-.option-selected: hover{
-    background-color: #6ca4c8 !important;
-    cursor: pointer;
+.selected-solution {
+    background-color: lightskyblue !important;
 }

@@ -29,7 +29,7 @@ header {
         color: #4c4c4c;
         text-decoration: none;
         display: inline-block;
-        margin: 15px 0 15px 5%;
+        margin: 15px 0 15px 2.5%;
         font-size: 20px;
         background-color: lightskyblue;
         padding: 3px 10px;
@@ -45,7 +45,7 @@ header {
 
     header .signout_greetings-wrapper {
         position:absolute;
-        right: 5%;
+        right: 2.5%;
         display: inline-block;
     }
 
@@ -78,8 +78,8 @@ header {
 
 
 section {
-    width: 90%;
-    margin:25px auto;
+    width: 95%;
+    margin:10px auto;
     font-size: 0;
     position: relative;
 }
@@ -88,7 +88,7 @@ section {
         font-size: 20px;
         text-align: center;
         line-height: 40px;
-        margin-bottom: 25px;
+        /*margin-bottom: 25px;*/
         background-color: lightskyblue;
         border-radius: 4px;
     }

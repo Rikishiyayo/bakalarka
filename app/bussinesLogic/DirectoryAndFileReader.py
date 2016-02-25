@@ -106,7 +106,6 @@ def get_weights(user_id, comp_guid):
 # comp_guid - id of a computation
 #
 # returns an array of objects where object represents a single point on a chart with attributes 'q_value' (point x of a curve) and 'intensity' (point y of a curve)
-
 def get_experiment_data(user_id, comp_guid):
     points = []
 
@@ -119,6 +118,32 @@ def get_experiment_data(user_id, comp_guid):
         points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip())) + 15])
 
     return points
+
+
+#
+#
+#
+#
+def get_best_solutions_of_computation(user_id, comp_guid):
+    filepath = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
+    solutions = []
+    name_of_data_values = ["c", "c1", "c2", "chi"]
+
+    file = open(filepath)   # Open the text file for reading
+    lines = file.readlines()
+    lines.pop(0)  # first line removed
+
+    for i, line in enumerate(lines, start=1):
+        data = {'solution': i}
+        values_in_line = line.split(',')
+
+        for j, value in enumerate(values_in_line[0:4]):
+            data[name_of_data_values[j]] = value.strip()
+
+        solutions.append(data)
+
+    file.close()
+    return solutions
 
 
 # reads a file 'result.dat' of specified computation and gets its result data 'status' and 'progress'
@@ -163,8 +188,7 @@ def read_file(file_path, object, keys):
     for key in keys:
         for line in lines:
             if key in line:
-                object[key] = line.split('=')[1].strip()
-                # object[key] = line.split('=')[1].strip()[1:-1]
+                object[key] = line.split('=')[1].strip()[1:-1]
 
     file.close()
 

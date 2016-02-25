@@ -83,15 +83,15 @@ def create_user_directory(user_id):
 
 
 # def create_different_curves(computed_curves):
-#     for i in range(1, 12):
-#         path = os.path.join(current_app.config['EXP_DIRECTORY'], '11', 'db30dba9-1084-4a00-9846-5f4761792453', str(i))
+#     for i in range(1, 14):
+#         path = os.path.join(current_app.config['EXP_DIRECTORY'], '11', str(i))
 #         counter = 1
-#         for curve in computed_curves:
+#         for k, v in computed_curves.items():
 #             new_file = open(os.path.join(path, "final_m" + str(counter) + ".pdb.dat"), "a+")
 #             new_file.write("# SAXS profile: number of points = 501, q_min = 0, q_max = 0.5, delta_q = 0.001\n")
 #             new_file.write("#    q    intensity    error\n")
-#             for point in curve['model']:
-#                 new_file.write(str(point['q_value']) + "    " + str(point['intensity'] + i * 1000000) + " random_error_number\n")
+#             for point in v:
+#                 new_file.write(str(point['q_value']) + "    " + str(point['intensity'] + i * 60000000) + " random_error_number\n")
 #             counter += 1
 
 
