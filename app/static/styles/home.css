@@ -37,7 +37,7 @@
 }
 
 div.submit_experiment{
-    width: 47%;
+    width: 45%;
     display: inline-block;
     vertical-align: middle;
 }
@@ -291,7 +291,7 @@ div.submit_experiment{
         }
 
 div.experiment_list{
-    width: 53%;
+    width: 55%;
     display: inline-block;
     vertical-align: top;
     position: relative;
@@ -302,9 +302,39 @@ div.experiment_list{
         margin: 0 auto 25px;
         text-align: center;
         display: inline-block;
-        width: 85%;
+        width: calc(100% - 5% - 68px);
         vertical-align: middle;
     }
+
+    div.experiment_list img.filter-toggle {
+        display: inline-block;
+        margin: 0 0 25px 0;
+        vertical-align: middle;
+        border-radius: 4px;
+        height: 34px;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
+    }
+
+        div.experiment_list img.filter-toggle:hover {
+            background-color: lightgray;
+            cursor: pointer;
+        }
+
+    div.experiment_list img.img_reload_list{
+        display: inline-block;
+        margin: 0 0 25px 5%;
+        vertical-align: middle;
+        border-radius: 4px;
+        height: 34px;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
+    }
+
+        div.experiment_list img.img_reload_list:hover{
+            background-color: lightgray;
+            cursor: pointer;
+        }
     
     div.experiment_list div.experiment_list_overlay{
         display: none;
@@ -334,21 +364,127 @@ div.experiment_list{
             height: 128px;
         }
 
-    div.experiment_list img.img_reload_list{
-        display: inline-block;
-        margin: 0 0 25px 5%;
-        text-align: center;
-        vertical-align: middle;
+    div.experiment_list .search-filter {
+        font-size: 17px;
         border-radius: 4px;
-        height: 34px;
-        padding: 5px 5px 5px 5px;
+        background-color: #4c4c4c;
+        color: whitesmoke;
+        width: 95%;
+        margin: 0 0 10px 5%;
+        padding-bottom: 10px;
+        display: none;
+    }
+
+        div.experiment_list .search-filter p {
+            font-size:0;
+        }
+
+            div.experiment_list .search-filter p span {
+                font-size: 17px;
+                display: inline-block;
+                box-sizing: border-box;
+                line-height: 40px;
+                margin-left: 1%;
+            }
+
+                div.experiment_list .search-filter p span.filter {
+                    font-size: 17px;
+                    background-color: lightskyblue;
+                    border-radius: 4px;
+                    width: 10%;
+                    line-height: 30px;
+                    color: #4c4c4c;
+                    text-align: center;
+                }
+
+                    div.experiment_list .search-filter p span.filter:hover {
+                        background-color: #6ca4c8;
+                        cursor: pointer;
+                    }
+
+            div.experiment_list .search-filter p input {
+                font-size: 13px;
+                box-sizing: border-box;
+                padding: 1px 5px;
+                color: #4c4c4c;
+                border-radius: 4px;
+                border: 1px solid lightgrey;
+                height: 30px;
+                margin-left: 1%;
+            }
+
+                div.experiment_list .search-filter p input:focus {
+                    border-color: lightskyblue;
+                    border-width: 2px;
+                }
+
+            div.experiment_list .search-filter p .date {
+                width: 19%
+            }
+
+            div.experiment_list .search-filter p .title{
+                width: 28%;
+            }
+
+            div.experiment_list .search-filter p .progress{
+                width: 17%;
+            }
+
+            div.experiment_list .search-filter p .status{
+                width: 20%;
+            }
+
+    div.experiment_list .list-header {
         box-sizing: border-box;
+        width: 95%;
+        margin-left: 5%;
+        height: 40px;
+        font-size: 0;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
-    
-    div.experiment_list img.img_reload_list:hover{
-        background-color: lightgray;
-        cursor: pointer;
-    }
+
+        div.experiment_list .list-header img {
+            display: none;
+            vertical-align: middle;
+            width: 20px;
+            margin-bottom: 5px;
+            padding-left: 5px;
+        }
+
+        div.experiment_list .list-header span {
+            display: inline-block;
+            font-size: 17px;
+            box-sizing: border-box;
+            vertical-align: middle;
+            line-height: 40px;
+            margin-left: 1%;
+            font-weight: bold;
+        }
+
+        div.experiment_list .list-header span:hover{
+            cursor: pointer;
+            color: black;
+        }
+
+        div.experiment_list .list-header span#date {
+            width: 14%;
+        }
+
+        div.experiment_list .list-header span#title {
+            width: 40%;
+        }
+
+        div.experiment_list .list-header span#progress {
+            width: 16%;
+        }
+
+        div.experiment_list .list-header span#status {
+            width: 16%;
+        }
 
     div.experiment_list .experiment_row, div.experiment_list .pagination-controls {
         box-sizing: border-box;
@@ -357,6 +493,7 @@ div.experiment_list{
         height: 40px;
         font-size: 0;
         border-radius: 4px;
+        position: relative;
     }
 
     div.experiment_list .pagination-controls{
@@ -375,7 +512,7 @@ div.experiment_list{
             box-sizing: border-box;
             vertical-align: middle;
             line-height: 40px;
-            height: 45px;
+            height: 40px;
             background-color: lightgray;
             width: 6%;
         }
@@ -413,18 +550,18 @@ div.experiment_list{
     }
 
         div.experiment_list .experiment_row span.date {
-            width: 16%;
+            width: 14%;
         }
 
         div.experiment_list .experiment_row span.name {
-            width: 44%;
+            width: 40%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: pre;
         }
         
         div.experiment_list .experiment_row span.progress {
-            width: 8%;
+            width: 16%;
         }
 
         div.experiment_list .experiment_row span.status {
@@ -436,7 +573,10 @@ div.experiment_list{
             vertical-align: middle;
             height: 40px;
             width: 40px;
-            margin-left: 4.5%;
+            box-sizing: border-box;
+            padding: 5px;
+            position: absolute;
+            right: 0;
         }
 
 .ui-tooltip {
@@ -475,4 +615,8 @@ div.experiment_list{
 
 .selected-radio-button{
     background-color: greenyellow;
+}
+
+.visible{
+    display: inline-block !important;
 }

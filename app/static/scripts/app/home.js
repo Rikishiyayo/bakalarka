@@ -1,8 +1,6 @@
+var pages;
+
 $(function () {
-//    $('.loading-screen div').addClass('animate');
-//    setTimeout(function(){
-//        $('.loading-screen').hide();
-//    }, 4000);
     setSliderValue();
     changeSliderValue();
     setOptParamsVisibility(0);
@@ -10,19 +8,53 @@ $(function () {
     changeDefaultCalcStepsValueOnCalcTypeChange();
     highlightSelectedRadioButton();
     fileUploadButtonsBehaviour();
-    tooltips();
     advancedSettingsToggleClick();
-    validation();
-    fileFormatValidation();
-    setPages();
+
+    reloadList();
     changeStatusColor();
     computationRowHoverAndClick();
+    deleteButtonHoverAndClick();
+
+    setPages();
     changePageOnPageClick();
     changePageOnNextClick();
     changePageOnPreviousClick();
-    reloadList();
+
+    filterToggleClick();
+    sortList();
+    filterList();
+
+    validation();
+    fileFormatValidation();
+
+    tooltips();
 });
 
+//this function erases current list of computations and replaces it with new list
+function onGetExperimentsSuccess(data) {
+    $('.experiment_list p.experiment_row').detach();
+    var comps = data.comps;
+    pages = data.pages;
+
+    for (var i = 0; i < comps.length; i++) {
+        var newEl = "<p class=\"experiment_row\">";
+        newEl += "<a href=\"/view_experiment/" + comps[i].user_id + "/" + comps[i].comp_guid + "\"></a>";
+        newEl += "<span class=\"date\">" + comps[i].date + "</span>";
+        newEl += "<span class=\"name\">" + comps[i].title + "</span>";
+        newEl += "<span class=\"progress\">" + comps[i].progress + "</span>";
+        newEl += "<span class=\"status\">" + comps[i].status + "</span>";
+        newEl += "<img src=\"/static/styles/icons/recycle_bin.png\">";
+        $(newEl).insertBefore('.pagination-controls');
+    }
+    changeStatusColor();
+    computationRowHoverAndClick();
+    deleteButtonHoverAndClick();
+    setTimeout(function(){
+        $('.experiment_list_overlay').hide();
+    }, 500);
+}
+
+//---------------------------------------------------------------------------------form manipulation---------------------------------------------------------------------------------------
 function setSliderValue(){
     $('.qRange-value').text($('#qRange').val());
 }
@@ -55,12 +87,10 @@ function setDefaultCalcStepsValue(value){
 }
 
 function setOptParamsVisibility(visible){
-    if (visible == 0) {
+    if (visible == 0)
         $('#alpha, #beta, #gama').attr('disabled', true).css('color', '#a8a8a8').prev().css('color', '#a8a8a8');
-    }
-    else {
+    else
         $('#alpha, #beta, #gama').attr('disabled', false).css('color', '#4c4c4c').prev().css('color', '#4c4c4c');
-    }
 }
 
 function highlightSelectedRadioButton(){
@@ -83,89 +113,16 @@ function advancedSettingsToggleClick(){
         $(this).find('div.img').toggleClass('advanced-settings-toggle-clicked');
     });
 }
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------list of computations manipulation---------------------------------------------------------------------------------
 //this function reloads list with computations - it asynchronously calls server method that returns list of computations in JSON
 function reloadList(){
     $('.img_reload_list').on('click', function(){
         $('.experiment_list_overlay').show();
-        $.get("/get_experiments/0", onGetExperimentsSuccess);
+        $.get("/get_experiments/0/0/0", onGetExperimentsSuccess);
         selectPageControl(1);
     });
-}
-
-//
-function setPages(){
-    $('span._1').addClass('selected');
-    $('span.page:not(.previous, .next)').slice(13).addClass('hiddenAfter')
-}
-
-//this function displays computations for clicked page
-function changePageOnPageClick(){
-    $('span.page:not(.previous, .next)').on('click', function(){
-       if ( !$(this).hasClass('selected') ){
-           $.get("/get_experiments/" + (parseInt($(this).text()) - 1).toString(), onGetExperimentsSuccess);
-           selectPageControl($(this).text());
-       }
-    });
-}
-
-//this function displays computation for selected page when user clicked 'next' button
-function changePageOnNextClick(){
-    $('span.next').on('click', function(){
-       selectedPage = $('span.page.selected');
-       lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
-
-       if ( !selectedPage.is($('span.page:not(.previous, .next)').last()) ){
-           $.get("/get_experiments/" + selectedPage.text(), onGetExperimentsSuccess);
-           selectPageControl(parseInt(selectedPage.text()) + 1);
-
-           if (selectedPage.is(lastVisiblePage)) {
-               $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
-               $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
-           }
-       }
-    });
-}
-
-//this function displays computation for selected page when user clicked 'previous' button
-function changePageOnPreviousClick(){
-    $('span.previous').on('click', function(){
-       selectedPage = $('span.page.selected');
-       firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
-
-       if ( selectedPage.text() != "1" ){
-           $.get("/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString(), onGetExperimentsSuccess);
-           selectPageControl(parseInt(selectedPage.text()) - 1);
-
-           if (selectedPage.is(firstVisiblePage)) {
-               $('span.page:not(.previous, .next).hiddenBefore').last().removeClass('hiddenBefore');
-               $('span.page:not(.previous, .next):visible').last().addClass('hiddenAfter');
-           }
-       }
-    });
-}
-
-//this function erases current list of computations and replaces it with new list
-function onGetExperimentsSuccess(data) {
-    $('.experiment_list p.experiment_row').detach();
-    var exps = data.exps;
-    
-    for (var i = 0; i < exps.length; i++) {
-        var newEl = "<p class=\"experiment_row\">";
-        newEl += "<a href=\"/view_experiment/" + exps[i].user_id + "/" + exps[i].exp_guid + "\"></a>";
-        newEl += "<span class=\"date\">" + exps[i].date + "</span>";
-        newEl += "<span class=\"name\">" + exps[i].title + "</span>";
-        newEl += "<span class=\"progress\">" + exps[i].progress + "</span>";
-        newEl += "<span class=\"status\">" + exps[i].status + "</span>";
-        newEl += "<img src=\"/static/styles/icons/eye_grey.png\">";
-        $(newEl).insertBefore('.pagination-controls');
-    }
-    
-    changeStatusColor();
-    computationRowHoverAndClick();
-    setTimeout(function(){
-        $('.experiment_list_overlay').hide();
-    }, 500);
 }
 
 //change color of a state text according to its value
@@ -178,10 +135,10 @@ function changeStatusColor() {
             case "done":
                 $(this).css('color', '#8acc25');
                 break;
-            case "processing":
+            case "running":
                 $(this).css('color', 'lightskyblue');
                 break;
-            case "crashed":
+            case "queued":
                 $(this).css('color', '#F54646');
                 break;
             default:
@@ -208,6 +165,16 @@ function computationRowHoverAndClick(){
         });
 }
 
+function deleteButtonHoverAndClick(){
+        $('.experiment_row img').on('mouseover', function () {
+            $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
+        }).on('mouseout', function () {
+            $(this).attr('src', '/static/styles/icons/recycle_bin.png');
+        }).on('click', function () {
+            alert("Are you sure you want to delete this computation ?");
+        });
+}
+
 //this function highlights selected page
 function selectPageControl(page){
    $('span.page').each(function(){
@@ -215,7 +182,151 @@ function selectPageControl(page){
    });
    $('span._' + page).addClass('selected');
 }
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------pagination controls-------------------------------------------------------------------------------------------
+function setPages(){
+    $('span._1').addClass('selected');
+    $('span.page:not(.previous, .next)').slice(13).addClass('hiddenAfter');
+}
+
+//this function displays computations for clicked page
+function changePageOnPageClick(){
+    $('span.page:not(.previous, .next)').on('click', function(){
+       if ( !$(this).hasClass('selected') ){
+           $.get("/get_experiments/" + (parseInt($(this).text()) - 1).toString() + "/" + getSortOption() + "/" + determineSortOrder(), getFilterArguments(), onGetExperimentsSuccess);
+           selectPageControl($(this).text());
+       }
+    });
+}
+
+//this function displays computation for selected page when user clicked 'next' button
+function changePageOnNextClick(){
+    $('span.next').on('click', function(){
+        selectedPage = $('span.page.selected');
+        lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
+        if ( !selectedPage.is($('span.page:not(.previous, .next)').last()) ){
+            $.get("/get_experiments/" + selectedPage.text() + "/" + getSortOption() + "/" + determineSortOrder(), getFilterArguments(), onGetExperimentsSuccess);
+            selectPageControl(parseInt(selectedPage.text()) + 1);
+
+            if (selectedPage.is(lastVisiblePage)) {
+               $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
+               $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
+            }
+        }
+    });
+}
+
+//this function displays computation for selected page when user clicked 'previous' button
+function changePageOnPreviousClick(){
+    $('span.previous').on('click', function(){
+       selectedPage = $('span.page.selected');
+       firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
+
+       if ( selectedPage.text() != "1" ){
+           $.get("/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString() + "/" + getSortOption() + "/" + determineSortOrder(), getFilterArguments(), onGetExperimentsSuccess);
+           selectPageControl(parseInt(selectedPage.text()) - 1);
+
+           if (selectedPage.is(firstVisiblePage)) {
+               $('span.page:not(.previous, .next).hiddenBefore').last().removeClass('hiddenBefore');
+               $('span.page:not(.previous, .next):visible').last().addClass('hiddenAfter');
+           }
+       }
+    });
+}
+
+function createPaginationControls(pages){
+    $('.pagination-controls span').detach();
+    if (pages <= 1)
+        return;
+    $('.pagination-controls').append("<span class=\"page previous\"> < </span>");
+    var newEl;
+    for (var i = 1; i <= parseInt(pages); i++){
+        newEl = "<span class=\"page _" + i + "\">" + i + "</span>";
+        $('.pagination-controls').append(newEl);
+    }
+    $('.pagination-controls').append("<span class=\"page next\"> > </span>");
+    changePageOnNextClick();
+    changePageOnPreviousClick();
+    changePageOnPageClick();
+}
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------filtering and sorting----------------------------------------------------------------------------------
+function filterToggleClick(){
+    $('.experiment_list .filter-toggle').on('click', function(){
+        $('.experiment_list .search-filter').slideToggle(150);
+        $(this).toggleClass('filter-toggle-clicked');
+    });
+}
+
+function filterList(){
+    $('.search-filter .filter').on('click', function(){
+        $.get("/get_experiments/0/0/0", getFilterArguments(), function(data){
+            onGetExperimentsSuccess(data);
+            createPaginationControls(pages);
+            setPages();
+            selectPageControl(1);
+        });
+    });
+}
+
+function sortList(){
+    $('.list-header span').on('click', function(){
+        setSortOrder($(this));
+        $.get("/get_experiments/0/" + $(this).attr('id') + "/" + determineSortOrder($(this)), getFilterArguments(), onGetExperimentsSuccess);
+        selectPageControl(1);
+        showSortOrderIcon($(this));
+    });
+}
+
+function showSortOrderIcon(clickedElement){
+    $('.list-header span img').removeClass('visible');
+    clickedElement.children('img').addClass('visible');
+    if (determineSortOrder() == 1)
+        clickedElement.children('img').attr('src', '/static/styles/icons/arrow_up.png');
+    else
+        clickedElement.children('img').attr('src', '/static/styles/icons/arrow_down2.png');
+}
+
+function setSortOrder(element){
+    if(element.hasClass('ascending'))
+        element.removeClass('ascending').addClass('descending');
+    else if(element.hasClass('descending'))
+        element.removeClass('descending').addClass('ascending');
+    else {
+        $('.list-header span').removeClass();
+        element.addClass('ascending');
+    }
+}
+
+function determineSortOrder(){
+    sortAttr = $('.list-header span.ascending, .list-header span.descending');
+    if (sortAttr.length != 0 && sortAttr.hasClass('ascending'))
+        return 1;
+    if (sortAttr.length != 0 && sortAttr.hasClass('descending'))
+        return -1;
+    return 0;
+}
+
+function getSortOption(){
+    sortAttr = $('.list-header span.ascending, .list-header span.descending');
+    if (sortAttr.length == 0)
+        return 0;
+    return sortAttr.attr('id');
+}
+
+function getFilterArguments(){
+    var result = {};
+    $('.search-filter input').each(function(){
+        if($(this).val().trim() != "")
+            result[$(this).attr('class')] = $(this).val().trim();
+    });
+    return result;
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------validation-----------------------------------------------------------------------------------------
 function validation() {
     $('#new_experiment_form').validate({
         rules: {
@@ -305,13 +416,28 @@ function validateFileFormatForExpData(){
         return true;
     }
 }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function tooltips() {
     position = {
         my: "left center",
-        at: "right+25 center",
+        at: "right+20 center",
         collision: "none"
     }
+    $('.filter-toggle').tooltip({
+        content: "Search filter",
+        position: {
+            my: "right",
+            at: "left-20",
+            collision: "none"
+        },
+        items: ".filter-toggle"
+    });
+    $( ".img_reload_list" ).tooltip({
+        content: "Reload list",
+        position: position,
+        items: ".img_reload_list"
+    });
     $( ".row-models" ).tooltip({
         content: "Allowed file formats: 'zip', 'tar.gz', 'pdb'.",
         position: position,
@@ -352,7 +478,6 @@ function tooltips() {
 //this function modifies name of the selected file to show only filename
 function modifyFilename(filename){
     var index = filename.indexOf("fakepath");
-
     if (index == -1)
         return filename;
     return filename.substring(index + 9);

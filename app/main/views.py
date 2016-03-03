@@ -25,7 +25,6 @@ def main_page():
 @main.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    # DirectoryAndFileWriter.create_different_curves(DirectoryAndFileReader.get_computed_curves('11', 'db30dba9-1084-4a00-9846-5f4761792453')['solution1'])
     form = Computation()
 
     if form.validate_on_submit():       #this block of code is executed when browser sent POST request(user submitted form)
@@ -34,13 +33,14 @@ def home():
         return redirect('/home')
 
     return render_template('home.html', form=form,
-                           pages=DirectoryAndFileReader.get_experiments_pages_count(current_user.id),
-                           exps=DirectoryAndFileReader.get_experiments(current_user.id, 0))
+                           pages=DirectoryAndFileReader.get_pagination_controls_count(current_user.id),
+                           comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, '0', 0, {}))
 
 
-@main.route('/get_experiments/<page>')
-def get_experiments(page):
-    return jsonify(exps = DirectoryAndFileReader.get_experiments(current_user.id, int(page)))
+@main.route('/get_experiments/<page>/<sort_option>/<sort_order>')
+def get_experiments(page, sort_option, sort_order):
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), get_filters()),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), get_filters()))))
 
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
@@ -88,3 +88,11 @@ def before_request():
     if current_user.is_authenticated and request.endpoint == 'main.home' and \
             (not current_user.confirmed or not current_user.active):
         return redirect(url_for('userManagement.unconfirmed'))
+
+
+def get_filters():
+    search_filters = {}
+    for key in ["title", "date", "progress", "status"]:
+        if request.args.get(key) is not None:
+            search_filters[key] = request.args.get(key)
+    return search_filters

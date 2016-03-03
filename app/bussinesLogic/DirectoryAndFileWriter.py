@@ -17,6 +17,7 @@ def create_experiment(form, user_id):
 
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), form)
     create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
+    create_result_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
     upload_file(form.models.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "model.pdb")
     upload_file(form.expData.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), "saxs.dat")
 
@@ -55,7 +56,13 @@ def create_status_file(path):
     result = open(os.path.join(path, "status.txt"), "a+")
     result.write("accepted")
     result.close()
-    
+
+
+def create_result_file(path):
+    result = open(os.path.join(path, "result.dat"), "a+")
+    result.write("3574")
+    result.close()
+
 
 # gets a file with model to display and moves it to a directory on a server to read and for user to download
 # gets a file with experiment data and moves it to a directory on a server for user to download

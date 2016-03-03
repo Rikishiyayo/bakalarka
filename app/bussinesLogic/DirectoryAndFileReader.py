@@ -1,6 +1,20 @@
-import os
+import os, datetime
 from flask import current_app
 from math import log
+from operator import itemgetter
+
+status_shortcuts = {"accepted": "a", "running": "r", "queued": "q", "done": "d"}
+
+
+#
+#
+#
+#
+def get_subset_of_computations_for_one_page(user_id, page, sort_option, sort_order, search_filters):
+    count = current_app.config['EXPERIMENTS_ON_ONE_PAGE']
+    start = page * count
+    end = page * count + count
+    return get_computations(user_id, sort_option, sort_order, search_filters)[start:end]
 
 
 # reads a directory for a current logged in user and return his computations
@@ -9,29 +23,108 @@ from math import log
 # page - a list of computations shows a certain number of them on 1 page. This parameter represents which page should be displayed
 #
 # returns an subarray of dictionaries - each dictionary has 4 keys - title, date, status and progress, which hold informations about an computation
-def get_experiments(user_id, page):
-    experiments = []
-    count = current_app.config['EXPERIMENTS_ON_ONE_PAGE']
+def get_computations(user_id, sort_option, sort_order, search_filters):
+    computations = []
 
     for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
         info = { "comp_guid": item, "user_id": user_id }
         read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "params.txt"), info, ["title", "date"])
         read_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "status.txt"), info, "status")
-        experiments.append(info)
+        read_result_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat"), info, "progress")
+        computations.append(info)
 
-    start = page * count
-    end = page * count + count
-    return experiments[start:end]
+    computations = filter_computations(computations, search_filters)
+    if sort_option == '0':
+        return computations
+    return sort_computations(computations, sort_option, sort_order)
 
 
+def sort_computations(computations, sort_option, sort_order):
+    if sort_order == 1 and sort_option != "date":
+        return sorted(computations, key=itemgetter(sort_option))
+    if sort_order == -1 and sort_option != "date":
+        return sorted(computations, key=itemgetter(sort_option), reverse=True)
+    if sort_order == 1 and sort_option == "date":
+        return sorted(computations, key=lambda x: datetime.datetime.strptime(x['date'], '%d/%m/%Y'))
+    if sort_order == -1 and sort_option == "date":
+        return sorted(computations, key=lambda x: datetime.datetime.strptime(x['date'], '%d/%m/%Y'), reverse=True)
 
-# reads a directory with computations for a current logged in user and return number of pages
+
+def filter_computations(computations, search_filters):
+    for key in search_filters.keys():
+        computations = list(item for item in computations if custom_filter(item, key, search_filters))
+    return computations
+
+
+def custom_filter(item, key, key_values):
+    if key == "progress":
+        return compare_progress(item[key], key_values[key])
+    if key == "date":
+        return compare_date(item[key], key_values[key])
+    if key == "status":
+        return compare_status(item[key], key_values[key])
+    if key == "title":
+        return item[key] in key_values[key]
+    return False
+
+
+def compare_status(value, expected_values):
+    expression = expected_values.strip().split(' ')
+
+    return value in expression or status_shortcuts[value] in expression
+
+
+def compare_progress(value, expected_value):
+    expression = expected_value.strip().split(' ')
+
+    if len(expression) == 1:
+        return float(value) == float(expression[0])
+    if len(expression) == 2:
+        if expression[0] == "=":
+            return float(value) == float(expression[1])
+        if expression[0] == "<":
+            return float(value) < float(expression[1])
+        if expression[0] == "<=":
+            return float(value) <= float(expression[1])
+        if expression[0] == ">":
+            return float(value) > float(expression[1])
+        if expression[0] == ">=":
+            return float(value) >= float(expression[1])
+    if len(expression) == 3:
+        return float(expression[0]) <= float(value) <= float(expression[2])
+
+
+def compare_date(value, expected_value):
+    expression = expected_value.strip().split(' ')
+    date_value = datetime.datetime.strptime(value, '%d/%m/%Y')
+
+    if len(expression) == 1:
+        return date_value == datetime.datetime.strptime(expression[0], '%d/%m/%Y')
+    if len(expression) == 2:
+        if expression[0] == "=":
+            return date_value == datetime.datetime.strptime(expression[1], '%d/%m/%Y')
+        if expression[0] == "<":
+            return date_value < datetime.datetime.strptime(expression[1], '%d/%m/%Y')
+        if expression[0] == "<=":
+            return date_value <= datetime.datetime.strptime(expression[1], '%d/%m/%Y')
+        if expression[0] == ">":
+            return date_value > datetime.datetime.strptime(expression[1], '%d/%m/%Y')
+        if expression[0] == ">=":
+            return date_value >= datetime.datetime.strptime(expression[1], '%d/%m/%Y')
+    if len(expression) == 3:
+        return datetime.datetime.strptime(expression[0], '%d/%m/%Y') <= date_value <= datetime.datetime.strptime(expression[2], '%d/%m/%Y')
+
+
+# reads a directory with computations for a current logged in user and return number of pagination controls to be created
 #
 # user_id - id of an user which matches a directory on a server where this user has his computations saved
 #
-def get_experiments_pages_count(user_id):
-    exps_count = len(os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))))
-    pages = 1.0 * exps_count / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
+def get_pagination_controls_count(user_id=None, computations=None):
+    if computations is not None:
+        pages = 1.0 * len(computations) / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
+    else:
+        exps_count = len(os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))))
+        pages = 1.0 * exps_count / current_app.config['EXPERIMENTS_ON_ONE_PAGE']
 
     if pages.is_integer():
         pages_array = [0] * int(pages)
@@ -195,9 +288,14 @@ def read_file(file_path, object, keys):
 
 def read_status_file(file_path, object, key):
     file = open(file_path)
-    object[key] = file.readline()
+    object[key] = file.readline().strip()
     file.close()
-    
+
+
+def read_result_file(file_path, object, key):
+    file = open(file_path)
+    object[key] = file.readline().strip()
+    file.close()
     
     
     
