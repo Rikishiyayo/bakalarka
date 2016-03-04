@@ -34,13 +34,13 @@ def home():
 
     return render_template('home.html', form=form,
                            pages=DirectoryAndFileReader.get_pagination_controls_count(current_user.id),
-                           comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, '0', 0, {}))
+                           comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, 'date', -1, {}))
 
 
-@main.route('/get_experiments/<page>/<sort_option>/<sort_order>')
+@main.route('/get_experiments/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
 def get_experiments(page, sort_option, sort_order):
-    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), get_filters()),
-                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), get_filters()))))
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json))))
 
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
@@ -61,6 +61,12 @@ def get_experiment_data():
                     experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
                     # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
     return json
+
+
+@main.route('/delete_computations', methods=['GET', 'POST'])
+def delete_computations():
+    DirectoryAndFileWriter.delete_computations(request.json, str(current_user.id))
+    return "true"
 
 
 @main.route('/is_email_available')
@@ -88,11 +94,3 @@ def before_request():
     if current_user.is_authenticated and request.endpoint == 'main.home' and \
             (not current_user.confirmed or not current_user.active):
         return redirect(url_for('userManagement.unconfirmed'))
-
-
-def get_filters():
-    search_filters = {}
-    for key in ["title", "date", "progress", "status"]:
-        if request.args.get(key) is not None:
-            search_filters[key] = request.args.get(key)
-    return search_filters

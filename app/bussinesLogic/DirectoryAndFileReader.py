@@ -40,6 +40,10 @@ def get_computations(user_id, sort_option, sort_order, search_filters):
 
 
 def sort_computations(computations, sort_option, sort_order):
+    if sort_order == 1 and sort_option == "progress":
+        return sorted(computations, key=lambda x: float(x[sort_option]))
+    if sort_order == -1 and sort_option == "progress":
+        return sorted(computations, key=lambda x: float(x[sort_option]), reverse=True)
     if sort_order == 1 and sort_option != "date":
         return sorted(computations, key=itemgetter(sort_option))
     if sort_order == -1 and sort_option != "date":
@@ -296,11 +300,3 @@ def read_result_file(file_path, object, key):
     file = open(file_path)
     object[key] = file.readline().strip()
     file.close()
-    
-    
-    
-    
-    
-    
-    
-    

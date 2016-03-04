@@ -438,6 +438,7 @@ div.experiment_list{
         box-sizing: border-box;
         width: 95%;
         margin-left: 5%;
+        margin-bottom: 10px;
         height: 40px;
         font-size: 0;
         border-radius: 4px;
@@ -446,14 +447,6 @@ div.experiment_list{
         -ms-user-select: none;
         user-select: none;
     }
-
-        div.experiment_list .list-header img {
-            display: none;
-            vertical-align: middle;
-            width: 20px;
-            margin-bottom: 5px;
-            padding-left: 5px;
-        }
 
         div.experiment_list .list-header span {
             display: inline-block;
@@ -465,25 +458,48 @@ div.experiment_list{
             font-weight: bold;
         }
 
-        div.experiment_list .list-header span:hover{
+            div.experiment_list .list-header span img {
+                display: none;
+                vertical-align: middle;
+                width: 20px;
+                margin-bottom: 5px;
+                padding-left: 5px;
+            }
+
+            div.experiment_list .list-header span:hover{
+                cursor: pointer;
+                color: black;
+            }
+
+            div.experiment_list .list-header span#date {
+                width: 14%;
+            }
+
+            div.experiment_list .list-header span#title {
+                width: 40%;
+            }
+
+            div.experiment_list .list-header span#progress {
+                width: 16%;
+            }
+
+            div.experiment_list .list-header span#status {
+                width: 16%;
+            }
+
+        div.experiment_list .list-header img.delete-all {
+            display: inline-block;
+            box-sizing: border-box;
+            vertical-align: middle;
+            height: 34px;
+            padding: 5px;
+            border-radius: 4px;
+            margin-left: calc(100% - 90% - 34px);
+        }
+
+        div.experiment_list .list-header img.delete-all:hover {
             cursor: pointer;
-            color: black;
-        }
-
-        div.experiment_list .list-header span#date {
-            width: 14%;
-        }
-
-        div.experiment_list .list-header span#title {
-            width: 40%;
-        }
-
-        div.experiment_list .list-header span#progress {
-            width: 16%;
-        }
-
-        div.experiment_list .list-header span#status {
-            width: 16%;
+            background-color: lightgray;
         }
 
     div.experiment_list .experiment_row, div.experiment_list .pagination-controls {
@@ -493,7 +509,6 @@ div.experiment_list{
         height: 40px;
         font-size: 0;
         border-radius: 4px;
-        position: relative;
     }
 
     div.experiment_list .pagination-controls{
@@ -567,12 +582,11 @@ div.experiment_list{
         div.experiment_list .experiment_row span.status {
             width: 16%;
         }
-        
+
         div.experiment_list .experiment_row img{
             display: none;
             vertical-align: middle;
-            height: 40px;
-            width: 40px;
+            height: 34px;
             box-sizing: border-box;
             padding: 5px;
             position: absolute;

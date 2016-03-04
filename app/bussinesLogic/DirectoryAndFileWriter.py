@@ -2,7 +2,6 @@ import os
 import time
 import shutil
 import uuid
-from werkzeug.utils import secure_filename
 from flask import current_app
 
 
@@ -100,6 +99,15 @@ def create_user_directory(user_id):
 #             for point in v:
 #                 new_file.write(str(point['q_value']) + "    " + str(point['intensity'] + i * 60000000) + " random_error_number\n")
 #             counter += 1
+
+
+def delete_computations(info, user_id):
+    if info['all'] == 'True':
+        for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id)):
+            shutil.rmtree(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, item))
+    else:
+        directory_to_delete = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, info['comp_guid'])
+        shutil.rmtree(directory_to_delete)
 
 
 

@@ -1,4 +1,4 @@
-var pages;
+var pages, filterOptions = {};
 
 $(function () {
     setSliderValue();
@@ -13,7 +13,8 @@ $(function () {
     reloadList();
     changeStatusColor();
     computationRowHoverAndClick();
-    deleteButtonHoverAndClick();
+    deleteAllHoverAndClick();
+    deleteRowButtonHoverAndClick();
 
     setPages();
     changePageOnPageClick();
@@ -48,7 +49,8 @@ function onGetExperimentsSuccess(data) {
     }
     changeStatusColor();
     computationRowHoverAndClick();
-    deleteButtonHoverAndClick();
+    deleteAllHoverAndClick();
+    deleteRowButtonHoverAndClick();
     setTimeout(function(){
         $('.experiment_list_overlay').hide();
     }, 500);
@@ -120,12 +122,25 @@ function advancedSettingsToggleClick(){
 function reloadList(){
     $('.img_reload_list').on('click', function(){
         $('.experiment_list_overlay').show();
-        $.get("/get_experiments/0/0/0", onGetExperimentsSuccess);
+        $('.search-filter input').val('');
+        filterOptions = {};
+        $.ajax({
+            type: 'POST',
+            url: "/get_experiments/0/date/-1",
+            data: JSON.stringify({}),
+            contentType: 'application/json',
+            success: function(data){
+                onGetExperimentsSuccess(data);
+                createPaginationControls(pages);
+                setPages();
+                selectPageControl(1);
+            }
+        })
         selectPageControl(1);
+        resetSortOrder();
     });
 }
 
-//change color of a state text according to its value
 function changeStatusColor() {
     $('.experiment_row span.status').each(function () {
         switch ($(this).text()) {
@@ -165,14 +180,49 @@ function computationRowHoverAndClick(){
         });
 }
 
-function deleteButtonHoverAndClick(){
+function deleteAllHoverAndClick(){
+    $('.list-header .delete-all').on('mouseover', function () {
+        $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
+    }).on('mouseout', function () {
+        $(this).attr('src', '/static/styles/icons/recycle_bin.png');
+    }).on('click', function () {
+        alert("Are you sure you want to delete all computations ?");
+        $.ajax({
+            type: 'POST',
+            url: "/delete_computations",
+            data: JSON.stringify({'all': 'True'}),
+            contentType: 'application/json',
+            success: function(){
+                $('.img_reload_list').trigger('click');
+            }
+        });
+    });
+}
+
+function deleteRowButtonHoverAndClick(){
         $('.experiment_row img').on('mouseover', function () {
             $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
         }).on('mouseout', function () {
             $(this).attr('src', '/static/styles/icons/recycle_bin.png');
-        }).on('click', function () {
+        }).on('click', function (e) {
+            e.stopPropagation();
             alert("Are you sure you want to delete this computation ?");
+            $.ajax({
+                type: 'POST',
+                url: "/delete_computations",
+                data: JSON.stringify(getInfoOfComputationBeingDeleted($(this).parent())),
+                contentType: 'application/json',
+                success: function(){
+                    $('.img_reload_list').trigger('click');
+                }
+            });
         });
+}
+
+function getInfoOfComputationBeingDeleted(element){
+    var json = {'all': 'False'}
+    json['comp_guid'] = element.children('a').attr('href').split('/')[3];
+    return json;
 }
 
 //this function highlights selected page
@@ -193,9 +243,16 @@ function setPages(){
 //this function displays computations for clicked page
 function changePageOnPageClick(){
     $('span.page:not(.previous, .next)').on('click', function(){
-       if ( !$(this).hasClass('selected') ){
-           $.get("/get_experiments/" + (parseInt($(this).text()) - 1).toString() + "/" + getSortOption() + "/" + determineSortOrder(), getFilterArguments(), onGetExperimentsSuccess);
-           selectPageControl($(this).text());
+        if ( !$(this).hasClass('selected') ){
+            $.ajax({
+                type: 'POST',
+                url: "/get_experiments/" + (parseInt($(this).text()) - 1).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
+                contentType: 'application/json',
+                success: onGetExperimentsSuccess,
+                data: JSON.stringify(filterOptions),
+                dataType: 'json'
+            });
+            selectPageControl($(this).text());
        }
     });
 }
@@ -206,7 +263,14 @@ function changePageOnNextClick(){
         selectedPage = $('span.page.selected');
         lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
         if ( !selectedPage.is($('span.page:not(.previous, .next)').last()) ){
-            $.get("/get_experiments/" + selectedPage.text() + "/" + getSortOption() + "/" + determineSortOrder(), getFilterArguments(), onGetExperimentsSuccess);
+            $.ajax({
+                type: 'POST',
+                url: "/get_experiments/" + selectedPage.text() + "/" + getSortOption() + "/" + determineSortOrder(),
+                contentType: 'application/json',
+                success: onGetExperimentsSuccess,
+                data: JSON.stringify(filterOptions),
+                dataType: 'json'
+            });
             selectPageControl(parseInt(selectedPage.text()) + 1);
 
             if (selectedPage.is(lastVisiblePage)) {
@@ -220,18 +284,24 @@ function changePageOnNextClick(){
 //this function displays computation for selected page when user clicked 'previous' button
 function changePageOnPreviousClick(){
     $('span.previous').on('click', function(){
-       selectedPage = $('span.page.selected');
-       firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
-
-       if ( selectedPage.text() != "1" ){
-           $.get("/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString() + "/" + getSortOption() + "/" + determineSortOrder(), getFilterArguments(), onGetExperimentsSuccess);
+        selectedPage = $('span.page.selected');
+        firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
+        if ( selectedPage.text() != "1" ){
+           $.ajax({
+                type: 'POST',
+                url: "/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
+                contentType: 'application/json',
+                success: onGetExperimentsSuccess,
+                data: JSON.stringify(filterOptions),
+                dataType: 'json'
+           });
            selectPageControl(parseInt(selectedPage.text()) - 1);
 
            if (selectedPage.is(firstVisiblePage)) {
                $('span.page:not(.previous, .next).hiddenBefore').last().removeClass('hiddenBefore');
                $('span.page:not(.previous, .next):visible').last().addClass('hiddenAfter');
            }
-       }
+        }
     });
 }
 
@@ -262,11 +332,18 @@ function filterToggleClick(){
 
 function filterList(){
     $('.search-filter .filter').on('click', function(){
-        $.get("/get_experiments/0/0/0", getFilterArguments(), function(data){
-            onGetExperimentsSuccess(data);
-            createPaginationControls(pages);
-            setPages();
-            selectPageControl(1);
+        $.ajax({
+            type: 'POST',
+            url: "/get_experiments/0/" + getSortOption() + '/' + determineSortOrder(),
+            contentType: 'application/json',
+            success: function(data){
+                onGetExperimentsSuccess(data);
+                createPaginationControls(pages);
+                setPages();
+                selectPageControl(1);
+            },
+            data: JSON.stringify(getFilterArguments()),
+            dataType: 'json'
         });
     });
 }
@@ -274,7 +351,14 @@ function filterList(){
 function sortList(){
     $('.list-header span').on('click', function(){
         setSortOrder($(this));
-        $.get("/get_experiments/0/" + $(this).attr('id') + "/" + determineSortOrder($(this)), getFilterArguments(), onGetExperimentsSuccess);
+        $.ajax({
+            type: 'POST',
+            url: "/get_experiments/0/" + $(this).attr('id') + "/" + determineSortOrder(),
+            contentType: 'application/json',
+            success: onGetExperimentsSuccess,
+            data: JSON.stringify(filterOptions),
+            dataType: 'json'
+        });
         selectPageControl(1);
         showSortOrderIcon($(this));
     });
@@ -296,7 +380,7 @@ function setSortOrder(element){
         element.removeClass('descending').addClass('ascending');
     else {
         $('.list-header span').removeClass();
-        element.addClass('ascending');
+        element.addClass('descending');
     }
 }
 
@@ -316,11 +400,20 @@ function getSortOption(){
     return sortAttr.attr('id');
 }
 
+function resetSortOrder(){
+    $('.list-header span').removeClass();
+    $('.list-header span#date').addClass('descending');
+    $('.list-header span img').removeClass('visible');
+    $('.list-header span#date img').attr('src', '/static/styles/icons/arrow_down2.png').addClass('visible');
+}
+
 function getFilterArguments(){
     var result = {};
     $('.search-filter input').each(function(){
-        if($(this).val().trim() != "")
+        if($(this).val().trim() != "") {
             result[$(this).attr('class')] = $(this).val().trim();
+            filterOptions[$(this).attr('class')] = $(this).val().trim();
+        }
     });
     return result;
 }
@@ -424,6 +517,15 @@ function tooltips() {
         at: "right+20 center",
         collision: "none"
     }
+    $('.delete-all').tooltip({
+        content: "Delete all",
+        position: {
+            my: "right",
+            at: "left-20",
+            collision: "none"
+        },
+        items: ".delete-all"
+    });
     $('.filter-toggle').tooltip({
         content: "Search filter",
         position: {
