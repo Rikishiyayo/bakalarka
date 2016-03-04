@@ -589,8 +589,7 @@ div.experiment_list{
             height: 34px;
             box-sizing: border-box;
             padding: 5px;
-            position: absolute;
-            right: 0;
+            margin-left: calc(100% - 90% - 34px);
         }
 
 .ui-tooltip {
@@ -633,4 +632,11 @@ div.experiment_list{
 
 .visible{
     display: inline-block !important;
+}
+
+/* dialog classes */
+.ui-widget-overlay {
+    background: none;
+    background-color: lightgrey;
+    opacity: .7;
 }

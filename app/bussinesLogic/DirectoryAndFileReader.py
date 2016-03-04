@@ -1,7 +1,7 @@
-import os, datetime
+import os
 from flask import current_app
 from math import log
-from operator import itemgetter
+from app.bussinesLogic import Filtering
 
 status_shortcuts = {"accepted": "a", "running": "r", "queued": "q", "done": "d"}
 
@@ -14,7 +14,12 @@ def get_subset_of_computations_for_one_page(user_id, page, sort_option, sort_ord
     count = current_app.config['EXPERIMENTS_ON_ONE_PAGE']
     start = page * count
     end = page * count + count
-    return get_computations(user_id, sort_option, sort_order, search_filters)[start:end]
+
+    result = get_computations(user_id, sort_option, sort_order, search_filters)
+    if start >= len(result):
+        start -= count
+        end -= count
+    return result[start:end]
 
 
 # reads a directory for a current logged in user and return his computations
@@ -33,90 +38,10 @@ def get_computations(user_id, sort_option, sort_order, search_filters):
         read_result_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat"), info, "progress")
         computations.append(info)
 
-    computations = filter_computations(computations, search_filters)
+    computations = Filtering.filter_computations(computations, search_filters)
     if sort_option == '0':
         return computations
-    return sort_computations(computations, sort_option, sort_order)
-
-
-def sort_computations(computations, sort_option, sort_order):
-    if sort_order == 1 and sort_option == "progress":
-        return sorted(computations, key=lambda x: float(x[sort_option]))
-    if sort_order == -1 and sort_option == "progress":
-        return sorted(computations, key=lambda x: float(x[sort_option]), reverse=True)
-    if sort_order == 1 and sort_option != "date":
-        return sorted(computations, key=itemgetter(sort_option))
-    if sort_order == -1 and sort_option != "date":
-        return sorted(computations, key=itemgetter(sort_option), reverse=True)
-    if sort_order == 1 and sort_option == "date":
-        return sorted(computations, key=lambda x: datetime.datetime.strptime(x['date'], '%d/%m/%Y'))
-    if sort_order == -1 and sort_option == "date":
-        return sorted(computations, key=lambda x: datetime.datetime.strptime(x['date'], '%d/%m/%Y'), reverse=True)
-
-
-def filter_computations(computations, search_filters):
-    for key in search_filters.keys():
-        computations = list(item for item in computations if custom_filter(item, key, search_filters))
-    return computations
-
-
-def custom_filter(item, key, key_values):
-    if key == "progress":
-        return compare_progress(item[key], key_values[key])
-    if key == "date":
-        return compare_date(item[key], key_values[key])
-    if key == "status":
-        return compare_status(item[key], key_values[key])
-    if key == "title":
-        return item[key] in key_values[key]
-    return False
-
-
-def compare_status(value, expected_values):
-    expression = expected_values.strip().split(' ')
-
-    return value in expression or status_shortcuts[value] in expression
-
-
-def compare_progress(value, expected_value):
-    expression = expected_value.strip().split(' ')
-
-    if len(expression) == 1:
-        return float(value) == float(expression[0])
-    if len(expression) == 2:
-        if expression[0] == "=":
-            return float(value) == float(expression[1])
-        if expression[0] == "<":
-            return float(value) < float(expression[1])
-        if expression[0] == "<=":
-            return float(value) <= float(expression[1])
-        if expression[0] == ">":
-            return float(value) > float(expression[1])
-        if expression[0] == ">=":
-            return float(value) >= float(expression[1])
-    if len(expression) == 3:
-        return float(expression[0]) <= float(value) <= float(expression[2])
-
-
-def compare_date(value, expected_value):
-    expression = expected_value.strip().split(' ')
-    date_value = datetime.datetime.strptime(value, '%d/%m/%Y')
-
-    if len(expression) == 1:
-        return date_value == datetime.datetime.strptime(expression[0], '%d/%m/%Y')
-    if len(expression) == 2:
-        if expression[0] == "=":
-            return date_value == datetime.datetime.strptime(expression[1], '%d/%m/%Y')
-        if expression[0] == "<":
-            return date_value < datetime.datetime.strptime(expression[1], '%d/%m/%Y')
-        if expression[0] == "<=":
-            return date_value <= datetime.datetime.strptime(expression[1], '%d/%m/%Y')
-        if expression[0] == ">":
-            return date_value > datetime.datetime.strptime(expression[1], '%d/%m/%Y')
-        if expression[0] == ">=":
-            return date_value >= datetime.datetime.strptime(expression[1], '%d/%m/%Y')
-    if len(expression) == 3:
-        return datetime.datetime.strptime(expression[0], '%d/%m/%Y') <= date_value <= datetime.datetime.strptime(expression[2], '%d/%m/%Y')
+    return Filtering.sort_computations(computations, sort_option, sort_order)
 
 
 # reads a directory with computations for a current logged in user and return number of pagination controls to be created

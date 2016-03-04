@@ -1,4 +1,4 @@
-var pages, filterOptions = {};
+var pages, filterOptions = {}, compBeingDeleted;
 
 $(function () {
     setSliderValue();
@@ -29,6 +29,7 @@ $(function () {
     fileFormatValidation();
 
     tooltips();
+    dialog();
 });
 
 //this function erases current list of computations and replaces it with new list
@@ -133,11 +134,9 @@ function reloadList(){
                 onGetExperimentsSuccess(data);
                 createPaginationControls(pages);
                 setPages();
-                selectPageControl(1);
+                resetSortOrder();
             }
         })
-        selectPageControl(1);
-        resetSortOrder();
     });
 }
 
@@ -164,20 +163,20 @@ function changeStatusColor() {
 
 //hovering effect over a row with a computation. Clicking on a row will sent player to a page with results of a clicked computation
 function computationRowHoverAndClick(){
-        $('.experiment_row').on('mouseover', function () {
-            if ($(this).find('a').length != 0) {
-                $(this).css({'background-color': 'lightgrey', 'cursor': 'pointer'});
-                $(this).find('img').css('display', 'inline-block');
-            }
-        }).on('mouseout', function () {
-            $(this).css({'background-color': 'whitesmoke', 'cursor': 'default'});
-            $('.experiment_row img').css('display', 'none');
-        }).on('click', function () {
-            if ($(this).find('a').length != 0) {
-                var href = $(this).children('a').attr('href');
-                window.location.href = href;
-            }
-        });
+    $('.experiment_row').on('mouseover', function () {
+        if ($(this).find('a').length != 0) {
+            $(this).css({'background-color': 'lightgrey', 'cursor': 'pointer'});
+            $(this).find('img').css('display', 'inline-block');
+        }
+    }).on('mouseout', function () {
+        $(this).css({'background-color': 'whitesmoke', 'cursor': 'default'});
+        $('.experiment_row img').css('display', 'none');
+    }).on('click', function () {
+        if ($(this).find('a').length != 0) {
+            var href = $(this).children('a').attr('href');
+            window.location.href = href;
+        }
+    });
 }
 
 function deleteAllHoverAndClick(){
@@ -200,23 +199,39 @@ function deleteAllHoverAndClick(){
 }
 
 function deleteRowButtonHoverAndClick(){
-        $('.experiment_row img').on('mouseover', function () {
-            $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
-        }).on('mouseout', function () {
-            $(this).attr('src', '/static/styles/icons/recycle_bin.png');
-        }).on('click', function (e) {
-            e.stopPropagation();
-            alert("Are you sure you want to delete this computation ?");
-            $.ajax({
-                type: 'POST',
-                url: "/delete_computations",
-                data: JSON.stringify(getInfoOfComputationBeingDeleted($(this).parent())),
-                contentType: 'application/json',
-                success: function(){
-                    $('.img_reload_list').trigger('click');
-                }
-            });
-        });
+    $('.experiment_row img').on('mouseover', function () {
+        $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
+    }).on('mouseout', function () {
+        $(this).attr('src', '/static/styles/icons/recycle_bin.png');
+    }).on('click', function (e) {
+        e.stopPropagation();
+        compBeingDeleted = getInfoOfComputationBeingDeleted($(this).parent());
+        $('.delete-dialog').dialog("open");
+    });
+}
+
+function deleteComputation(){
+    $('.experiment_list_overlay').show();
+    data = compBeingDeleted;
+    data['filter_values'] = filterOptions;
+
+    if ($('span.page.selected').length == 0)
+        selectedPage = 0;
+    else
+        selectedPage = parseInt($('span.page.selected').text()) - 1;
+
+    $.ajax({
+        type: 'POST',
+        url: "/delete_computations/" + selectedPage + "/" + getSortOption() + "/" + determineSortOrder(),
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data){
+            onGetExperimentsSuccess(data);
+            createPaginationControls(pages);
+            setPages();
+            selectPageControl(selectedPage + 1);
+        }
+    });
 }
 
 function getInfoOfComputationBeingDeleted(element){
@@ -224,22 +239,9 @@ function getInfoOfComputationBeingDeleted(element){
     json['comp_guid'] = element.children('a').attr('href').split('/')[3];
     return json;
 }
-
-//this function highlights selected page
-function selectPageControl(page){
-   $('span.page').each(function(){
-       $(this).removeClass('selected');
-   });
-   $('span._' + page).addClass('selected');
-}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------pagination controls-------------------------------------------------------------------------------------------
-function setPages(){
-    $('span._1').addClass('selected');
-    $('span.page:not(.previous, .next)').slice(13).addClass('hiddenAfter');
-}
-
 //this function displays computations for clicked page
 function changePageOnPageClick(){
     $('span.page:not(.previous, .next)').on('click', function(){
@@ -320,6 +322,22 @@ function createPaginationControls(pages){
     changePageOnPreviousClick();
     changePageOnPageClick();
 }
+
+function setPages(){
+    $('span._1').addClass('selected');
+    $('span.page:not(.previous, .next)').slice(13).addClass('hiddenAfter');
+}
+
+//this function highlights selected page
+function selectPageControl(page){
+   $('span.page').each(function(){
+       $(this).removeClass('selected');
+   });
+   if ($('span.page:not(.previous, .next)').length != 0 && parseInt($('span.page:not(.previous, .next)').last().text()) < page)
+       $('span._' + (page - 1)).addClass('selected');
+   else
+       $('span._' + page).addClass('selected');
+}
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------filtering and sorting----------------------------------------------------------------------------------
@@ -332,6 +350,7 @@ function filterToggleClick(){
 
 function filterList(){
     $('.search-filter .filter').on('click', function(){
+        filterOptions = {};
         $.ajax({
             type: 'POST',
             url: "/get_experiments/0/" + getSortOption() + '/' + determineSortOrder(),
@@ -340,7 +359,6 @@ function filterList(){
                 onGetExperimentsSuccess(data);
                 createPaginationControls(pages);
                 setPages();
-                selectPageControl(1);
             },
             data: JSON.stringify(getFilterArguments()),
             dataType: 'json'
@@ -510,6 +528,27 @@ function validateFileFormatForExpData(){
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+function dialog(){
+    $( ".delete-dialog" ).dialog({
+        title: "Are you sure ?",
+        draggable: false,
+        autoOpen: false,
+        resizable: false,
+        height:140,
+        modal: true,
+        position: { my: 'center', at: 'top-70 center'},
+        buttons: {
+            "Yes": function() {
+                $( this ).dialog( "close" );
+                deleteComputation();
+        },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+                compBeingDeleted = {};
+            }
+        }
+    });
+}
 
 function tooltips() {
     position = {

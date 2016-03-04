@@ -39,7 +39,7 @@ var options = {
   background: '#cdd0d7'
 };
 
-////////////////////////////////////////////// main fucntion - calls other functions ////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////// main function - calls other functions ////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
     viewer = pv.Viewer(document.getElementById('jsmolViewer'), options);
     $('.PageWrapper').css('min-width', '1550px');
@@ -66,6 +66,7 @@ $(function () {
             chartOptions.series = chartOptions.series.slice(0, 1);
             createButtons(solution);
             loadComputedCurvesForSolution(solution, true);
+            displayModels();
         }, 10);
     });
 
@@ -196,7 +197,7 @@ function radioButtonSortChange(radioButton){
 //handles a change in selected radio button for select option
 function radioButtonSelectChange(radioButton){
     switch(radioButton.val()){
-        case "1":       //display all models andcurves
+        case "1":       //display all models and curves
             $('.model_buttons input').addClass('selected');
             break;
         case "2":       //hide all models and curves
@@ -296,7 +297,7 @@ function onGetExperimentDataSuccess(data) {
 
 //this function loads data for every computed curve in a given solution to an array of arrays with 2 values - 'q_value' and 'intensity'
 function loadComputedCurvesForSolution(solution, override) {
-    if (!override)
+    if (!override)   //load experiment data to highcharts only once in the beginning
         chartOptions.series.push({ data: computationData.experimentData, color: '#434343', type: 'scatter' });
 
     var curve;
@@ -307,8 +308,10 @@ function loadComputedCurvesForSolution(solution, override) {
         });
         if (!override)
             chartOptions.series.push({ data: curve });
-        else
+        else {
             $('#chart').highcharts().series[i].setData(curve, false);
+            $('#chart').highcharts().series[i].setVisible(true, false);
+        }
     }
 
     if (override){

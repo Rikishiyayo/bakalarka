@@ -37,18 +37,26 @@ def home():
                            comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, 'date', -1, {}))
 
 
-@main.route('/get_experiments/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
-def get_experiments(page, sort_option, sort_order):
-    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json),
-                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json))))
-
-
 @main.route('/view_experiment/<user_id>/<comp_guid>')
 @login_required
 def view_experiment(user_id, comp_guid):
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
     return render_template("view_experiment.html", best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
                          computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
+
+
+@main.route('/get_experiments/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
+def get_experiments(page, sort_option, sort_order):
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json))))
+
+
+@main.route('/delete_computations/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
+def delete_computations(page, sort_option, sort_order):
+    DirectoryAndFileWriter.delete_computations(request.json, str(current_user.id))
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json['filter_values']),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json['filter_values']))))
+
 
 
 @main.route('/get_experiment_data')
@@ -61,12 +69,6 @@ def get_experiment_data():
                     experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
                     # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
     return json
-
-
-@main.route('/delete_computations', methods=['GET', 'POST'])
-def delete_computations():
-    DirectoryAndFileWriter.delete_computations(request.json, str(current_user.id))
-    return "true"
 
 
 @main.route('/is_email_available')
