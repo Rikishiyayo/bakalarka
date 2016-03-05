@@ -13,7 +13,7 @@ $(function () {
     reloadList();
     changeStatusColor();
     computationRowHoverAndClick();
-    deleteAllHoverAndClick();
+//    deleteAllHoverAndClick();
     deleteRowButtonHoverAndClick();
 
     setPages();
@@ -50,7 +50,7 @@ function onGetExperimentsSuccess(data) {
     }
     changeStatusColor();
     computationRowHoverAndClick();
-    deleteAllHoverAndClick();
+//    deleteAllHoverAndClick();
     deleteRowButtonHoverAndClick();
     setTimeout(function(){
         $('.experiment_list_overlay').hide();
@@ -165,12 +165,12 @@ function changeStatusColor() {
 function computationRowHoverAndClick(){
     $('.experiment_row').on('mouseover', function () {
         if ($(this).find('a').length != 0) {
-            $(this).css({'background-color': 'lightgrey', 'cursor': 'pointer'});
-            $(this).find('img').css('display', 'inline-block');
+            $(this).addClass('highlight');
+            $(this).find('img').css('opacity', '1');
         }
     }).on('mouseout', function () {
-        $(this).css({'background-color': 'whitesmoke', 'cursor': 'default'});
-        $('.experiment_row img').css('display', 'none');
+        $(this).removeClass('highlight');
+        $('.experiment_row img').css('opacity', '0');
     }).on('click', function () {
         if ($(this).find('a').length != 0) {
             var href = $(this).children('a').attr('href');
@@ -179,24 +179,24 @@ function computationRowHoverAndClick(){
     });
 }
 
-function deleteAllHoverAndClick(){
-    $('.list-header .delete-all').on('mouseover', function () {
-        $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
-    }).on('mouseout', function () {
-        $(this).attr('src', '/static/styles/icons/recycle_bin.png');
-    }).on('click', function () {
-        alert("Are you sure you want to delete all computations ?");
-        $.ajax({
-            type: 'POST',
-            url: "/delete_computations",
-            data: JSON.stringify({'all': 'True'}),
-            contentType: 'application/json',
-            success: function(){
-                $('.img_reload_list').trigger('click');
-            }
-        });
-    });
-}
+//function deleteAllHoverAndClick(){
+//    $('.list-header .delete-all').on('mouseover', function () {
+//        $(this).attr('src', '/static/styles/icons/recycle_bin_red.png');
+//    }).on('mouseout', function () {
+//        $(this).attr('src', '/static/styles/icons/recycle_bin.png');
+//    }).on('click', function () {
+//        alert("Are you sure you want to delete all computations ?");
+//        $.ajax({
+//            type: 'POST',
+//            url: "/delete_computations",
+//            data: JSON.stringify({'all': 'True'}),
+//            contentType: 'application/json',
+//            success: function(){
+//                $('.img_reload_list').trigger('click');
+//            }
+//        });
+//    });
+//}
 
 function deleteRowButtonHoverAndClick(){
     $('.experiment_row img').on('mouseover', function () {

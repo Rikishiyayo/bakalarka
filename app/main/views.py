@@ -42,7 +42,7 @@ def home():
 def view_experiment(user_id, comp_guid):
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
     return render_template("view_experiment.html", best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
-                         computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
+                           computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
 
 
 @main.route('/get_experiments/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
@@ -58,16 +58,15 @@ def delete_computations(page, sort_option, sort_order):
                    pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json['filter_values']))))
 
 
-
 @main.route('/get_experiment_data')
 @login_required
 def get_experiment_data():
     user_id = request.args.get("user_id")
     comp_guid = request.args.get("comp_guid")
     json = jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
-                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
-                    experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
-                    # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
+                   computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
+                   experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
+                   # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
     return json
 
 
