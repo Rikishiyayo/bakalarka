@@ -14,6 +14,7 @@ def create_experiment(form, user_id):
     # create a directory for this experiment
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id))
     os.mkdir(exp_identificator)
+    os.chmod(exp_identificator,0770)
 
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), form)
     create_result_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
@@ -50,7 +51,7 @@ def create_params_file(path, form):
 # path - a path to a directory where the result.dat file will be created
 def create_result_file(path):
     result = open(os.path.join(path, "result.dat"), "a+")
-    result.write("status:accepted\nprogress:40%")
+    result.write("status:accepted\nprogress:0\n")
     result.close()
     
 
