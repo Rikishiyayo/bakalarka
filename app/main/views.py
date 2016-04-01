@@ -27,19 +27,47 @@ def main_page():
 def home():
     form = Computation()
 
-    if form.validate_on_submit():       #this block of code is executed when browser sent GET request(user submitted form)
+    if form.validate_on_submit():       #this block of code is executed when browser sent POST request(user submitted form)
         DirectoryAndFileWriter.create_experiment(form, str(current_user.id))
         flash(current_app.config['EXPERIMENT_SUBMITTED'], "info")
         return redirect('/home')
 
     return render_template('home.html', form=form,
-                           pages=DirectoryAndFileReader.get_experiments_pages_count(current_user.id),
-                           exps=DirectoryAndFileReader.get_experiments(current_user.id, 0))
+                           pages=DirectoryAndFileReader.get_pagination_controls_count(current_user.id),
+                           comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, 'date', -1, {}))
 
 
-@main.route('/get_experiments/<page>')
-def get_experiments(page):
-    return jsonify(exps = DirectoryAndFileReader.get_experiments(current_user.id, int(page)))
+@main.route('/view_experiment/<user_id>/<comp_guid>')
+@login_required
+def view_experiment(user_id, comp_guid):
+    DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
+    return render_template("view_experiment.html", best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
+                           computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
+
+
+@main.route('/get_experiments/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
+def get_experiments(page, sort_option, sort_order):
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json))))
+
+
+@main.route('/delete_computations/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
+def delete_computations(page, sort_option, sort_order):
+    DirectoryAndFileWriter.delete_computations(request.json, str(current_user.id))
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json['filter_values']),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json['filter_values']))))
+
+
+@main.route('/get_experiment_data')
+@login_required
+def get_experiment_data():
+    user_id = request.args.get("user_id")
+    comp_guid = request.args.get("comp_guid")
+    json = jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
+                   computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
+                   experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
+                   # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
+    return json
 
 
 @main.route('/is_email_available')
@@ -61,24 +89,6 @@ def is_username_available():
 
     return "true"
 
-
-@main.route('/view_experiment/<user_id>/<exp_guid>')
-@login_required
-def view_experiment(user_id, exp_guid):
-    DirectoryAndFileWriter.get_model_data(user_id, exp_guid)
-    return render_template("view_experiment.html", exp_details=DirectoryAndFileReader.get_experiment_parameters(
-        user_id, exp_guid))
-
-
-@main.route('/get_experiment_data')
-@login_required
-def get_experiment_data():
-    user_id = request.args.get("user_id")
-    exp_guid = request.args.get("exp_guid")
-    json =  jsonify(weights=DirectoryAndFileReader.get_weights(user_id, exp_guid),
-                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, exp_guid),
-                    metadata=DirectoryAndFileReader.get_computations_result_data(user_id, exp_guid))
-    return json
 
 @main.before_request
 def before_request():

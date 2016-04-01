@@ -10,7 +10,7 @@ body {
 }
 
 .PageWrapper {
-    min-width: 1200px;
+    min-width: 1400px;
     margin-left: auto;
     margin-right: auto;
     color: #4c4c4c;
@@ -29,13 +29,17 @@ header {
         color: #4c4c4c;
         text-decoration: none;
         display: inline-block;
-        margin: 15px 0 15px 5%;
+        margin: 15px 0 15px 2.5%;
         font-size: 20px;
         background-color: lightskyblue;
         padding: 3px 10px;
         border-radius: 4px;
         box-sizing: border-box;
         height: 30px;
+        transition: background-color .5s;
+        -webkit-transition: background-color .5s;
+        -moz-transition: background-color .5s;
+        -o-transition: background-color .5s;
     }
     
         header a.user_management_link:hover{
@@ -45,7 +49,7 @@ header {
 
     header .signout_greetings-wrapper {
         position:absolute;
-        right: 5%;
+        right: 2.5%;
         display: inline-block;
     }
 
@@ -60,6 +64,10 @@ header {
             box-sizing: border-box;
             height: 30px;
             vertical-align: middle;
+            transition: background-color .5s;
+            -webkit-transition: background-color .5s;
+            -moz-transition: background-color .5s;
+            -o-transition: background-color .5s;
         }
 
             header .signout_greetings-wrapper a.sign_out:hover{
@@ -78,8 +86,8 @@ header {
 
 
 section {
-    width: 90%;
-    margin:25px auto;
+    width: 95%;
+    margin:10px auto;
     font-size: 0;
     position: relative;
 }
@@ -88,7 +96,7 @@ section {
         font-size: 20px;
         text-align: center;
         line-height: 40px;
-        margin-bottom: 25px;
+        /*margin-bottom: 25px;*/
         background-color: lightskyblue;
         border-radius: 4px;
     }
@@ -116,10 +124,9 @@ footer {
             height: 22px;
         }
 
-        footer .footer-content-wrapper img:hover{
-            height: 22px;
-            cursor: pointer;
-        }
+            footer .footer-content-wrapper img:hover{
+                cursor: pointer;
+            }
 
         footer .footer-content-wrapper span.mail-address{
             color: #dd4b39;
@@ -135,6 +142,10 @@ footer {
                 color: #79b220;
                 text-decoration: none;
                 margin: 0;
+                transition: color .5s;
+                -webkit-transition: color .5s;
+                -moz-transition: color .5s;
+                -o-transition: color .5s;
             }
 
                 footer .footer-content-wrapper div a:hover{
