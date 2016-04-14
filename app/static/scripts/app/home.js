@@ -9,6 +9,7 @@ $(function () {
     highlightSelectedRadioButton();
     fileUploadButtonsBehaviour();
     advancedSettingsToggleClick();
+    clearFilenamesAfterFormReset();
 
     reloadList();
     changeStatusColor();
@@ -99,6 +100,13 @@ function setOptParamsVisibility(visible){
 function highlightSelectedRadioButton(){
     $('span.calcType label').removeClass('selected-radio-button');
     $('input[name=calcType]:checked').next().addClass('selected-radio-button');
+}
+
+function clearFilenamesAfterFormReset(){
+    $('#btnReset').on('click', function(){
+        $('.row-models span.filename').text("");
+        $('.row-expData span.filename').text("");
+    });
 }
 
 function fileUploadButtonsBehaviour(){
@@ -350,6 +358,7 @@ function filterToggleClick(){
 
 function filterList(){
     $('.search-filter .filter').on('click', function(){
+        if (!filterValidation()) return;
         filterOptions = {};
         $.ajax({
             type: 'POST',
@@ -444,12 +453,6 @@ function validation() {
             title: {
                 required: true
             },
-            models: {
-                required: true
-            },
-            expData: {
-                required: true
-            },
             qRange: {
                 required: true,
                 number: true
@@ -499,33 +502,68 @@ function fileFormatValidation() {
     $('#new_experiment_form').on('submit', function(){
         var bool1 = validateFileFormatForModels();
         var bool2 = validateFileFormatForExpData();
-        if (bool1 && bool2 != true)
+        if (!bool1 || !bool2)
             return false;
     });
 }
 
 function validateFileFormatForModels(){
-    var allowedExtensions = ["zip", "tar.gz", "pdb"];
-    var extension = $('#models').val().split('.');
-    if(extension.length == 1 || allowedExtensions.indexOf(extension[1]) == -1) {
-        $('#models').parent().next().addClass('file-extension-validation-error');
-        return false;
-    } else {
-        $('#models').parent().next().removeClass('file-extension-validation-error');
-        return true;
+    var allowedExtensions = ["zip", "tar.gz", "pdb", "rar", "tar.bz2"];
+    var firstDot = $('#models').val().indexOf('.');
+    if (firstDot != -1) {
+        var extension = $('#models').val().substring(firstDot + 1);
+        if(allowedExtensions.indexOf(extension) == -1) {
+            $('#models').parent().next().addClass('file-extension-validation-error');
+            return false;
+        } else {
+            $('#models').parent().next().removeClass('file-extension-validation-error');
+            return true;
+        }
     }
 }
 
 function validateFileFormatForExpData(){
     var allowedExtensions = ["dat"];
-    var extension = $('#expData').val().split('.');
-    if(extension.length == 1 || allowedExtensions.indexOf(extension[1]) == -1) {
-        $('#expData').parent().next().addClass('file-extension-validation-error');
-        return false;
-    } else {
-        $('#expData').parent().next().removeClass('file-extension-validation-error');
-        return true;
+    var firstDot = $('#models').val().indexOf('.');
+    if (firstDot != -1) {
+        var extension = $('#models').val().substring(firstDot + 1);
+        if(allowedExtensions.indexOf(extension) == -1) {
+            $('#expData').parent().next().addClass('file-extension-validation-error');
+            return false;
+        } else {
+            $('#expData').parent().next().removeClass('file-extension-validation-error');
+            return true;
+        }
     }
+}
+
+function filterValidation(){
+    var progressInput = $('.search-filter input.progress');
+    var progressReg1 = /^[> < =]\s+\d+$/;
+    var progressReg2 = /^[> <]=\s+\d+$/;
+    var progressReg3 = /^\d+\s+-\s+\d+$/;
+    if (progressReg1.test(progressInput.val()) || progressReg2.test(progressInput.val()) || progressReg3.test(progressInput.val()) || progressInput.val() == ""){
+        return true;
+    } else {
+        progressInput.addClass('search-filter-validation-error');
+        return false;
+    }
+    var dateInput = $('.search-filter input.date');
+    var dateReg1 = /^[> < =]\s+\d{1,2}\/\d{1,2}\/\d{4}$/;
+    var dateReg2 = /^[> <]=\s+\d{1,2}\/\d{1,2}\/\d{4}$/;
+    var dateReg3 = /^\d{1,2}\/\d{1,2}\/\d{4}\s+-\s+\d{1,2}\/\d{1,2}\/\d{4}$/;
+    if (dateReg1.test(dateInput.val()) || dateReg2.test(dateInput.val()) || dateReg3.test(dateInput.val()) || dateInput.val() == ""){
+        return true;
+    } else {
+        dateInput.addClass('search-filter-validation-error');
+        return false;
+    }
+    /*
+       date(> < =) - ^[> < =]\s\d{1,2}\/\d{1,2}\/\d{4}$
+       date(>= <=) - ^[> <]=\s\d{1,2}\/\d{1,2}\/\d{4}$
+       date(date - date) - ^\d{1,2}\/\d{1,2}\/\d{4}\s-\s\d{1,2}\/\d{1,2}\/\d{4}$
+    */
+
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function dialog(){
