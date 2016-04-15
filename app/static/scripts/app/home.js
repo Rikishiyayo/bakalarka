@@ -520,13 +520,15 @@ function validateFileFormatForModels(){
             return true;
         }
     }
+    $('#models').parent().next().addClass('file-extension-validation-error');
+    return false;
 }
 
 function validateFileFormatForExpData(){
     var allowedExtensions = ["dat"];
-    var firstDot = $('#models').val().indexOf('.');
+    var firstDot = $('#expData').val().indexOf('.');
     if (firstDot != -1) {
-        var extension = $('#models').val().substring(firstDot + 1);
+        var extension = $('#expData').val().substring(firstDot + 1);
         if(allowedExtensions.indexOf(extension) == -1) {
             $('#expData').parent().next().addClass('file-extension-validation-error');
             return false;
@@ -535,6 +537,8 @@ function validateFileFormatForExpData(){
             return true;
         }
     }
+    $('#expData').parent().next().addClass('file-extension-validation-error');
+    return false;
 }
 
 function filterValidation(){
