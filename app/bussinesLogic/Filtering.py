@@ -3,6 +3,7 @@ from operator import itemgetter
 
 status_shortcuts = {"accepted": "a", "running": "r", "queued": "q", "done": "d"}
 
+
 def sort_computations(computations, sort_option, sort_order):
     if sort_order == 1 and sort_option == "progress":
         return sorted(computations, key=lambda x: float(x[sort_option]))
@@ -31,7 +32,7 @@ def custom_filter(item, key, filter_values):
         return compare_date(item[key], filter_values[key])
     if key == "status":
         return compare_status(item[key], filter_values[key])
-    if key == "title":
+    if key == "name":
         v = filter_values[key] in item[key]
         return v
     return False

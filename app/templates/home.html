@@ -128,13 +128,13 @@
         <div class="search-filter">
             <p class="header">
                 <span class="date">Date</span>
-                <span class="title">Title</span>
+                <span class="name">Name</span>
                 <span class="progress">Progress</span>
                 <span class="status">Status</span>
             </p>
             <p class="textboxes">
                 <input class="date" type="text">
-                <input class="title" type="text">
+                <input class="name" type="text">
                 <input class="progress" type="text">
                 <input class="status" type="text">
                 <span class="filter">Search</span>
@@ -142,7 +142,7 @@
         </div>
         <p class="list-header">
             <span id="date" class="descending">Date<img class="visible" src="/static/styles/icons/arrow_down2.png"></span>
-            <span id="title">Title<img src="/static/styles/icons/arrow_down2.png"></span>
+            <span id="name">Title<img src="/static/styles/icons/arrow_down2.png"></span>
             <span id="progress">Progress<img src="/static/styles/icons/arrow_down2.png"></span>
             <span id="status">Status<img src="/static/styles/icons/arrow_down2.png"></span>
             <!--<img class="delete-all" src="/static/styles/icons/recycle_bin.png">-->
@@ -153,7 +153,7 @@
                 <a href="{{ url_for('main.view_experiment', user_id=item.user_id, comp_guid=item.comp_guid) }}"></a>
             {% endif %}
             <span class="date">{{ item.date }}</span>
-            <span class="name">{{ item.title }}</span>
+            <span class="name">{{ item.name }}</span>
             <span class="progress">{{ item.progress }}</span>
             <span class="status">{{ item.status }}</span>
             <img src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">

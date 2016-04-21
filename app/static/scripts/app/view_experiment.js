@@ -27,7 +27,7 @@ var chartOptions = {
                    series: { turboTreshold: 0} },
     tooltip: { enabled: false },
     legend: { enabled: false },
-    title: { text: "Computed curves" },
+    title: { text: "Computed curves" }
 };
 
 //PV viewer options
@@ -84,13 +84,7 @@ $(function () {
     // handles a slider value change and displays corresponding models and curves
     $('#sliderWeight').on('input', function () {            //versions of IE < 9 do not support this event, they have proprietary onPropertyChange event
         $('.sliderWeightValue').text($(this).val() + "%");
-    });
-
-    $('#sliderSummation').on('input', function () {
-        $('.sliderSummationValue').text($(this).val() + "%");
-    });
-
-    $('#sliderWeight').on('mouseup', function () {
+    }).on('mouseup', function () {
         var value = $(this).val();
 
         //remove selected value on another slider
@@ -108,7 +102,9 @@ $(function () {
         }, 10);
     });
 
-    $('#sliderSummation').on('mouseup', function () {
+    $('#sliderSummation').on('input', function () {
+        $('.sliderSummationValue').text($(this).val() + "%");
+    }).on('mouseup', function () {
         var value = $(this).val();
 
         //remove selected value on another slider
@@ -144,6 +140,19 @@ $(function () {
             radioButtonSelectChange(button);
         }, 10);
     });
+
+    var $content = $('.highcharts-container'); // Cache your selectors!
+
+    function loop(){
+        $content.stop().animate({scrollTop:'-=20'}, 400, 'linear', loop);
+    }
+
+    function stop(){
+        $content.stop();
+    }
+
+    $(".scrollDown").hover(loop, stop);
+
 //    $('#btnFullscreen').on('click', function () {
 //        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
 //        var chart = new Highcharts.Chart(options);
@@ -166,10 +175,10 @@ function modelButtonClicked(button){
             button.toggleClass('selected');
 
             //if all models are selected, select 'Select all' radio button
-            $('.Controls input[name=select][value=1]').prop('checked', false);
+            $(".Controls input[name=select][value='1']").prop('checked', false);
             highlightSelectedRadioButton('select');
             if (allModelButtonsSelected()) {
-                $('.Controls input[name=select][value=1]').prop('checked', true);
+                $(".Controls input[name=select][value='1']").prop('checked', true);
                 highlightSelectedRadioButton('select');
             }
             displayModels();
@@ -196,15 +205,16 @@ function radioButtonSortChange(radioButton){
 
 //handles a change in selected radio button for select option
 function radioButtonSelectChange(radioButton){
+    var modelButton = $('.model_buttons input');
     switch(radioButton.val()){
         case "1":       //display all models and curves
-            $('.model_buttons input').addClass('selected');
+            modelButton.addClass('selected');
             break;
         case "2":       //hide all models and curves
-            $('.model_buttons input').removeClass('selected');
+            modelButton.removeClass('selected');
             break;
         case "3":       //display model and curve with highest weight
-            $('.model_buttons input').removeClass('selected');
+            modelButton.removeClass('selected');
             $('.model_buttons input[name=' + getModelWithHighestWeight(selectedSolution) + ']').addClass('selected');
             break;
     }
@@ -225,8 +235,8 @@ function highlightSelectedRadioButton(option){
 }
 
 function setSelectedRadioButtons(){
-    $('input[type=radio][name=select][value=1]').prop('checked', true);
-    $('input[type=radio][name=sort][value=3]').prop('checked', true);
+    $("input[type=radio][name=select][value='1']").prop('checked', true);
+    $("input[type=radio][name=sort][value='3']").prop('checked', true);
 }
 
 function resetSliderValues(){
@@ -237,17 +247,19 @@ function resetSliderValues(){
 }
 
 function setModelViewerWidth(){
-    var currentHeight = $('#jsmolViewer').height();
-    var currentWidth = $('#jsmolViewer').width();
-    $('#jsmolViewer canvas').attr({'width': currentWidth - 2, 'height': currentHeight -1});
+    var jsmolViewer = $('#jsmolViewer');
+    var currentHeight = jsmolViewer.height();
+    var currentWidth = jsmolViewer.width();
+    jsmolViewer.children('canvas').attr({'width': currentWidth - 2, 'height': currentHeight -1});
 }
 
 function windowResizeActions(){
+    var jsmolViewer = $('#jsmolViewer');
     $(window).resize(function(){
         setTimeout(function(){
-            var currentWidth = $('#jsmolViewer').width();
-            var currentHeight = $('#jsmolViewer').height();
-            $('#jsmolViewer canvas').attr({'width': currentWidth - 1, 'height': currentHeight - 1});
+            var currentWidth = jsmolViewer.width();
+            var currentHeight = jsmolViewer.height();
+            jsmolViewer.children('canvas').attr({'width': currentWidth - 1, 'height': currentHeight - 1});
         }, 50);
     });
 }
@@ -261,28 +273,31 @@ function onGetExperimentDataSuccess(data) {
     computationData = data;
     loadComputedCurvesForSolution(selectedSolution, false);
 
-    chart = new Highcharts.Chart(chartOptions); //create a chart
-    var chartWidth = $('#chart').width();
-    var chartHeight = $('#chart').height();
+    var highchartsObject = new Highcharts.Chart(chartOptions); //create a chart
+    var chartElement = $('#chart');
+    var chartWidth = chartElement.width();
+    var chartHeight = chartElement.height();
 
     $('#btnZoomIn').click(function () {
         chartWidth *= 1.3;
         chartHeight *= 1.3;
-        chart.setSize(chartWidth, chartHeight);
+        highchartsObject.setSize(chartWidth, chartHeight);
         return false;
     });
 
     $('#btnZoomOut').click(function () {
         chartWidth *= 0.7;
         chartHeight *= 0.7;
-        chart.setSize(chartWidth, chartHeight);
+        highchartsObject.setSize(chartWidth, chartHeight);
         return false;
     });
 
     $('#btnDefault').click(function () {
-        chart.setSize($('#chart').width(), $('#chart').height());
+        highchartsObject.setSize(chartElement.width(), chartElement.height());
         return false;
     });
+
+    chartElement.append("<div class='scrollDown'>DOWN</down>");
 
     //set value of a progress bar
 //    $(".progressBar").progressbar({
@@ -309,8 +324,9 @@ function loadComputedCurvesForSolution(solution, override) {
         if (!override)
             chartOptions.series.push({ data: curve });
         else {
-            $('#chart').highcharts().series[i].setData(curve, false);
-            $('#chart').highcharts().series[i].setVisible(true, false);
+            var chartEl = $('#chart');
+            chartEl.highcharts().series[i].setData(curve, false);
+            chartEl.highcharts().series[i].setVisible(true, false);
         }
     }
 
@@ -323,22 +339,22 @@ function loadComputedCurvesForSolution(solution, override) {
     }
 }
 
-function onError(xhr, errorType, exception) {
-    var responseText;
-    var error = "";
-    try {
-        responseText = jQuery.parseJSON(xhr.responseText);
-        error.append("<div><b>" + errorType + " " + exception + "</b></div>");
-        error.append("<div><u>Exception</u>:<br /><br />" + responseText.ExceptionType + "</div>");
-        error.append("<div><u>StackTrace</u>:<br /><br />" + responseText.StackTrace + "</div>");
-        error.append("<div><u>Message</u>:<br /><br />" + responseText.Message + "</div>");
-        alert(error);
-    } catch (e) {
-        responseText = xhr.responseText;
-        alert(responseText);
-
-    }
-}
+// function onError(xhr, errorType, exception) {
+//     var responseText;
+//     var error = "";
+//     try {
+//         responseText = jQuery.parseJSON(xhr.responseText);
+//         error.append("<div><b>" + errorType + " " + exception + "</b></div>");
+//         error.append("<div><u>Exception</u>:<br /><br />" + responseText.ExceptionType + "</div>");
+//         error.append("<div><u>StackTrace</u>:<br /><br />" + responseText.StackTrace + "</div>");
+//         error.append("<div><u>Message</u>:<br /><br />" + responseText.Message + "</div>");
+//         alert(error);
+//     } catch (e) {
+//         responseText = xhr.responseText;
+//         alert(responseText);
+//
+//     }
+// }
 
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
@@ -365,20 +381,22 @@ function createButtons(solution) {
 
 //return number of model with highest weight
 function getModelWithHighestWeight(solution){
-    obj = computationData.weights['solution' + solution];
-    sortedWeights = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]})
+    var obj = computationData.weights['solution' + solution];
+    var sortedWeights = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
     return sortedWeights[0];
 }
 
 //function sorts model buttons ascending or descending, depending on attribute 'order' value
 function sortModels(order, solution) {
-    obj = computationData.weights['solution' + solution];
+    var obj = computationData.weights['solution' + solution];
+    var sortedWeights;
+    
     if (order == "asc")
-        sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]})
+        sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
     else if (order == "desc")
-        sortedWeights = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]})
+        sortedWeights = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
     else
-        sortedWeights = Object.keys(obj);;
+        sortedWeights = Object.keys(obj);
 
     //get all selected buttons so they can be selected after they are sorted
     var selectedModelsIds = [];
@@ -500,11 +518,11 @@ function selectButtonsByWeight(weight) {
 
 //this function selects buttons, which summation of weight is equal to or bigger than a selected value on a slider
 function selectButtonsByWeightSummation(value, solution) {
-    obj = computationData.weights['solution' + solution];
-    sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
+    var obj = computationData.weights['solution' + solution];
+    var sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
 
-    selectedModels = [];
-    summation = 0;
+    var selectedModels = [];
+    var summation = 0;
     $.each(sortedWeights, function(i, v){
         if ((summation * 100) < parseInt(value))
             selectedModels.push(v);
@@ -520,25 +538,23 @@ function selectButtonsByWeightSummation(value, solution) {
 
 //check if clicked button is the last selected button. if yes, return false. if no, return yes.
 function canDeselect(model) {
-    if ($('.model_buttons input.selected').length == 1 && $('.model_buttons input.selected').attr('name') == model)
-        return false;
-    return true;
+    var modelButtons = $('.model_buttons input.selected');
+    return !(modelButtons.length == 1 && modelButtons.attr('name') == model);
 }
 
 //check if all model buttons are clicked.if yes, return true.if no, return false.
 function allModelButtonsSelected() {
-    if ($('.model_buttons input.btnModel').length == $('.model_buttons input.btnModel.selected').length)
-        return true;
-    return false;
+    return $('.model_buttons input.btnModel').length == $('.model_buttons input.btnModel.selected').length;
+    
 }
 
 //select radio button 'selectAll' option if all models are selected, otherwise deselect
 function toggleSelectAllButton(){
     if (allModelButtonsSelected()) {
-        $('.Controls input[type=radio][name=select][value=1]').prop('checked', true);
+        $(".Controls input[type=radio][name=select][value='1']").prop('checked', true);
         highlightSelectedRadioButton('select');
     } else {
-        $('.Controls input[type=radio][name=select][value=1]').prop('checked', false);
+        $(".Controls input[type=radio][name=select][value='1']").prop('checked', false);
         highlightSelectedRadioButton('select');
     }
 }

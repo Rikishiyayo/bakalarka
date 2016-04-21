@@ -11,7 +11,7 @@ def create_experiment(form, user_id):
     # create a directory for this experiment
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id))
     os.mkdir(exp_identificator)
-    os.chmod(exp_identificator,0770)
+    # os.chmod(exp_identificator,0770)
 
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), form)
     create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
@@ -35,7 +35,7 @@ def upload_file(file, path, name, extension):
 def create_params_file(path, form):
     params = open(os.path.join(path, "params.txt"), "a+")
 
-    params.write('NAME' + '="' + form.title.data + '"\n')
+    params.write('NAME="' + form.title.data + '"\n')
     params.write('DATE="' + time.strftime("%d/%m/%Y") + '"\n')
     params.write('DESCRIPTION' + '="' + form.description.data + '"\n')
     params.write('STRUCTURES_FILE="' + form.models.data.filename + '"\n')

@@ -41,9 +41,13 @@ function onGetExperimentsSuccess(data) {
 
     for (var i = 0; i < comps.length; i++) {
         var newEl = "<p class=\"experiment_row\">";
-        newEl += "<a href=\"/view_experiment/" + comps[i].user_id + "/" + comps[i].comp_guid + "\"></a>";
+
+        if(comps[i].progress != 0){
+            newEl += "<a href=\"/view_experiment/" + comps[i].user_id + "/" + comps[i].comp_guid + "\"></a>";
+        }
+
         newEl += "<span class=\"date\">" + comps[i].date + "</span>";
-        newEl += "<span class=\"name\">" + comps[i].title + "</span>";
+        newEl += "<span class=\"name\">" + comps[i].name + "</span>";
         newEl += "<span class=\"progress\">" + comps[i].progress + "</span>";
         newEl += "<span class=\"status\">" + comps[i].status + "</span>";
         newEl += "<img src=\"/static/styles/icons/recycle_bin.png\">";

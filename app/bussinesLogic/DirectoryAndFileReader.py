@@ -32,10 +32,16 @@ def get_computations(user_id, sort_option, sort_order, search_filters):
     computations = []
 
     for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
-        info = { "comp_guid": item, "user_id": user_id }
-        read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "params.txt"), info, ["title", "date"])
+        info = {"comp_guid": item, "user_id": user_id}
+        read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "params.txt"), info, ["NAME", "DATE"])
         read_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "status.txt"), info, "status")
-        read_result_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat"), info, "progress")
+
+        path_to_result_file = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat")
+        if os.path.isfile(path_to_result_file):
+            read_result_file(path_to_result_file, info, "progress")
+        else:
+            info["progress"] = "0"
+
         computations.append(info)
 
     computations = Filtering.filter_computations(computations, search_filters)
@@ -210,18 +216,18 @@ def read_file(file_path, object, keys):
     for key in keys:
         for line in lines:
             if key in line:
-                object[key] = line.split('=')[1].strip()[1:-1]
+                object[key.lower()] = line.split('=')[1].strip()[1:-1]
 
     file.close()
 
 
-def read_status_file(file_path, object, key):
+def read_status_file(file_path, info_dict, key):
     file = open(file_path)
-    object[key] = file.readline().strip()
+    info_dict[key] = file.readline().strip()
     file.close()
 
 
-def read_result_file(file_path, object, key):
+def read_result_file(file_path, info_dict, key):
     file = open(file_path)
-    object[key] = file.readline().strip()
+    info_dict[key] = file.readline().strip()
     file.close()

@@ -509,7 +509,7 @@ div.experiment_list{
                 width: 14%;
             }
 
-            div.experiment_list .list-header span#title {
+            div.experiment_list .list-header span#name {
                 width: 40%;
             }
 
@@ -671,7 +671,7 @@ div.experiment_list{
     display: none !important;
 }
 
-.file-extension-validation-error {
+.file-extension-validation-error, .search-filter-validation-error {
     background-color: #f65858;
 }
 
