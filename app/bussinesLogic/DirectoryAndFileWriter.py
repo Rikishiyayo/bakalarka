@@ -11,7 +11,7 @@ def create_experiment(form, user_id):
     # create a directory for this experiment
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id))
     os.mkdir(exp_identificator)
-    # os.chmod(exp_identificator,0770)
+    os.chmod(exp_identificator,0770)
 
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator), form)
     create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_identificator))
