@@ -14,7 +14,7 @@ def login():
 
     if l_form.validate_on_submit():
         user = User.query.filter_by(email=l_form.login_email.data).first()
-        if user is not None and user.verify_password(l_form.login_password.data):       #if user with specified email exists and submited password is correct
+        if user is not None and user.verify_password(l_form.login_password.data):   #if user with specified email exists and submited password is correct
             login_user(user, l_form.remember_me.data)
             target = request.args.get("next")
             if target is not None:
@@ -24,8 +24,7 @@ def login():
 
         flash(current_app.config['LOGIN_ERROR'], "login_error")
 
-    return render_template('main_page.html', l_form=l_form, r_form=RegistrationForm(),
-                            pr_form=PasswordResetRequestForm())
+    return render_template('main_page.html', l_form=l_form, r_form=RegistrationForm(), pr_form=PasswordResetRequestForm())
 
 
 @userMngmt.route('/logout')
@@ -51,6 +50,7 @@ def register():
     return render_template('main_page.html', l_form=LoginForm(), r_form=r_form,
                            pr_form=PasswordResetRequestForm())
 
+
 @userMngmt.route('/confirm/<token>')
 @login_required
 def confirm(token):
@@ -61,7 +61,7 @@ def confirm(token):
         flash(current_app.config['ACCOUNT_CONFIRMATION'], "info")
         DirectoryAndFileWriter.create_user_directory(current_user.id)
         return redirect('/home')
-    else:       #confirmation wasnt successfull
+    else:       #confirmation wasn't successful
         flash(current_app.config['ACCOUNT_FAILED_CONFIRMATION'], "info")
         return redirect(url_for('userManagement.unconfirmed'))
 

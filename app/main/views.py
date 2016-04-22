@@ -75,14 +75,12 @@ def get_experiment_data():
     json = jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
                    experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
-                   # metadata=DirectoryAndFileReader.get_computations_result_data(user_id, comp_guid))
     return json
 
 
 @main.route('/is_email_available')
 def is_email_available():
     user = User.query.filter_by(email=request.args.get("register_email")).first()
-
     if user is not None:
         return "false"
 
@@ -92,7 +90,6 @@ def is_email_available():
 @main.route('/is_username_available')
 def is_username_available():
     user = User.query.filter_by(username=request.args.get("username")).first()
-
     if user is not None:
         return "false"
 

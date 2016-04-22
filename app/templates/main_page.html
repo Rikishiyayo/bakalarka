@@ -67,7 +67,7 @@
 {% block content %}
     <div class="flash-message">
         {% for message in get_flashed_messages(category_filter=["info"]) %}
-            <span>{{ message }}</span>
+            <span class="info">{{ message }}</span>
         {% endfor %}
     </div>
     <div class="register-form-wrapper">
