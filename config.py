@@ -42,7 +42,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(EXP_DIRECTORY, 'app.db')
 
-    MAIL_SERVER = relay.ics.muni.cz'
+    MAIL_SERVER = 'relay.ics.muni.cz'
     MAIL_PORT = 25
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True

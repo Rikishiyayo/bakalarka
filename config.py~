@@ -37,18 +37,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    EXP_DIRECTORY = "/var/www/SaxsExperiments"
+
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'app.db')
+        'sqlite:///' + os.path.join(EXP_DIRECTORY, 'app.db')
 
-    EXP_DIRECTORY = "/home/yayo/SaxsExperiments"
-
-    MAIL_SERVER = 'smtp.mail.yahoo.com'
-    MAIL_PORT = 465
+    MAIL_SERVER = relay.ics.muni.cz'
+    MAIL_PORT = 25
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = "saxsExpViewer@yahoo.com"
-    MAIL_PASSWORD = "g8e6j6o8s5f"
-    MAIL_DEFAULT_SENDER = "saxsExpViewer@yahoo.com"
+    MAIL_USERNAME = ""
+    MAIL_PASSWORD = ""
+    MAIL_DEFAULT_SENDER = "ljocha@ics.muni.cz"
     MAIL_SUBJECT = "[SaxsExpWebApp]"
 
 
