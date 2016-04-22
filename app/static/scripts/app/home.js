@@ -380,11 +380,11 @@ function filterList(){
 }
 
 function sortList(){
-    $('.list-header span').on('click', function(){
-        setSortOrder($(this));
+    $('.list-header > span > span').on('click', function(){
+        setSortOrder($(this).parent());
         $.ajax({
             type: 'POST',
-            url: "/get_experiments/0/" + $(this).attr('id') + "/" + determineSortOrder(),
+            url: "/get_experiments/0/" + $(this).parent().attr('id') + "/" + determineSortOrder(),
             contentType: 'application/json',
             success: onGetExperimentsSuccess,
             data: JSON.stringify(filterOptions),
@@ -416,7 +416,7 @@ function setSortOrder(element){
 }
 
 function determineSortOrder(){
-    sortAttr = $('.list-header span.ascending, .list-header span.descending');
+    var sortAttr = $('.list-header span.ascending, .list-header span.descending');
     if (sortAttr.length != 0 && sortAttr.hasClass('ascending'))
         return 1;
     if (sortAttr.length != 0 && sortAttr.hasClass('descending'))

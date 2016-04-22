@@ -6,16 +6,12 @@
     <script src="{{ url_for('static',filename='scripts/app/home.js') }}"></script>
 {% endblock %}
 
-{% block header %}
-    {{ super() }}
-{% endblock %}
-
 {% block content %}
-    <div class="flash-message">
-        {% for message in get_flashed_messages(category_filter=["info"]) %}
-            <span>{{ message }}</span>
-        {% endfor %}
-    </div>
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="flash-message {{ category }}">
+            {{ message }}
+        </div>
+    {% endfor %}
     <div class="submit_experiment">
         <h1>Submit a new computation</h1>
         <form action="" method="post" enctype="multipart/form-data" id="new_experiment_form">
@@ -141,10 +137,10 @@
             </p>
         </div>
         <p class="list-header">
-            <span id="date" class="descending">Date<img class="visible" src="/static/styles/icons/arrow_down2.png"></span>
-            <span id="name">Title<img src="/static/styles/icons/arrow_down2.png"></span>
-            <span id="progress">Progress<img src="/static/styles/icons/arrow_down2.png"></span>
-            <span id="status">Status<img src="/static/styles/icons/arrow_down2.png"></span>
+            <span id="date" class="descending"><span>Date<img class="visible" src="/static/styles/icons/arrow_down2.png"></span></span>
+            <span id="name"><span>Title<img src="/static/styles/icons/arrow_down2.png"></span></span>
+            <span id="progress"><span>Progress<img src="/static/styles/icons/arrow_down2.png"></span></span>
+            <span id="status"><span>Status<img src="/static/styles/icons/arrow_down2.png"></span></span>
             <!--<img class="delete-all" src="/static/styles/icons/recycle_bin.png">-->
         </p>
         {% for item in comps %}

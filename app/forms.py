@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp,
 from flask_wtf.file import FileAllowed, FileField
 from app.models import User
 
+
 # A form for computation
 #
 class Computation(Form):
@@ -47,12 +48,10 @@ class RegistrationForm(Form):
     password2 = PasswordField('Confirm password:', validators=[DataRequired(), EqualTo('register_password',
                                                    message='Passwords must match.')])
     submit = SubmitField('Register')
-    
-    
+
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
             raise ValidationError('Email already registered.')
-
 
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():

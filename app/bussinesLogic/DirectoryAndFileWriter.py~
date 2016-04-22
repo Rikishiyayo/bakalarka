@@ -32,7 +32,6 @@ def create_computation_directory(user_id, comp_id):
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id))
     try:
         os.mkdir(comp_id)
-	os.chmod(comp_id, 0770)
     except OSError as err:
         current_app.logger.error('Error while trying to create computation directory for user with id - ' + user_id, exc_info=err)
         raise NewComputationRequestSubmitError("Error occurred while trying to submit a computation request.")

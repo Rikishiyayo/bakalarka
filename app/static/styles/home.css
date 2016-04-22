@@ -456,7 +456,7 @@ div.experiment_list{
                 width: 19%
             }
 
-            div.experiment_list .search-filter p .title{
+            div.experiment_list .search-filter p .name{
                 width: 28%;
             }
 
@@ -482,7 +482,7 @@ div.experiment_list{
         user-select: none;
     }
 
-        div.experiment_list .list-header span {
+        div.experiment_list .list-header > span {
             display: inline-block;
             font-size: 17px;
             box-sizing: border-box;
@@ -500,7 +500,7 @@ div.experiment_list{
                 padding-left: 5px;
             }
 
-            div.experiment_list .list-header span:hover{
+            div.experiment_list .list-header > span > span:hover{
                 cursor: pointer;
                 color: black;
             }

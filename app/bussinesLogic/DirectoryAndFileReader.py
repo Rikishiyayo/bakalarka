@@ -31,14 +31,14 @@ def get_subset_of_computations_for_one_page(user_id, page, sort_option, sort_ord
 def get_computations(user_id, sort_option, sort_order, search_filters):
     computations = []
 
-    for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
-        info = {"comp_guid": item, "user_id": user_id}
-        read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "params.txt"), info, ["NAME", "DATE"])
-        read_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "status.txt"), info, "status")
+    for computation_dir in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
+        info = {"comp_guid": computation_dir, "user_id": user_id}
+        read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "params.txt"), info, ["NAME", "DATE"])
+        read_result_or_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "status.txt"), info, "status")
 
-        path_to_result_file = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), item, "result.dat")
-        if os.path.isfile(path_to_result_file):
-            read_result_file(path_to_result_file, info, "progress")
+        path_to_result_file = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "result.dat")
+        if check_for_computation_results(user_id, computation_dir, info["status"]):
+            read_result_or_status_file(path_to_result_file, info, "progress")
         else:
             info["progress"] = "0"
 
@@ -48,6 +48,27 @@ def get_computations(user_id, sort_option, sort_order, search_filters):
     if sort_option == '0':
         return computations
     return Filtering.sort_computations(computations, sort_option, sort_order)
+
+
+# returns true, if directory for given computation for given user exist, otherwise return false
+def check_if_computation_exist(user_id, comp_guid):
+    return os.path.isdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), comp_guid))
+
+
+# return true, if given computation has got all required data to show user results, otherwise returns false
+# status must be running or done, file result.dat and directory ComputedValues must be present in computation directory
+def check_for_computation_results(user_id, comp_guid, status):
+    path_to_result_file = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), comp_guid, "result.dat")
+    path_to_required_dir = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), comp_guid, "ComputedCurves")
+
+    return os.path.isfile(path_to_result_file) and os.path.isdir(path_to_required_dir) and (status == "running" or status == "done")
+
+
+def get_computation_status(user_id, comp_guid):
+    file_path = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), comp_guid, "status.txt")
+    info = {}
+    read_result_or_status_file(file_path, info, "status")
+    return info["status"]
 
 
 # reads a directory with computations for a current logged in user and return number of pagination controls to be created
@@ -84,17 +105,28 @@ def get_computed_curves(user_id, comp_guid):
         models = {}
 
         for j in range(len(os.listdir(os.path.join(directory, "ComputedCurves", str(i + 1))))):
-            file = open(os.path.join(directory, "ComputedCurves", str(i + 1), "final_m" + str(j + 1) + ".pdb.dat"))  # Open the text file for reading
-            lines = file.readlines()
-            points = []
+            file_path = os.path.join(directory, "ComputedCurves", str(i + 1), "final_m" + str(j + 1) + ".pdb.dat")
 
+            try:
+                with open(file_path) as file:
+                    lines = file.readlines()
+            except FileNotFoundError as err:
+                current_app.logger.error(
+                    'File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+                raise err
+            except OSError as err:
+                current_app.logger.error(
+                    'Error while trying to access or while reading result.dat in specified directory\n'
+                    'function arguments: file_path - ' + file_path, exc_info=err)
+                raise err
+
+            points = []
             for line in lines[2:]:
                 values_in_line = line.split()
                 points.append({"q_value": float(values_in_line[0].strip()),
                                "intensity": float(values_in_line[1].strip())})
 
             models[str(j + 1)] = points
-            file.close()
 
         solutions['solution' + str(i + 1)] = models
 
@@ -108,24 +140,30 @@ def get_computed_curves(user_id, comp_guid):
 #
 # returns an array of weights
 def get_weights(user_id, comp_guid):
-    filepath = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
+    file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
     solutions = {}
 
-    file = open(filepath)   # Open the text file for reading
-    lines = file.readlines()
-    lines.pop(0)  # first line removed
+    try:
+        with open(file_path) as file:
+            lines = file.readlines()
+            lines.pop(0)  # first line removed
+            for i, line in enumerate(lines, start=1):
+                weights = {}
+                values_in_line = line.split(',')
 
-    for i, line in enumerate(lines, start=1):
-        weights = {}
-        values_in_line = line.split(',')
+                for j, value in enumerate(values_in_line[4:], start=1):
+                    weights[str(j)] = value.strip()
 
-        for j, value in enumerate(values_in_line[4:], start=1):
-            weights[str(j)] = value.strip()
+                solutions['solution' + str(i)] = weights
 
-        solutions['solution' + str(i)] = weights
-
-    file.close()
-    return solutions
+            return solutions
+    except FileNotFoundError as err:
+        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+        raise err
+    except OSError as err:
+        current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
+                                 'function arguments: file_path - ' + file_path, exc_info=err)
+        raise err
 
 
 # reads a file 'saxs.dat' with experimental data of specified computation
@@ -133,19 +171,25 @@ def get_weights(user_id, comp_guid):
 # user_id - id of an user which matches a directory on a server where this user has his computations saved
 # comp_guid - id of a computation
 #
-# returns an array of objects where object represents a single point on a chart with attributes 'q_value' (point x of a curve) and 'intensity' (point y of a curve)
+# returns an array of arrays with 2 values where each 2-value array represents a single point on a chart with attributes 'q_value' (point x of a curve) and 'intensity' (point y of a curve)
 def get_experiment_data(user_id, comp_guid):
+    file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "saxs.dat")
     points = []
 
-    # Open the text file for reading
-    file = open(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "saxs.dat"))
-    lines = file.readlines()
-
-    for line in lines[3:]:
-        values_in_line = line.split()
-        points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip())) + 15])
-
-    return points
+    try:
+        with open(file_path) as file:
+            lines = file.readlines()
+            for line in lines[3:]:
+                values_in_line = line.split()
+                points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip())) + 15])
+            return points
+    except FileNotFoundError as err:
+        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+        raise err
+    except OSError as err:
+        current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
+                                 'function arguments: file_path - ' + file_path, exc_info=err)
+        raise err
 
 
 #
@@ -153,25 +197,31 @@ def get_experiment_data(user_id, comp_guid):
 #
 #
 def get_best_solutions_of_computation(user_id, comp_guid):
-    filepath = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
+    file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
     solutions = []
     name_of_data_values = ["c", "c1", "c2", "chi"]
 
-    file = open(filepath)   # Open the text file for reading
-    lines = file.readlines()
-    lines.pop(0)  # first line removed
+    try:
+        with open(file_path) as file:
+            lines = file.readlines()
+            lines.pop(0)  # first line removed
+            for i, line in enumerate(lines, start=1):
+                data = {'solution': i}
+                values_in_line = line.split(',')
 
-    for i, line in enumerate(lines, start=1):
-        data = {'solution': i}
-        values_in_line = line.split(',')
+                for j, value in enumerate(values_in_line[0:4]):
+                    data[name_of_data_values[j]] = value.strip()
 
-        for j, value in enumerate(values_in_line[0:4]):
-            data[name_of_data_values[j]] = value.strip()
+                solutions.append(data)
 
-        solutions.append(data)
-
-    file.close()
-    return solutions
+            return solutions
+    except FileNotFoundError as err:
+        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+        raise err
+    except OSError as err:
+        current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
+                                 'function arguments: file_path - ' + file_path, exc_info=err)
+        raise err
 
 
 # reads a file 'result.dat' of specified computation and gets its result data 'status' and 'progress'
@@ -180,13 +230,13 @@ def get_best_solutions_of_computation(user_id, comp_guid):
 # comp_guid - id of a computation
 #
 # returns an object with 2 attributes - 'status' and 'progress'
-def get_computations_result_data(user_id, comp_guid):
-    result_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
-
-    info = {}
-    read_file(result_file_path, info, ["status", "progress"])
-
-    return info
+# def get_computations_result_data(user_id, comp_guid):
+#     result_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
+#
+#     info = {}
+#     read_file(result_file_path, info, ["status", "progress"])
+#
+#     return info
 
 
 # reads a file 'params.txt' of specified computation and gets its parameters
@@ -199,7 +249,7 @@ def get_computation_parameters(user_id, comp_guid):
     parameters_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "params.txt")
 
     info = {}
-    read_file(parameters_file_path, info, ["title", "date", "description", "optim_steps", "optim_sync", "optim_alpha", "optim_beta", "optim_gama", "optim_algorithm", "max_q"])
+    read_file(parameters_file_path, info, ["NAME", "DATE", "DESCRIPTION", "OPTIM_STEPS", "OPTIM_SYNC", "OPTIM_ALPHA", "OPTIM_BETA", "OPTIM_GAMMA", "OPTIM_ALGORITHM", "MAX_Q"])
 
     return info
 
@@ -210,24 +260,33 @@ def get_computation_parameters(user_id, comp_guid):
 # filePath - path of the file to read
 # object - reference to a dictionary to which new attribute:value pairs will be appended
 # keys - a list of strings to find in a file. Each string represents a key in dictionary
-def read_file(file_path, object, keys):
-    file = open(file_path)
-    lines = file.readlines()
-    for key in keys:
-        for line in lines:
-            if key in line:
-                object[key.lower()] = line.split('=')[1].strip()[1:-1]
+def read_file(file_path, info_dict, keys):
+    try:
+        with open(file_path) as file:
+            lines = file.readlines()
+            for key in keys:
+                for line in lines:
+                    if key in line:
+                        info_dict[key.lower()] = line.split('=')[1].strip()[1:-1]
+    except FileNotFoundError as err:
+        current_app.logger.error('File doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', keys - ' + keys.__str__(), exc_info=err)
+        raise err
+    except OSError as err:
+        current_app.logger.error('Error while trying to access or while reading file in specified directory\n'
+                                 'function arguments: file_path - ' + file_path + ', keys - ' + keys.__str__(), exc_info=err)
+        raise err
 
-    file.close()
+
+def read_result_or_status_file(file_path, info_dict, key):
+    try:
+        with open(file_path) as file:
+            info_dict[key] = file.readline().strip()
+    except FileNotFoundError as err:
+        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
+        raise err
+    except OSError as err:
+        current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
+                                 'function arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
+        raise err
 
 
-def read_status_file(file_path, info_dict, key):
-    file = open(file_path)
-    info_dict[key] = file.readline().strip()
-    file.close()
-
-
-def read_result_file(file_path, info_dict, key):
-    file = open(file_path)
-    info_dict[key] = file.readline().strip()
-    file.close()

@@ -5,12 +5,17 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_mail import Mail
 from config import config
+import logging
 
 
 db = SQLAlchemy()
+
 bootstrap = Bootstrap()
+
 mail = Mail()
+
 admin = Admin(name="User management")
+
 lm = LoginManager()
 lm.login_view = 'main.main_page'
 
@@ -19,6 +24,13 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+
+    # Configure logging
+    handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
+    handler.setLevel(app.config['LOGGING_LEVEL'])
+    formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
 
     bootstrap.init_app(app)
     mail.init_app(app)
