@@ -33,7 +33,7 @@ $(function () {
     dialog();
 });
 
-//this function erases current list of computations and replaces it with new list
+//success function for asynchronous calls, erases current list of computations and replaces it with new list
 function onGetExperimentsSuccess(data) {
     $('.experiment_list p.experiment_row').detach();
     var comps = data.comps;
@@ -57,6 +57,15 @@ function onGetExperimentsSuccess(data) {
     computationRowHoverAndClick();
 //    deleteAllHoverAndClick();
     deleteRowButtonHoverAndClick();
+}
+
+//error function for asynchronous calls, tries to log error to saxs.log on server
+function onGetExperimentsError(jqXHR, textStatus, errorThrown) {
+    console.log(jqXHR.statusText + '\n' + jqXHR.responseText + '\n' + textStatus + '\n' + errorThrown)
+}
+
+//complete function for asynchronous calls, hides loading gif and displays error message to user
+function onGetExperimentsComplete() {
     setTimeout(function(){
         $('.experiment_list_overlay').hide();
     }, 500);
@@ -139,7 +148,7 @@ function reloadList(){
         filterOptions = {};
         $.ajax({
             type: 'POST',
-            url: "/get_experiments/0/date/-1",
+            url: "/gett_experiments/0/date/-1",
             data: JSON.stringify({}),
             contentType: 'application/json',
             success: function(data){
@@ -147,7 +156,9 @@ function reloadList(){
                 createPaginationControls(pages);
                 setPages();
                 resetSortOrder();
-            }
+            },
+            complete: onGetExperimentsComplete,
+            error: onGetExperimentsError
         })
     });
 }
@@ -224,13 +235,14 @@ function deleteRowButtonHoverAndClick(){
 
 function deleteComputation(){
     $('.experiment_list_overlay').show();
-    data = compBeingDeleted;
+    var data = compBeingDeleted;
     data['filter_values'] = filterOptions;
 
-    if ($('span.page.selected').length == 0)
-        selectedPage = 0;
+    var selectedPageEl = $('span.page.selected');
+    if (selectedPageEl.length == 0)
+        var selectedPage = 0;
     else
-        selectedPage = parseInt($('span.page.selected').text()) - 1;
+        selectedPage = parseInt(selectedPageEl.text()) - 1;
 
     $.ajax({
         type: 'POST',
@@ -242,7 +254,9 @@ function deleteComputation(){
             createPaginationControls(pages);
             setPages();
             selectPageControl(selectedPage + 1);
-        }
+        },
+        complete: onGetExperimentsComplete,
+        error: onGetExperimentsError
     });
 }
 
@@ -258,15 +272,20 @@ function getInfoOfComputationBeingDeleted(element){
 function changePageOnPageClick(){
     $('span.page:not(.previous, .next)').on('click', function(){
         if ( !$(this).hasClass('selected') ){
+            $('.experiment_list_overlay').show();
             $.ajax({
                 type: 'POST',
                 url: "/get_experiments/" + (parseInt($(this).text()) - 1).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
                 contentType: 'application/json',
-                success: onGetExperimentsSuccess,
+                success: function (data) {
+                    onGetExperimentsSuccess(data);
+                    selectPageControl($(this).text());
+                },
+                complete: onGetExperimentsComplete,
+                error: onGetExperimentsError,
                 data: JSON.stringify(filterOptions),
                 dataType: 'json'
             });
-            selectPageControl($(this).text());
        }
     });
 }
@@ -274,23 +293,27 @@ function changePageOnPageClick(){
 //this function displays computation for selected page when user clicked 'next' button
 function changePageOnNextClick(){
     $('span.next').on('click', function(){
-        selectedPage = $('span.page.selected');
-        lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
+        var selectedPage = $('span.page.selected');
+        var lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
         if ( !selectedPage.is($('span.page:not(.previous, .next)').last()) ){
+            $('.experiment_list_overlay').show();
             $.ajax({
                 type: 'POST',
                 url: "/get_experiments/" + selectedPage.text() + "/" + getSortOption() + "/" + determineSortOrder(),
                 contentType: 'application/json',
-                success: onGetExperimentsSuccess,
+                success: function (data) {
+                    onGetExperimentsSuccess(data);
+                    selectPageControl(parseInt(selectedPage.text()) + 1);
+                    if (selectedPage.is(lastVisiblePage)) {
+                       $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
+                       $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
+                    }
+                },
+                complete: onGetExperimentsComplete,
+                error: onGetExperimentsError,
                 data: JSON.stringify(filterOptions),
                 dataType: 'json'
             });
-            selectPageControl(parseInt(selectedPage.text()) + 1);
-
-            if (selectedPage.is(lastVisiblePage)) {
-               $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
-               $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
-            }
         }
     });
 }
@@ -298,23 +321,27 @@ function changePageOnNextClick(){
 //this function displays computation for selected page when user clicked 'previous' button
 function changePageOnPreviousClick(){
     $('span.previous').on('click', function(){
-        selectedPage = $('span.page.selected');
-        firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
+        var selectedPage = $('span.page.selected');
+        var firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
         if ( selectedPage.text() != "1" ){
-           $.ajax({
+            $('.experiment_list_overlay').show();
+            $.ajax({
                 type: 'POST',
                 url: "/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
                 contentType: 'application/json',
-                success: onGetExperimentsSuccess,
+                success: function (data) {
+                    onGetExperimentsSuccess(data);
+                    selectPageControl(parseInt(selectedPage.text()) - 1);
+                    if (selectedPage.is(firstVisiblePage)) {
+                        $('span.page:not(.previous, .next).hiddenBefore').last().removeClass('hiddenBefore');
+                        $('span.page:not(.previous, .next):visible').last().addClass('hiddenAfter');
+                    }
+                },
+                complete: onGetExperimentsComplete,
+                error: onGetExperimentsError,
                 data: JSON.stringify(filterOptions),
                 dataType: 'json'
            });
-           selectPageControl(parseInt(selectedPage.text()) - 1);
-
-           if (selectedPage.is(firstVisiblePage)) {
-               $('span.page:not(.previous, .next).hiddenBefore').last().removeClass('hiddenBefore');
-               $('span.page:not(.previous, .next):visible').last().addClass('hiddenAfter');
-           }
         }
     });
 }
@@ -364,6 +391,7 @@ function filterList(){
     $('.search-filter .filter').on('click', function(){
         if (!filterValidation()) return;
         filterOptions = {};
+        $('.experiment_list_overlay').show();
         $.ajax({
             type: 'POST',
             url: "/get_experiments/0/" + getSortOption() + '/' + determineSortOrder(),
@@ -373,6 +401,8 @@ function filterList(){
                 createPaginationControls(pages);
                 setPages();
             },
+            complete: onGetExperimentsComplete,
+            error: onGetExperimentsError,
             data: JSON.stringify(getFilterArguments()),
             dataType: 'json'
         });
@@ -381,17 +411,23 @@ function filterList(){
 
 function sortList(){
     $('.list-header > span > span').on('click', function(){
-        setSortOrder($(this).parent());
+        var clickedEl = $(this);
+        setSortOrder(clickedEl.parent());
+        $('.experiment_list_overlay').show();
         $.ajax({
             type: 'POST',
             url: "/get_experiments/0/" + $(this).parent().attr('id') + "/" + determineSortOrder(),
             contentType: 'application/json',
-            success: onGetExperimentsSuccess,
+            success: function (data) {
+                onGetExperimentsSuccess(data);
+                selectPageControl(1);
+                showSortOrderIcon(clickedEl);
+            },
+            complete: onGetExperimentsComplete,
+            error: onGetExperimentsError,
             data: JSON.stringify(filterOptions),
             dataType: 'json'
         });
-        selectPageControl(1);
-        showSortOrderIcon($(this));
     });
 }
 
@@ -425,7 +461,7 @@ function determineSortOrder(){
 }
 
 function getSortOption(){
-    sortAttr = $('.list-header span.ascending, .list-header span.descending');
+    var sortAttr = $('.list-header span.ascending, .list-header span.descending');
     if (sortAttr.length == 0)
         return 0;
     return sortAttr.attr('id');
@@ -530,18 +566,19 @@ function validateFileFormatForModels(){
 
 function validateFileFormatForExpData(){
     var allowedExtensions = ["dat"];
-    var firstDot = $('#expData').val().indexOf('.');
+    var expDataInput = $('#expData');
+    var firstDot = expDataInput.val().indexOf('.');
     if (firstDot != -1) {
-        var extension = $('#expData').val().substring(firstDot + 1);
+        var extension = expDataInput.val().substring(firstDot + 1);
         if(allowedExtensions.indexOf(extension) == -1) {
-            $('#expData').parent().next().addClass('file-extension-validation-error');
+            expDataInput.parent().next().addClass('file-extension-validation-error');
             return false;
         } else {
-            $('#expData').parent().next().removeClass('file-extension-validation-error');
+            expDataInput.parent().next().removeClass('file-extension-validation-error');
             return true;
         }
     }
-    $('#expData').parent().next().addClass('file-extension-validation-error');
+    expDataInput.parent().next().addClass('file-extension-validation-error');
     return false;
 }
 
@@ -588,7 +625,7 @@ function dialog(){
                 $( this ).dialog( "close" );
                 deleteComputation();
         },
-            Cancel: function() {
+            "Cancel": function() {
                 $( this ).dialog( "close" );
                 compBeingDeleted = {};
             }
@@ -597,7 +634,7 @@ function dialog(){
 }
 
 function tooltips() {
-    position = {
+    var position = {
         my: "left center",
         at: "right+20 center",
         collision: "none"

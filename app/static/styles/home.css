@@ -372,11 +372,11 @@ div.experiment_list{
         color: #4c4c4c;
         text-align: center;
         box-sizing: border-box;
-        margin-top: 59px;
+        margin-top: 99px;
         background-color: whitesmoke;
         width: 100%;
         vertical-align: middle;
-        height: calc(100% - 59px);
+        height: calc(100% - 99px);
         top: 0;
         left: 0;
         opacity: 1;
@@ -392,6 +392,7 @@ div.experiment_list{
         div.experiment_list div.experiment_list_overlay img{
             width: 128px;
             height: 128px;
+            vertical-align: middle;
         }
 
     div.experiment_list .search-filter {
@@ -448,8 +449,7 @@ div.experiment_list{
             }
 
                 div.experiment_list .search-filter p input:focus {
-                    border-color: lightskyblue;
-                    border-width: 2px;
+                    border: 2px lightskyblue;
                 }
 
             div.experiment_list .search-filter p .date {

@@ -27,7 +27,6 @@ def main_page():
 @login_required
 def home():
     form = Computation()
-
     if form.validate_on_submit():       # this block of code is executed when browser sent POST request(user submitted form)
         try:
             DirectoryAndFileWriter.create_experiment(form, str(current_user.id))
