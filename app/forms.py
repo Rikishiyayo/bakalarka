@@ -23,7 +23,7 @@ class Computation(Form):
                                     validators=[NumberRange(100, 10000, "Minimum value is 100, maximum value is 10000!")], default=100)
     alpha = FloatField('alpha - max. random step:', default=0.01)
     beta = FloatField('beta - chi2 acceptance:', default=0.005)
-    gama = FloatField('gama - tunel scaling:', default=500)
+    gamma = FloatField('gamma - tunnel scaling:', default=500)
     submit = SubmitField('Submit')
 
 

@@ -244,7 +244,7 @@ def get_best_solutions_of_computation(user_id, comp_guid):
 # user_id - id of an user which matches a directory on a server where this user has his computations saved
 # comp_guid - id of a computation
 #
-# returns an object with 8 attributes - "title", "date", "comment", "steps", "sync", "alpha", "beta" and "gama"
+# returns an object with 8 attributes - "title", "date", "comment", "steps", "sync", "alpha", "beta" and "gamma"
 def get_computation_parameters(user_id, comp_guid):
     parameters_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "params.txt")
 

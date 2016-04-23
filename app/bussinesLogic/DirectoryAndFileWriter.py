@@ -64,7 +64,7 @@ def create_params_file(path, form):
             params.write('OPTIM_SYNC="' + str(form.stepsBetweenSync.data) + '"\n')
             params.write('OPTIM_ALPHA="' + str(form.alpha.data) + '"\n')
             params.write('OPTIM_BETA="' + str(form.beta.data) + '"\n')
-            params.write('OPTIM_GAMMA="' + str(form.gama.data) + '"\n')
+            params.write('OPTIM_GAMMA="' + str(form.gamma.data) + '"\n')
             params.write('OPTIM_ALGORITHM="' + str(form.calcType.data) + '"\n')
             params.write('MAX_Q="' + str(form.qRange.data) + '"\n')
     except OSError as err:

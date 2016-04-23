@@ -96,9 +96,9 @@ function setDefaultCalcStepsValue(value){
 
 function setOptParamsVisibility(visible){
     if (visible == 0)
-        $('#alpha, #beta, #gama').attr('disabled', true).css('color', '#a8a8a8').prev().css('color', '#a8a8a8');
+        $('#alpha, #beta, #gamma').attr('disabled', true).css('color', '#a8a8a8').prev().css('color', '#a8a8a8');
     else
-        $('#alpha, #beta, #gama').attr('disabled', false).css('color', '#4c4c4c').prev().css('color', '#4c4c4c');
+        $('#alpha, #beta, #gamma').attr('disabled', false).css('color', '#4c4c4c').prev().css('color', '#4c4c4c');
 }
 
 function highlightSelectedRadioButton(){
@@ -476,7 +476,7 @@ function validation() {
             beta: {
                 number: true
             },
-            gama: {
+            gamma: {
                 number: true
             }
         },
@@ -655,10 +655,10 @@ function tooltips() {
         position: position,
         items: "#beta"
     });
-    $( "#gama" ).tooltip({
+    $( "#gamma" ).tooltip({
         content: "chi2 difference scaling in stochastic tunneling transformation. Float number.",
         position: position,
-        items: "#gama"
+        items: "#gamma"
     });
 }
 
