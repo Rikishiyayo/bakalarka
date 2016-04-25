@@ -365,34 +365,64 @@ div.experiment_list{
             background-color: lightgray;
             cursor: pointer;
         }
-    
-    div.experiment_list div.experiment_list_overlay{
+
+    .img-reload-list-overlay, .filter-toggle-overlay{
         display: none;
         position: absolute;
-        color: #4c4c4c;
-        text-align: center;
-        box-sizing: border-box;
-        margin-top: 99px;
-        background-color: whitesmoke;
-        width: 100%;
-        vertical-align: middle;
-        height: calc(100% - 99px);
         top: 0;
-        left: 0;
-        opacity: 1;
+        height: 38px;
+        width: 38px;
+        opacity: .7;
+        background-color: whitesmoke;
     }
 
-    div.experiment_list div.experiment_list_overlay:after{
+    .img-reload-list-overlay{
+        left: 5%;
+    }
+
+    .filter-toggle-overlay{
+        right: 0;
+    }
+    
+    .experiment_list_overlay, .error-info, .list-header-overlay, .search-filter-overlay, .pagination-controls-overlay {
+        display: none;
+        position: absolute;
+        text-align: center;
+        background-color: whitesmoke;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        font-size: 17px;
+    }
+
+    .list-header-overlay, .search-filter-overlay, .pagination-controls-overlay {
+        opacity: .7;
+    }
+
+    div.experiment_list div.experiment_list_overlay{
+        z-index: 10;
+    }
+
+    div.experiment_list div.error-info{
+        z-index: 1;
+    }
+
+    div.experiment_list div.experiment_list_overlay:after, div.experiment_list div.error-info:after{
         content: "";
         display: inline-block;
         vertical-align: middle;
         height: 100%;
     }
 
-        div.experiment_list div.experiment_list_overlay img{
+        div.experiment_list div.experiment_list_overlay img, div.experiment_list div.error-info img{
             width: 128px;
             height: 128px;
             vertical-align: middle;
+        }
+
+        div.experiment_list div.error-info img {
+            margin-right: 20px;
         }
 
     div.experiment_list .search-filter {
@@ -404,6 +434,7 @@ div.experiment_list{
         margin: 0 0 10px 5%;
         padding-bottom: 10px;
         display: none;
+        position: relative;
     }
 
         div.experiment_list .search-filter p {
@@ -418,9 +449,7 @@ div.experiment_list{
                 margin-left: 1%;
             }
 
-                div.experiment_list .search-filter p span.filter {
-                    font-size: 17px;
-                    background-color: lightskyblue;
+                div.experiment_list .search-filter p span.filter, div.experiment_list .search-filter p span.clear-filter {
                     border-radius: 4px;
                     width: 10%;
                     line-height: 30px;
@@ -432,8 +461,21 @@ div.experiment_list{
                     -o-transition: background-color .5s;
                 }
 
+                div.experiment_list .search-filter p span.filter {
+                    background-color: lightskyblue;
+                }
+
+                div.experiment_list .search-filter p span.clear-filter {
+                    background-color: #f65858;
+                }
+
                     div.experiment_list .search-filter p span.filter:hover {
                         background-color: #6ca4c8;
+                        cursor: pointer;
+                    }
+
+                    div.experiment_list .search-filter p span.clear-filter:hover {
+                        background-color: #dc3f3f;
                         cursor: pointer;
                     }
 
@@ -443,13 +485,13 @@ div.experiment_list{
                 padding: 1px 5px;
                 color: #4c4c4c;
                 border-radius: 4px;
-                border: 1px solid lightgrey;
+                border: 1px solid #4c4c4c;
                 height: 30px;
                 margin-left: 1%;
             }
 
                 div.experiment_list .search-filter p input:focus {
-                    border: 2px lightskyblue;
+                    border: 2px solid lightskyblue;
                 }
 
             div.experiment_list .search-filter p .date {
@@ -476,6 +518,7 @@ div.experiment_list{
         height: 40px;
         font-size: 0;
         border-radius: 4px;
+        position: relative;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
@@ -559,6 +602,7 @@ div.experiment_list{
         text-align: center;
         border-radius: 4px;
         margin-top: 10px;
+        position: relative;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
@@ -598,6 +642,11 @@ div.experiment_list{
                 background-color: gray;
                 cursor: pointer;
             }
+
+    div.experiments-rows-wrapper{
+        position: relative;
+        height: 640px;
+    }
 
     div.experiment_list .experiment_row a {
         display: none;
@@ -657,6 +706,47 @@ div.experiment_list{
     border-radius: 4px !important;
     color: whitesmoke;
     max-width: 800px;
+    position: absolute;
+}
+
+.leftArrowTooltip:after{
+    content: " ";
+    width: 0;
+    border: 10px solid #4c4c4c;
+    border-bottom-color: transparent;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    position: absolute;
+    left: -19px;
+    top: 10px;
+}
+
+.rightArrowTooltip:after{
+    content: " ";
+    width: 0;
+    border: 10px solid #4c4c4c;
+    border-bottom-color: transparent;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    position: absolute;
+    right: -19px;
+    top: 10px;
+}
+
+.upArrowTooltip{
+
+}
+
+.upArrowTooltip:after{
+    content: " ";
+    width: 0;
+    border: 10px solid #4c4c4c;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    position: absolute;
+    right: 50%;
+    top: -19px;
 }
 
 .ui-tooltip-content {

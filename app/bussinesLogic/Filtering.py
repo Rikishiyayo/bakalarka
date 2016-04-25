@@ -1,7 +1,7 @@
 import datetime
 from operator import itemgetter
 
-status_shortcuts = {"accepted": "a", "running": "r", "queued": "q", "done": "d"}
+status_shortcuts = {"accepted": "a", "checked": "c", "preprocessed": "p", "storage_ready": "sr", "optim_completed": "oc", "running": "r", "queued": "q", "done": "d"}
 
 
 def sort_computations(computations, sort_option, sort_order):
@@ -45,7 +45,6 @@ def compare_status(value, expected_values):
 
 def compare_progress(value, expected_value):
     expression = expected_value.strip().split(' ')
-
     try:
         if len(expression) == 1:
             return float(value) == float(expression[0])

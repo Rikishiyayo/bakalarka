@@ -114,48 +114,60 @@
         </form>
     </div>
     <div class="experiment_list">
+        <div class="img-reload-list-overlay"></div>
+        <div class="filter-toggle-overlay"></div>
         <div class="delete-dialog"></div>
-        <div class="experiment_list_overlay">
-            <img src="/static/styles/icons/gears.gif" title="reload">
-        </div>
         <img class="img_reload_list" src="/static/styles/icons/reload.png" title="reload">
         <h1>View a computation</h1>
         <img class="filter-toggle" src="/static/styles/icons/search_filter.png" title="search filter">
         <div class="search-filter">
+            <div class="search-filter-overlay"></div>
             <p class="header">
                 <span class="date">Date</span>
                 <span class="name">Name</span>
                 <span class="progress">Progress</span>
                 <span class="status">Status</span>
+                <span class="clear-filter">Clear</span>
             </p>
             <p class="textboxes">
                 <input class="date" type="text">
                 <input class="name" type="text">
                 <input class="progress" type="text">
                 <input class="status" type="text">
-                <span class="filter">Search</span>
+                <span class="filter">Filter</span>
             </p>
         </div>
-        <p class="list-header">
+        <div class="list-header">
+            <div class="list-header-overlay"></div>
             <span id="date" class="descending"><span>Date<img class="visible" src="/static/styles/icons/arrow_down2.png"></span></span>
             <span id="name"><span>Title<img src="/static/styles/icons/arrow_down2.png"></span></span>
             <span id="progress"><span>Progress<img src="/static/styles/icons/arrow_down2.png"></span></span>
             <span id="status"><span>Status<img src="/static/styles/icons/arrow_down2.png"></span></span>
             <!--<img class="delete-all" src="/static/styles/icons/recycle_bin.png">-->
-        </p>
-        {% for item in comps %}
-        <p class="experiment_row">
-            {% if item.progress != '0' %}
-                <a href="{{ url_for('main.view_experiment', user_id=item.user_id, comp_guid=item.comp_guid) }}"></a>
-            {% endif %}
-            <span class="date">{{ item.date }}</span>
-            <span class="name">{{ item.name }}</span>
-            <span class="progress">{{ item.progress }}</span>
-            <span class="status">{{ item.status }}</span>
-            <img src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">
-        </p>
-        {% endfor %}
+        </div>
+        <div class="experiments-rows-wrapper">
+            <div class="experiment_list_overlay">
+                <img id="loading-icon" src="/static/styles/icons/gears.gif">
+            </div>
+            <div class="error-info">
+                <img id="error-icon" class="" src="/static/styles/icons/error.png">
+                Could not load data. Please try again.
+            </div>
+            {% for item in comps %}
+                <p class="experiment_row">
+                {% if item.progress != '0' %}
+                    <a href="{{ url_for('main.view_experiment', user_id=item.user_id, comp_guid=item.comp_guid) }}"></a>
+                {% endif %}
+                <span class="date">{{ item.date }}</span>
+                <span class="name">{{ item.name }}</span>
+                <span class="progress">{{ item.progress }}</span>
+                <span class="status">{{ item.status }}</span>
+                <img src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">
+                </p>
+            {% endfor %}
+        </div>
         <div class="pagination-controls">
+            <div class="pagination-controls-overlay"></div>
             {% if pages|length > 1 %}
                 <span class="page previous"> < </span>
                     {% for item in pages %}

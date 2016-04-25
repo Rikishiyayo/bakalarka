@@ -25,14 +25,20 @@ $(function () {
     filterToggleClick();
     sortList();
     filterList();
+    clearFilter();
 
     validation();
     fileFormatValidation();
 
     tooltips();
     dialog();
+
+    $('#calcSteps').on('click', function () {
+        $(this).tooltip('open');
+    })
 });
 
+//---------------------------------------------------------------------------------ajax callback functions---------------------------------------------------------------------------------------
 //success function for asynchronous calls, erases current list of computations and replaces it with new list
 function onGetExperimentsSuccess(data) {
     $('.experiment_list p.experiment_row').detach();
@@ -51,7 +57,7 @@ function onGetExperimentsSuccess(data) {
         newEl += "<span class=\"progress\">" + comps[i].progress + "</span>";
         newEl += "<span class=\"status\">" + comps[i].status + "</span>";
         newEl += "<img src=\"/static/styles/icons/recycle_bin.png\">";
-        $(newEl).insertBefore('.pagination-controls');
+        $('.experiments-rows-wrapper').append(newEl);
     }
     changeStatusColor();
     computationRowHoverAndClick();
@@ -61,17 +67,24 @@ function onGetExperimentsSuccess(data) {
 
 //error function for asynchronous calls, tries to log error to saxs.log on server
 function onGetExperimentsError(jqXHR, textStatus, errorThrown) {
-    console.log(jqXHR.statusText + '\n' + jqXHR.responseText + '\n' + textStatus + '\n' + errorThrown)
+    $('.error-info').show();
+    setTimeout(function () {
+        $('.error-info').fadeOut(700);
+        hideOverlays();
+    }, 3000);
 }
 
 //complete function for asynchronous calls, hides loading gif and displays error message to user
-function onGetExperimentsComplete() {
+function onGetExperimentsComplete(textStatus) {
     setTimeout(function(){
         $('.experiment_list_overlay').hide();
+        if (textStatus.status == 200)
+            hideOverlays();
     }, 500);
 }
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------------form manipulation---------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------form manipulation------------------------------------------------------------------------------------------
 function setSliderValue(){
     $('.qRange-value').text($('#qRange').val());
 }
@@ -143,12 +156,13 @@ function advancedSettingsToggleClick(){
 //this function reloads list with computations - it asynchronously calls server method that returns list of computations in JSON
 function reloadList(){
     $('.img_reload_list').on('click', function(){
-        $('.experiment_list_overlay').show();
+        $('.error-info').hide();
+        showOverlays();
         $('.search-filter input').val('');
         filterOptions = {};
         $.ajax({
             type: 'POST',
-            url: "/gett_experiments/0/date/-1",
+            url: "/get_experiments/0/date/-1",
             data: JSON.stringify({}),
             contentType: 'application/json',
             success: function(data){
@@ -177,6 +191,18 @@ function changeStatusColor() {
                 break;
             case "queued":
                 $(this).css('color', '#F54646');
+                break;
+            case "checked":
+                $(this).css('color', 'brown');
+                break;
+            case "preprocessed":
+                $(this).css('color', 'pink');
+                break;
+            case "storage_ready":
+                $(this).css('color', 'purple');
+                break;
+            case "optim_completed":
+                $(this).css('color', 'magenta');
                 break;
             default:
                 break;
@@ -234,7 +260,8 @@ function deleteRowButtonHoverAndClick(){
 }
 
 function deleteComputation(){
-    $('.experiment_list_overlay').show();
+    $('.error-info').hide();
+    showOverlays();
     var data = compBeingDeleted;
     data['filter_values'] = filterOptions;
 
@@ -261,32 +288,49 @@ function deleteComputation(){
 }
 
 function getInfoOfComputationBeingDeleted(element){
-    var json = {'all': 'False'}
+    var json = {'all': 'False'};
     json['comp_guid'] = element.children('a').attr('href').split('/')[3];
     return json;
+}
+
+function hideOverlays() {
+    $('.list-header-overlay').hide();
+    $('.search-filter-overlay').hide();
+    $('.img-reload-list-overlay').hide();
+    $('.filter-toggle-overlay').hide();
+    $('.pagination-controls-overlay').hide();
+}
+
+function showOverlays() {
+    $('.experiment_list_overlay').show();
+    $('.list-header-overlay').show();
+    $('.search-filter-overlay').show();
+    $('.img-reload-list-overlay').show();
+    $('.filter-toggle-overlay').show();
+    $('.pagination-controls-overlay').show();
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------pagination controls-------------------------------------------------------------------------------------------
 //this function displays computations for clicked page
 function changePageOnPageClick(){
-    $('span.page:not(.previous, .next)').on('click', function(){
-        if ( !$(this).hasClass('selected') ){
-            $('.experiment_list_overlay').show();
-            $.ajax({
-                type: 'POST',
-                url: "/get_experiments/" + (parseInt($(this).text()) - 1).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
-                contentType: 'application/json',
-                success: function (data) {
-                    onGetExperimentsSuccess(data);
-                    selectPageControl($(this).text());
-                },
-                complete: onGetExperimentsComplete,
-                error: onGetExperimentsError,
-                data: JSON.stringify(filterOptions),
-                dataType: 'json'
-            });
-       }
+    $('.pagination-controls').on('click', 'span.page:not(.previous, .next, .selected)', function(){
+        var selectedPage = $(this);
+        $('.error-info').hide();
+        showOverlays();
+        $.ajax({
+            type: 'POST',
+            url: "/get_experiments/" + (parseInt($(this).text()) - 1).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
+            contentType: 'application/json',
+            success: function (data) {
+                onGetExperimentsSuccess(data);
+                selectPageControl(selectedPage.text());
+            },
+            complete: onGetExperimentsComplete,
+            error: onGetExperimentsError,
+            data: JSON.stringify(filterOptions),
+            dataType: 'json'
+        });
     });
 }
 
@@ -296,7 +340,8 @@ function changePageOnNextClick(){
         var selectedPage = $('span.page.selected');
         var lastVisiblePage = $('span.page:not(.previous, .next):visible').last();
         if ( !selectedPage.is($('span.page:not(.previous, .next)').last()) ){
-            $('.experiment_list_overlay').show();
+            $('.error-info').hide();
+            showOverlays();
             $.ajax({
                 type: 'POST',
                 url: "/get_experiments/" + selectedPage.text() + "/" + getSortOption() + "/" + determineSortOrder(),
@@ -305,8 +350,8 @@ function changePageOnNextClick(){
                     onGetExperimentsSuccess(data);
                     selectPageControl(parseInt(selectedPage.text()) + 1);
                     if (selectedPage.is(lastVisiblePage)) {
-                       $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
-                       $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
+                        $('span.page:not(.previous, .next):visible').first().addClass('hiddenBefore');
+                        $('span.page:not(.previous, .next).hiddenAfter').first().removeClass('hiddenAfter');
                     }
                 },
                 complete: onGetExperimentsComplete,
@@ -324,7 +369,8 @@ function changePageOnPreviousClick(){
         var selectedPage = $('span.page.selected');
         var firstVisiblePage = $('span.page:not(.previous, .next):visible').first();
         if ( selectedPage.text() != "1" ){
-            $('.experiment_list_overlay').show();
+            $('.error-info').hide();
+            showOverlays();
             $.ajax({
                 type: 'POST',
                 url: "/get_experiments/" + ((parseInt(selectedPage.text()) - 2)).toString() + "/" + getSortOption() + "/" + determineSortOrder(),
@@ -341,7 +387,7 @@ function changePageOnPreviousClick(){
                 error: onGetExperimentsError,
                 data: JSON.stringify(filterOptions),
                 dataType: 'json'
-           });
+            });
         }
     });
 }
@@ -369,13 +415,13 @@ function setPages(){
 
 //this function highlights selected page
 function selectPageControl(page){
-   $('span.page').each(function(){
-       $(this).removeClass('selected');
-   });
-   if ($('span.page:not(.previous, .next)').length != 0 && parseInt($('span.page:not(.previous, .next)').last().text()) < page)
-       $('span._' + (page - 1)).addClass('selected');
-   else
-       $('span._' + page).addClass('selected');
+    $('span.page').each(function(){
+        $(this).removeClass('selected');
+    });
+    if ($('span.page:not(.previous, .next)').length != 0 && parseInt($('span.page:not(.previous, .next)').last().text()) < page)
+        $('span._' + (page - 1)).addClass('selected');
+    else
+        $('span._' + page).addClass('selected');
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -390,8 +436,10 @@ function filterToggleClick(){
 function filterList(){
     $('.search-filter .filter').on('click', function(){
         if (!filterValidation()) return;
+        $('.search-filter input').removeClass("search-filter-validation-error");
         filterOptions = {};
-        $('.experiment_list_overlay').show();
+        $('.error-info').hide();
+        showOverlays();
         $.ajax({
             type: 'POST',
             url: "/get_experiments/0/" + getSortOption() + '/' + determineSortOrder(),
@@ -413,7 +461,8 @@ function sortList(){
     $('.list-header > span > span').on('click', function(){
         var clickedEl = $(this);
         setSortOrder(clickedEl.parent());
-        $('.experiment_list_overlay').show();
+        $('.error-info').hide();
+        showOverlays();
         $.ajax({
             type: 'POST',
             url: "/get_experiments/0/" + $(this).parent().attr('id') + "/" + determineSortOrder(),
@@ -428,6 +477,12 @@ function sortList(){
             data: JSON.stringify(filterOptions),
             dataType: 'json'
         });
+    });
+}
+
+function clearFilter() {
+    $('.search-filter .clear-filter').on('click', function(){
+        $('.search-filter input').val("").removeClass("search-filter-validation-error");
     });
 }
 
@@ -480,7 +535,7 @@ function getFilterArguments(){
         if($(this).val().trim() != "") {
             result[$(this).attr('class')] = $(this).val().trim();
             filterOptions[$(this).attr('class')] = $(this).val().trim();
-        }
+        }$('.search-filter input.progress')
     });
     return result;
 }
@@ -517,7 +572,7 @@ function validation() {
             }
         },
         errorPlacement: function(error, element) {
-               return true;
+            return true;
         }
     });
 }
@@ -583,32 +638,41 @@ function validateFileFormatForExpData(){
 }
 
 function filterValidation(){
-    var progressInput = $('.search-filter input.progress');
-    var progressReg1 = /^[> < =]\s+\d+$/;
-    var progressReg2 = /^[> <]=\s+\d+$/;
-    var progressReg3 = /^\d+\s+-\s+\d+$/;
-    if (progressReg1.test(progressInput.val()) || progressReg2.test(progressInput.val()) || progressReg3.test(progressInput.val()) || progressInput.val() == ""){
-        return true;
-    } else {
-        progressInput.addClass('search-filter-validation-error');
-        return false;
-    }
-    var dateInput = $('.search-filter input.date');
-    var dateReg1 = /^[> < =]\s+\d{1,2}\/\d{1,2}\/\d{4}$/;
-    var dateReg2 = /^[> <]=\s+\d{1,2}\/\d{1,2}\/\d{4}$/;
-    var dateReg3 = /^\d{1,2}\/\d{1,2}\/\d{4}\s+-\s+\d{1,2}\/\d{1,2}\/\d{4}$/;
-    if (dateReg1.test(dateInput.val()) || dateReg2.test(dateInput.val()) || dateReg3.test(dateInput.val()) || dateInput.val() == ""){
-        return true;
-    } else {
-        dateInput.addClass('search-filter-validation-error');
-        return false;
-    }
-    /*
-       date(> < =) - ^[> < =]\s\d{1,2}\/\d{1,2}\/\d{4}$
-       date(>= <=) - ^[> <]=\s\d{1,2}\/\d{1,2}\/\d{4}$
-       date(date - date) - ^\d{1,2}\/\d{1,2}\/\d{4}\s-\s\d{1,2}\/\d{1,2}\/\d{4}$
-    */
+    var isValid = true;
 
+    var progressInput = $('.search-filter input.progress');
+    var progressRegEx1 = /^\s*[><=]\s\d+\s*$/;
+    var progressRegEx2 = /^\s*[><]=\s\d+\s*$/;
+    var progressRegEx3 = /^\s*\d+\s-\s\d+\s*$/;
+    if (!(progressRegEx1.test(progressInput.val()) || progressRegEx2.test(progressInput.val()) || progressRegEx3.test(progressInput.val()) || progressInput.val() == "")) {
+        progressInput.addClass('search-filter-validation-error');
+        isValid = isValid && false;
+    }
+
+    var dateInput = $('.search-filter input.date');
+    var dateRegEx1 = /^\s*[><=]\s\d{1,2}\/\d{1,2}\/\d{4}\s*$/;
+    var dateRegEx2 = /^\s*[><]=\s\d{1,2}\/\d{1,2}\/\d{4}\s*$/;
+    var dateRegEx3 = /^\s*\d{1,2}\/\d{1,2}\/\d{4}\s-\s\d{1,2}\/\d{1,2}\/\d{4}\s*$/;
+    if (!(dateRegEx1.test(dateInput.val()) || dateRegEx2.test(dateInput.val()) || dateRegEx3.test(dateInput.val()) || dateInput.val() == "")) {
+        dateInput.addClass('search-filter-validation-error');
+        isValid = isValid && false;
+    }
+
+    var statusInput = $('.search-filter input.status');
+    var statusRegEx = /^\s*(\w[ ]?)+\s*$/;;
+    if (!(statusRegEx.test(statusInput.val()) || statusInput.val() == "")) {
+        statusInput.addClass('search-filter-validation-error');
+        isValid = isValid && false;
+    }
+
+    var nameInput = $('.search-filter input.name');
+    var nameRegEx = /.*/;
+    if (!(nameRegEx.test(nameInput.val()))) {
+        nameInput.addClass('search-filter-validation-error');
+        isValid = isValid && false;
+    }
+
+    return isValid;
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function dialog(){
@@ -624,7 +688,7 @@ function dialog(){
             "Yes": function() {
                 $( this ).dialog( "close" );
                 deleteComputation();
-        },
+            },
             "Cancel": function() {
                 $( this ).dialog( "close" );
                 compBeingDeleted = {};
@@ -634,11 +698,40 @@ function dialog(){
 }
 
 function tooltips() {
-    var position = {
+    var formFieldPosition = {
         my: "left center",
         at: "right+20 center",
         collision: "none"
-    }
+    };
+    var filterFieldPosition = {
+        my: "center top+40",
+        at: "center",
+        collision: "none"
+    };
+    $('input.date').tooltip({
+        content: "doplnit napovedu k filtrovaniu",
+        position: filterFieldPosition,
+        items: "input.date",
+        tooltipClass: "upArrowTooltip"
+    });
+    $('input.status').tooltip({
+        content: "doplnit napovedu k filtrovaniu",
+        position: filterFieldPosition,
+        items: "input.status",
+        tooltipClass: "upArrowTooltip"
+    });
+    $('input.name').tooltip({
+        content: "doplnit napovedu k filtrovaniu",
+        position: filterFieldPosition,
+        items: "input.name",
+        tooltipClass: "upArrowTooltip"
+    });
+    $('input.progress').tooltip({
+        content: "doplnit napovedu k filtrovaniu",
+        position: filterFieldPosition,
+        items: "input.progress",
+        tooltipClass: "upArrowTooltip"
+    });
     $('.delete-all').tooltip({
         content: "Delete all",
         position: {
@@ -646,7 +739,8 @@ function tooltips() {
             at: "left-20",
             collision: "none"
         },
-        items: ".delete-all"
+        items: ".delete-all",
+        tooltipClass: "rightArrowTooltip"
     });
     $('.filter-toggle').tooltip({
         content: "Search filter",
@@ -655,47 +749,56 @@ function tooltips() {
             at: "left-20",
             collision: "none"
         },
-        items: ".filter-toggle"
+        items: ".filter-toggle",
+        tooltipClass: "rightArrowTooltip"
     });
     $( ".img_reload_list" ).tooltip({
         content: "Reload list",
-        position: position,
-        items: ".img_reload_list"
+        position: formFieldPosition,
+        items: ".img_reload_list",
+        tooltipClass: "leftArrowTooltip"
     });
     $( ".row-models" ).tooltip({
         content: "Allowed file formats: 'zip', 'tar.gz', 'pdb'.",
-        position: position,
-        items: ".row-models"
+        position: formFieldPosition,
+        items: ".row-models",
+        tooltipClass: "leftArrowTooltip"
     });
     $( ".row-expData" ).tooltip({
         content: "Allowed file formats: 'dat'.",
-        position: position,
-        items: ".row-expData"
+        position: formFieldPosition,
+        items: ".row-expData",
+        tooltipClass: "leftArrowTooltip"
     });
     $( "#calcSteps" ).tooltip({
         content: "Integer number between 500 - 1 000 000.",
-        position: position,
-        items: "#calcSteps"
+        position: formFieldPosition,
+        items: "#calcSteps",
+        tooltipClass: "leftArrowTooltip"
     });
     $( "#stepsBetweenSync" ).tooltip({
         content: "Integer number between 100 - 10 000.",
-        position: position,
-        items: "#stepsBetweenSync"
+        position: formFieldPosition,
+        items: "#stepsBetweenSync",
+        tooltipClass: "leftArrowTooltip"
     });
     $( "#alpha" ).tooltip({
         content: "Maximal length of random walk step, 1 is whole range. Float number.",
-        position: position,
-        items: "#alpha"
+        position: formFieldPosition,
+        items: "#alpha",
+        tooltipClass: "leftArrowTooltip"
     });
     $( "#beta" ).tooltip({
         content: "This increase of chi2 is accepted with 10% probability by Metropolis criterion. Float number.",
-        position: position,
-        items: "#beta"
+        position: formFieldPosition,
+        items: "#beta",
+        tooltipClass: "leftArrowTooltip"
     });
     $( "#gamma" ).tooltip({
         content: "chi2 difference scaling in stochastic tunneling transformation. Float number.",
-        position: position,
-        items: "#gamma"
+        position: formFieldPosition,
+        items: "#gamma",
+        tooltipClass: "leftArrowTooltip"
     });
 }
 
