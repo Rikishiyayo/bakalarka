@@ -154,16 +154,23 @@
                 Could not load data. Please try again.
             </div>
             {% for item in comps %}
-                <p class="experiment_row">
-                {% if item.progress != '0' %}
-                    <a href="{{ url_for('main.view_experiment', user_id=item.user_id, comp_guid=item.comp_guid) }}"></a>
-                {% endif %}
-                <span class="date">{{ item.date }}</span>
-                <span class="name">{{ item.name }}</span>
-                <span class="progress">{{ item.progress }}</span>
-                <span class="status">{{ item.status }}</span>
-                <img src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">
-                </p>
+                <div class="experiment_row {{ item.status }}">
+                    {% if item.progress != '0' or item.status == 'user_error' or item.status == 'server_error' %}
+                        <a href="{{ url_for('main.view_experiment', user_id=item.user_id, comp_guid=item.comp_guid) }}"></a>
+                    {% endif %}
+                    <span class="date">{{ item.date }}</span>
+                    <span class="name">{{ item.name }}</span>
+                    <span class="progress">{{ item.progress }}</span>
+                    <span class="status">{{ item.status }}</span>
+                    {% if item.progress != '0' or item.status == 'user_error' or item.status == 'server_error' %}
+                        <img class="delete" src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">
+                    {% endif %}
+                    {% if item.status == 'user_error'%}
+                        <div class="error-row">
+                            {{ item.error_message }}
+                        </div>
+                    {% endif %}
+                </div>
             {% endfor %}
         </div>
         <div class="pagination-controls">

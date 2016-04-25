@@ -308,6 +308,12 @@ function onGetExperimentDataSuccess(data) {
 
     viewFile();
     createButtons(selectedSolution);
+    setWeightSpanWidth();
+}
+
+function setWeightSpanWidth() {
+    var length = 100 / $('.result-row:first span').length;
+    $('.result-row span').css('width', length + '%');
 }
 
 //this function loads data for every computed curve in a given solution to an array of arrays with 2 values - 'q_value' and 'intensity'

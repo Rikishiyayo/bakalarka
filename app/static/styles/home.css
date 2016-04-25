@@ -212,6 +212,10 @@ div.submit_experiment{
                 line-height: 40px;
                 border-radius: 4px;
                 margin: 0;
+                transition: all .5s;
+                -webkit-transition: all .5s;
+                -moz-transition: all .5s;
+                -o-transition: all .5s;
             }
 
             div.submit_experiment form span.calcType label:first-of-type {
@@ -222,8 +226,6 @@ div.submit_experiment{
                     cursor: pointer;
                     color: black;
                 }
-
-
 
         div.submit_experiment form textarea {
             box-sizing: border-box;
@@ -435,6 +437,10 @@ div.experiment_list{
         padding-bottom: 10px;
         display: none;
         position: relative;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 
         div.experiment_list .search-filter p {
@@ -584,13 +590,16 @@ div.experiment_list{
         box-sizing: border-box;
         width: 95%;
         margin-left: 5%;
-        height: 40px;
         font-size: 0;
         border-radius: 4px;
         transition: background-color .5s;
         -webkit-transition: background-color .5s;
         -moz-transition: background-color .5s;
         -o-transition: background-color .5s;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 
         div.experiment_list .experiment_row.highlight {
@@ -645,62 +654,72 @@ div.experiment_list{
 
     div.experiments-rows-wrapper{
         position: relative;
-        height: 640px;
+        min-height: 640px;
     }
 
-    div.experiment_list .experiment_row a {
-        display: none;
-    }
-
-    div.experiment_list .experiment_row span{
-        display: inline-block;
-        font-size: 17px;
-        box-sizing: border-box;
-        vertical-align: middle;
-        line-height: 40px;
-        margin-left: 1%;
-    }
-
-        div.experiment_list .experiment_row span.date {
-            width: 14%;
-        }
-
-        div.experiment_list .experiment_row span.name {
-            width: 40%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: pre;
-        }
-        
-        div.experiment_list .experiment_row span.progress {
-            width: 16%;
-        }
-
-        div.experiment_list .experiment_row span.status {
-            width: 16%;
-        }
-
-        div.experiment_list .experiment_row img{
-            display: inline-block;
-            opacity: 0;
-            vertical-align: middle;
-            height: 34px;
+        div.experiments-rows-wrapper .error-row{
+            display: none;
+            width: 100%;
+            text-align: center;
+            font-size: 17px;
             box-sizing: border-box;
-            padding: 5px;
-            margin-left: calc(100% - 90% - 34px);
-            transition: opacity .5s;
-            -webkit-transition: opacity .5s;
-            -moz-transition: opacity .5s;
-            -o-transition: opacity .5s;
+            padding: 5px 0 20px 0;
+            margin-bottom: 10px;
         }
+
+        div.experiments-rows-wrapper .experiment_row a {
+            display: none;
+        }
+
+        div.experiments-rows-wrapper .experiment_row span{
+            display: inline-block;
+            font-size: 17px;
+            box-sizing: border-box;
+            vertical-align: middle;
+            line-height: 40px;
+            margin-left: 1%;
+        }
+
+            div.experiments-rows-wrapper .experiment_row span.date {
+                width: 14%;
+            }
+
+            div.experiments-rows-wrapper .experiment_row span.name {
+                width: 40%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: pre;
+            }
+
+            div.experiments-rows-wrapper .experiment_row span.progress {
+                width: 16%;
+            }
+
+            div.experiments-rows-wrapper .experiment_row span.status {
+                width: 16%;
+            }
+
+            div.experiments-rows-wrapper .experiment_row img.delete{
+                display: inline-block;
+                opacity: 0;
+                vertical-align: middle;
+                height: 34px;
+                box-sizing: border-box;
+                padding: 5px;
+                margin-left: calc(100% - 90% - 34px);
+                transition: opacity .5s;
+                -webkit-transition: opacity .5s;
+                -moz-transition: opacity .5s;
+                -o-transition: opacity .5s;
+            }
 
 .ui-tooltip {
     background: #4c4c4c !important;
     box-sizing: border-box !important;
-    height: 40px;
+    height: 34px;
     padding: 0 5px !important;
     margin: 0 !important;
-    line-height: 40px;
+    line-height: 34px;
     border: none !important;
     box-shadow: 0 0 0 !important;
     border-radius: 4px !important;
@@ -709,52 +728,56 @@ div.experiment_list{
     position: absolute;
 }
 
+    .ui-tooltip-content {
+        font-size: 14px !important;
+    }
+
+    .ui-tooltip:after {
+        content: " ";
+        width: 0;
+        border: 10px solid #4c4c4c;
+        border-top-color: transparent;
+        position: absolute;
+    }
+
 .leftArrowTooltip:after{
-    content: " ";
-    width: 0;
-    border: 10px solid #4c4c4c;
     border-bottom-color: transparent;
-    border-top-color: transparent;
     border-left-color: transparent;
-    position: absolute;
     left: -19px;
-    top: 10px;
+    top: 7px;
 }
 
 .rightArrowTooltip:after{
-    content: " ";
-    width: 0;
-    border: 10px solid #4c4c4c;
     border-bottom-color: transparent;
-    border-top-color: transparent;
     border-right-color: transparent;
-    position: absolute;
     right: -19px;
-    top: 10px;
+    top: 7px;
 }
 
 .upArrowTooltip{
-
+    height: auto;
+    line-height: 23px;
+    max-width: 450px;
+    padding: 10px !important;
 }
 
+    .upArrowTooltip .ui-tooltip-content {
+
+    }
+
 .upArrowTooltip:after{
-    content: " ";
-    width: 0;
-    border: 10px solid #4c4c4c;
-    border-top-color: transparent;
     border-left-color: transparent;
     border-right-color: transparent;
-    position: absolute;
     right: 50%;
     top: -19px;
 }
 
-.ui-tooltip-content {
-    font-size: 14px !important;
+.selectedPaginationControl {
+    background-color: lightskyblue !important;
 }
 
-.selected{
-    background-color: lightskyblue !important;
+.selectedRow {
+    background-color: lightgray;
 }
 
 .hiddenBefore, .hiddenAfter{

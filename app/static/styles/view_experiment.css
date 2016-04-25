@@ -93,20 +93,10 @@ div.best-results-table {
         div.best-results-table p span {
             display: inline-block;
             vertical-align: middle;
-            width: 2%;
             font-size: 12px;
             height: 20px;
             line-height: 20px;
             text-align: center;
-        }
-
-        div.best-results-table p.header-row span {
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        div.best-results-table p span:last-child {
-            width: 92%;
         }
 
         div.best-results-table p.result-row {

@@ -34,13 +34,17 @@ def get_computations(user_id, sort_option, sort_order, search_filters):
     for computation_dir in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id))):
         info = {"comp_guid": computation_dir, "user_id": user_id}
         read_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "params.txt"), info, ["NAME", "DATE"])
-        read_result_or_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "status.txt"), info, "status")
+        read_row(os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "status.txt"), info, "status")
 
         path_to_result_file = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "result.dat")
         if check_for_computation_results(user_id, computation_dir, info["status"]):
-            read_result_or_status_file(path_to_result_file, info, "progress")
+            read_row(path_to_result_file, info, "progress")
         else:
             info["progress"] = "0"
+
+        if info["status"] == "user_error" or info["status"] == "server_error":
+            path_to_error_message = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), computation_dir, "error_message.txt")
+            read_row(path_to_error_message, info, "error_message")
 
         computations.append(info)
 
@@ -67,7 +71,7 @@ def check_for_computation_results(user_id, comp_guid, status):
 def get_computation_status(user_id, comp_guid):
     file_path = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), comp_guid, "status.txt")
     info = {}
-    read_result_or_status_file(file_path, info, "status")
+    read_row(file_path, info, "status")
     return info["status"]
 
 
@@ -192,25 +196,26 @@ def get_experiment_data(user_id, comp_guid):
         raise err
 
 
+# reads a file 'result.dat' with weights for every computed curve
 #
+# user_id - id of an user which matches a directory on a server where this user has his computations saved
+# comp_guid - id of a computation
 #
-#
-#
+# returns an array of arrays where nested arrays represents 1 computed curve
 def get_best_solutions_of_computation(user_id, comp_guid):
     file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "result.dat")
     solutions = []
-    name_of_data_values = ["c", "c1", "c2", "chi"]
 
     try:
         with open(file_path) as file:
             lines = file.readlines()
             lines.pop(0)  # first line removed
             for i, line in enumerate(lines, start=1):
-                data = {'solution': i}
+                data = [i]
                 values_in_line = line.split(',')
 
-                for j, value in enumerate(values_in_line[0:4]):
-                    data[name_of_data_values[j]] = value.strip()
+                for j, value in enumerate(values_in_line[4:]):
+                    data.append(float(value.strip()))
 
                 solutions.append(data)
 
@@ -277,15 +282,15 @@ def read_file(file_path, info_dict, keys):
         raise err
 
 
-def read_result_or_status_file(file_path, info_dict, key):
+def read_row(file_path, info_dict, key):
     try:
         with open(file_path) as file:
             info_dict[key] = file.readline().strip()
     except FileNotFoundError as err:
-        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
+        current_app.logger.error('File result.dat/status.txt or error_message.txt doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
         raise err
     except OSError as err:
-        current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
+        current_app.logger.error('Error while trying to access or while reading result.dat/status.txt or error_message.txt in specified directory\n'
                                  'function arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
         raise err
 

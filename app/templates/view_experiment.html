@@ -24,21 +24,12 @@
     </div>
     <div class="best-results-table">
         <div id="best-results-table-overlay"></div>
-        <p class="header-row">
-            <span>c</span>
-            <span>c1</span>
-            <span>c2</span>
-            <span>chi</span>
-            <span>weights</span>
-        </p>
         {% for item in best_results %}
             <p class="result-row">
-                <input type="hidden" value="{{ item.solution }}">
-                <span>{{ item.c }}</span>
-                <span>{{ item.c1 }}</span>
-                <span>{{ item.c2 }}</span>
-                <span>{{ item.chi }}</span>
-                <span>weights</span>
+                <input type="hidden" value="{{ item[0] }}">
+                {% for weight in item[1:] %}
+                    <span>{{ weight }}</span>
+                {% endfor %}
             </p>
         {% endfor %}
     </div>
