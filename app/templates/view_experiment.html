@@ -16,6 +16,10 @@
 {% endblock %}
 
 {% block content %}
+    <div class="error-screen">
+        <img id="error-icon" class="" src="/static/styles/icons/error.png">
+        <span>Could not load data. Please try again.</span>
+    </div>
     <div class="loading-screen">
         <span>loading...</span>
     </div>
@@ -60,7 +64,7 @@
     <hr>
     <div id="PresentationPanel">
         <div class="DataViewerPanel">
-            <div id="jsmolViewer"></div>
+            <div id="pvViewer"></div>
             <div id="chart"></div>
         </div>
         <div class="ControlsPanel">

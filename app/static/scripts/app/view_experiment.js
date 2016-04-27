@@ -41,105 +41,20 @@ var options = {
 
 ////////////////////////////////////////////// main function - calls other functions ////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
-    viewer = pv.Viewer(document.getElementById('jsmolViewer'), options);
+    viewer = pv.Viewer(document.getElementById('pvViewer'), options);  //must be javascript function 'getElementById', otherwise pv throws an error while trying to display molecules
     $('.PageWrapper').css('min-width', '1550px');
     $('.best-results-table .result-row').first().addClass('selected-solution');  //set currently displayed solution
+
     viewExperiment();
     setSelectedRadioButtons();
     setModelViewerWidth();
     windowResizeActions();
-
-    $('.result-row').on('click', function(){
-        $('#controls-panel-overlay').show();
-        $('#best-results-table-overlay').show();
-
-        var solution = $(this).find('input[type=hidden]').val();
-        $('.result-row').removeClass('selected-solution');
-        $(this).addClass('selected-solution');
-
-        setSelectedRadioButtons();
-        resetSliderValues();
-        highlightSelectedRadioButton('select');
-        highlightSelectedRadioButton('sort');
-
-        setTimeout(function(){
-            chartOptions.series = chartOptions.series.slice(0, 1);
-            createButtons(solution);
-            loadComputedCurvesForSolution(solution, true);
-            displayModels();
-        }, 10);
-    });
-
-    $('.model_buttons').on('click', 'input', function () {
-        var button = $(this);
-        $('#controls-panel-overlay').show();
-        $('#best-results-table-overlay').show();
-        resetSliderValues();
-        $('input[type=radio][name=select]:checked').prop('checked', false);
-        setTimeout(function(){
-            modelButtonClicked(button);
-        }, 10);
-    });
-
-    // handles a slider value change and displays corresponding models and curves
-    $('#sliderWeight').on('input', function () {            //versions of IE < 9 do not support this event, they have proprietary onPropertyChange event
-        $('.sliderWeightValue').text($(this).val() + "%");
-    }).on('mouseup', function () {
-        var value = $(this).val();
-
-        //remove selected value on another slider
-        $('#sliderSummation').val(0);
-        $('.sliderSummationValue').text("-");
-
-        $('#controls-panel-overlay').show();
-        $('#best-results-table-overlay').show();
-        $('.sliderWeightValue').text($(this).val() + "%");
-        $('input[type=radio][name=select]:checked').prop('checked', false);
-        setTimeout(function(){
-            selectButtonsByWeight(value);
-            displayModelsSelectedByWeight(value, selectedSolution);
-            displayCurves();
-        }, 10);
-    });
-
-    $('#sliderSummation').on('input', function () {
-        $('.sliderSummationValue').text($(this).val() + "%");
-    }).on('mouseup', function () {
-        var value = $(this).val();
-
-        //remove selected value on another slider
-        $('#sliderWeight').val(0);
-        $('.sliderWeightValue').text("-");
-
-        $('#controls-panel-overlay').show();
-        $('#best-results-table-overlay').show();
-        $('.sliderSummationValue').text($(this).val() + "%");
-        $('input[type=radio][name=select]:checked').prop('checked', false);
-        setTimeout(function(){
-            selectButtonsByWeightSummation(value, selectedSolution);
-            displayModels();
-            displayCurves();
-        }, 10);
-    });
-
-    $('input[type=radio][name=sort]').on('change', function () {
-        var button = $(this);
-        $('#controls-panel-overlay').show();
-        $('#best-results-table-overlay').show();
-        setTimeout(function(){
-            radioButtonSortChange(button);
-        }, 10);
-    });
-
-    $('input[type=radio][name=select]').on('change', function () {
-        var button = $(this);
-        $('#controls-panel-overlay').show();
-        $('#best-results-table-overlay').show();
-        resetSliderValues();
-        setTimeout(function(){
-            radioButtonSelectChange(button);
-        }, 10);
-    });
+    resultRowClick();
+    modelButtonsClick();
+    weightSliderValueChange();
+    weightSumValueChange();
+    selectRadioButtonsValueChange();
+    sortRadioButtonsValueChange();
 
     var $content = $('.highcharts-container'); // Cache your selectors!
 
@@ -160,16 +75,86 @@ $(function () {
 //    });
 //
 //    $('.btnCloseChartFullscreen').on('click', function () {
-//        $('#chart').insertAfter('#PresentationPanel .DataViewerPanel #jsmolViewer');
+//        $('#chart').insertAfter('#PresentationPanel .DataViewerPanel #pvViewer');
 //        $('.chart-fullscreen').css('display', 'none');
 //        var chart = new Highcharts.Chart(options);
 //        chart.setSize($('#chart').width(), $('#chart').height());
 //    });
 });
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// set sort and select options when page loads for the first time or when user selects another solution
+function setSelectedRadioButtons(){
+    $("input[type=radio][name=select][value='1']").prop('checked', true);
+    $("input[type=radio][name=sort][value='3']").prop('checked', true);
+}
+
+// set width and height of jsmol viewer when page loads for the first time
+function setModelViewerWidth(){
+    var pvViewer = $('#pvViewer');
+    var currentHeight = pvViewer.height();
+    var currentWidth = pvViewer.width();
+    pvViewer.children('canvas').attr({'width': currentWidth - 2, 'height': currentHeight -1});
+}
+
+// resize pv viewer on window resize event so it fits the parent element
+function windowResizeActions(){
+    var pvViewer = $('#pvViewer');
+    $(window).resize(function(){
+        setTimeout(function(){
+            var currentWidth = pvViewer.width();
+            var currentHeight = pvViewer.height();
+            pvViewer.children('canvas').attr({'width': currentWidth - 1, 'height': currentHeight - 1});
+        }, 50);
+    });
+}
+
+// handles a click on a solution row
+function resultRowClick() {
+    $('.result-row').on('click', function(){
+        // show overlays
+        $('#controls-panel-overlay').show();
+        $('#best-results-table-overlay').show();
+
+        // highlight selected row
+        var solution = $(this).find('input[type=hidden]').val();
+        $('.result-row').removeClass('selected-solution');
+        $(this).addClass('selected-solution');
+
+        setSelectedRadioButtons();
+        resetSliderValues();
+        highlightSelectedRadioButton('select');
+        highlightSelectedRadioButton('sort');
+
+        setTimeout(function(){
+            chartOptions.series = chartOptions.series.slice(0, 1);
+            createButtons(solution);
+            loadComputedCurvesForSolution(solution, true);
+            displayModels();
+        }, 10);
+    });
+}
 
 //handles a click on a model button
-function modelButtonClicked(button){
+function modelButtonsClick() {
+    $('.model_buttons').on('click', 'input', function () {
+        var button = $(this);
+        // show overlays
+        $('#controls-panel-overlay').show();
+        $('#best-results-table-overlay').show();
+
+        resetSliderValues();
+
+        // unselect all selected options on radio buttons
+        $('input[type=radio][name=select]:checked').prop('checked', false);
+
+        setTimeout(function(){
+            updateDisplayedResults(button);
+        }, 10);
+    });
+}
+
+function updateDisplayedResults(button){
         //if user click on model button, select or unselect it and hide/show respective model
         if (canDeselect(button.attr('name'))) {
             button.toggleClass('selected');
@@ -186,7 +171,85 @@ function modelButtonClicked(button){
         }
 }
 
-//handles a change in selected radio button for sorting option
+// handles a weight's slider value change and displays corresponding models and curves
+function weightSliderValueChange() {
+    $('#sliderWeight').on('input', function () {            //versions of IE < 9 do not support this event, they have proprietary onPropertyChange event
+        $('.sliderWeightValue').text($(this).val() + "%");
+    }).on('mouseup', function () {
+        var value = $(this).val();
+
+        //remove selected value on another slider
+        $('#sliderSummation').val(0);
+        $('.sliderSummationValue').text("-");
+
+        //show overlays
+        $('#controls-panel-overlay').show();
+        $('#best-results-table-overlay').show();
+
+        $('.sliderWeightValue').text(value + "%");
+        $('input[type=radio][name=select]:checked').prop('checked', false);
+        setTimeout(function(){
+            selectButtonsByWeight(value);
+            displayModelsSelectedByWeight(value, selectedSolution);
+            displayCurves();
+        }, 10);
+    });
+}
+
+// handles a weight summation slider value change and displays corresponding models and curves
+function weightSumValueChange() {
+    $('#sliderSummation').on('input', function () {
+        $('.sliderSummationValue').text($(this).val() + "%");
+    }).on('mouseup', function () {
+        var value = $(this).val();
+
+        //remove selected value on another slider
+        $('#sliderWeight').val(0);
+        $('.sliderWeightValue').text("-");
+
+        //show overlays
+        $('#controls-panel-overlay').show();
+        $('#best-results-table-overlay').show();
+
+        $('.sliderSummationValue').text(value + "%");
+        $('input[type=radio][name=select]:checked').prop('checked', false);
+        setTimeout(function(){
+            selectButtonsByWeightSummation(value, selectedSolution);
+            displayModels();
+            displayCurves();
+        }, 10);
+    });
+}
+
+// handles change of select option
+function sortRadioButtonsValueChange() {
+    $('input[type=radio][name=sort]').on('change', function () {
+        var button = $(this);
+
+        // show overlays
+        $('#controls-panel-overlay').show();
+        $('#best-results-table-overlay').show();
+        setTimeout(function(){
+            radioButtonSortChange(button);
+        }, 10);
+    });
+}
+
+// handles change of sort option
+function selectRadioButtonsValueChange() {
+    $('input[type=radio][name=select]').on('change', function () {
+        var button = $(this);
+
+        //show overlays
+        $('#controls-panel-overlay').show();
+        $('#best-results-table-overlay').show();
+        resetSliderValues();
+        setTimeout(function(){
+            radioButtonSelectChange(button);
+        }, 10);
+    });
+}
+
 function radioButtonSortChange(radioButton){
         switch(radioButton.val()){
             case "1":       //sort weights ascending
@@ -203,7 +266,6 @@ function radioButtonSortChange(radioButton){
         }
 }
 
-//handles a change in selected radio button for select option
 function radioButtonSelectChange(radioButton){
     var modelButton = $('.model_buttons input');
     switch(radioButton.val()){
@@ -234,11 +296,6 @@ function highlightSelectedRadioButton(option){
     }
 }
 
-function setSelectedRadioButtons(){
-    $("input[type=radio][name=select][value='1']").prop('checked', true);
-    $("input[type=radio][name=sort][value='3']").prop('checked', true);
-}
-
 function resetSliderValues(){
     $('#sliderSummation').val(0);
     $('#sliderWeight').val(0);
@@ -246,72 +303,83 @@ function resetSliderValues(){
     $('.sliderSummationValue').text("-");
 }
 
-function setModelViewerWidth(){
-    var jsmolViewer = $('#jsmolViewer');
-    var currentHeight = jsmolViewer.height();
-    var currentWidth = jsmolViewer.width();
-    jsmolViewer.children('canvas').attr({'width': currentWidth - 2, 'height': currentHeight -1});
-}
-
-function windowResizeActions(){
-    var jsmolViewer = $('#jsmolViewer');
-    $(window).resize(function(){
-        setTimeout(function(){
-            var currentWidth = jsmolViewer.width();
-            var currentHeight = jsmolViewer.height();
-            jsmolViewer.children('canvas').attr({'width': currentWidth - 1, 'height': currentHeight - 1});
-        }, 50);
-    });
-}
-
 //asynchronously calls a method on a server, which loads experiment data in JSON. If server method succesfully returns data to the browser, 'onGetExperimentDataSuccess' is executed
 function viewExperiment() {
-    $.get("/get_experiment_data", { user_id: $.url().segment(-2), comp_guid: $.url().segment(-1) }, onGetExperimentDataSuccess);
+    $.get("/get_experidment_data",
+        { user_id: $.url().segment(-2), comp_guid: $.url().segment(-1) }
+    )
+    .done( onGetExperimentDataSuccess )
+    .fail( onGetExperimentDataError )
 }
 
 function onGetExperimentDataSuccess(data) {
     computationData = data;
     loadComputedCurvesForSolution(selectedSolution, false);
 
-    var highchartsObject = new Highcharts.Chart(chartOptions); //create a chart
-    var chartElement = $('#chart');
-    var chartWidth = chartElement.width();
-    var chartHeight = chartElement.height();
+    new Highcharts.Chart(chartOptions); //create a chart
+    // var highchartsObject =
+    // var chartElement = $('#chart');
+    // var chartWidth = chartElement.width();
+    // var chartHeight = chartElement.height();
+    //
+    // $('#btnZoomIn').click(function () {
+    //     chartWidth *= 1.3;
+    //     chartHeight *= 1.3;
+    //     highchartsObject.setSize(chartWidth, chartHeight);
+    //     return false;
+    // });
+    //
+    // $('#btnZoomOut').click(function () {
+    //     chartWidth *= 0.7;
+    //     chartHeight *= 0.7;
+    //     highchartsObject.setSize(chartWidth, chartHeight);
+    //     return false;
+    // });
+    //
+    // $('#btnDefault').click(function () {
+    //     highchartsObject.setSize(chartElement.width(), chartElement.height());
+    //     return false;
+    // });
+    //
+    // chartElement.append("<div class='scrollDown'>DOWN</down>");
 
-    $('#btnZoomIn').click(function () {
-        chartWidth *= 1.3;
-        chartHeight *= 1.3;
-        highchartsObject.setSize(chartWidth, chartHeight);
-        return false;
-    });
-
-    $('#btnZoomOut').click(function () {
-        chartWidth *= 0.7;
-        chartHeight *= 0.7;
-        highchartsObject.setSize(chartWidth, chartHeight);
-        return false;
-    });
-
-    $('#btnDefault').click(function () {
-        highchartsObject.setSize(chartElement.width(), chartElement.height());
-        return false;
-    });
-
-    chartElement.append("<div class='scrollDown'>DOWN</down>");
-
-    //set value of a progress bar
-//    $(".progressBar").progressbar({
-//        value: parseInt(metadata.progress)
-//    });
-//
-//    $('.progress_value').text(metadata.progress + "%");
+   // set value of a progress bar
+   // $(".progressBar").progressbar({
+   //     value: parseInt(metadata.progress)
+   // });
+   //
+   // $('.progress_value').text(metadata.progress + "%");
 
     viewFile();
     createButtons(selectedSolution);
-    setWeightSpanWidth();
+    setWeightSpanInSolutionRowWidth();
 }
 
-function setWeightSpanWidth() {
+function onGetExperimentDataError(xhr, errorType, exception) {
+    // try to log error
+    $('.loading-screen').hide();
+    $('.error-screen').show();
+}
+
+//this function asynchronously loads models to be displayed by PV viewer
+function viewFile() {
+    pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {
+        try {
+            for (var i = 0; i < structures.length; i++) {
+                models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
+            }
+            viewer.autoZoom();
+            $('.loading-screen').hide();
+            $('html body').animate({ scrollTop: 60}, 500);
+        } catch (err){
+            // try to log error
+            $('.loading-screen').hide();
+            $('.error-screen').show();
+        }
+    }, { loadAllModels : true } );
+}
+
+function setWeightSpanInSolutionRowWidth() {
     var length = 100 / $('.result-row:first span').length;
     $('.result-row span').css('width', length + '%');
 }
@@ -338,40 +406,9 @@ function loadComputedCurvesForSolution(solution, override) {
 
     if (override){
         $('#chart').highcharts().redraw();
-        setTimeout(function(){
-            $('#controls-panel-overlay').toggle();
-            $('#best-results-table-overlay').toggle();
-        });
+        $('#controls-panel-overlay').toggle();
+        $('#best-results-table-overlay').toggle();
     }
-}
-
-// function onError(xhr, errorType, exception) {
-//     var responseText;
-//     var error = "";
-//     try {
-//         responseText = jQuery.parseJSON(xhr.responseText);
-//         error.append("<div><b>" + errorType + " " + exception + "</b></div>");
-//         error.append("<div><u>Exception</u>:<br /><br />" + responseText.ExceptionType + "</div>");
-//         error.append("<div><u>StackTrace</u>:<br /><br />" + responseText.StackTrace + "</div>");
-//         error.append("<div><u>Message</u>:<br /><br />" + responseText.Message + "</div>");
-//         alert(error);
-//     } catch (e) {
-//         responseText = xhr.responseText;
-//         alert(responseText);
-//
-//     }
-// }
-
-//this function asynchronously loads models to be displayed by PV viewer
-function viewFile() {
-      pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {
-            for (var i = 0; i < structures.length; i++) {
-                models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
-            }
-            viewer.autoZoom();
-            $('.loading-screen').hide();
-            $('html body').animate({ scrollTop: 60}, 500);
-      }, { loadAllModels : true } );
 }
 
 //create buttons that represent each model with weight value in a given file
@@ -430,7 +467,7 @@ function sortModels(order, solution) {
     }, 10);
 }
 
-////this function displays models in PV viewer selected by model buttons or radio buttons
+////this function displays models in PV viewer selected by model buttons or weight
 function displayModels() {
     var displayedModels = [];
 

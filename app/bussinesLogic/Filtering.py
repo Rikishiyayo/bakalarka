@@ -1,7 +1,7 @@
 import datetime
 from operator import itemgetter
 
-status_shortcuts = {"accepted": "a", "checked": "c", "preprocessed": "p", "storage_ready": "sr", "optim_completed": "oc", "running": "r", "queued": "q", "done": "d"}
+status_shortcuts = {"accepted": "a", "checked": "c", "preprocessed": "p", "storage_ready": "sr", "optim_completed": "oc", "running": "r", "queued": "q", "done": "d", "user_error": "ue", "server_error": "se"}
 
 
 def sort_computations(computations, sort_option, sort_order):
