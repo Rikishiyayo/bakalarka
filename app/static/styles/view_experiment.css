@@ -115,6 +115,16 @@ div.best-results-table {
             text-align: center;
         }
 
+        div.best-results-table p.header-row{
+            box-sizing: border-box;
+            border-bottom: 3px solid #4c4c4c;
+        }
+
+            div.best-results-table p.header-row span:nth-child(4){
+                box-sizing: border-box;
+                border-right: 3px solid #4c4c4c;
+            }
+
         div.best-results-table p.result-row {
             border-radius: 4px;
             transition: background-color .5s;
@@ -134,6 +144,11 @@ div.best-results-table {
 
             div.best-results-table p.result-row span{
                 font-weight: bold;
+            }
+
+            div.best-results-table p.result-row span:not(.weight):nth-child(5){
+                box-sizing: border-box;
+                border-right: 3px solid #4c4c4c;
             }
 
 .experiment_details{
@@ -435,3 +450,23 @@ div.best-results-table {
 .selected-solution {
     background-color: lightskyblue !important;
 }
+
+/*tooltip*/
+.ui-tooltip {
+    background: #4c4c4c !important;
+    box-sizing: border-box !important;
+    height: 34px;
+    padding: 0 7px !important;
+    margin: 0 !important;
+    line-height: 30px;
+    border: 2px solid lightgray !important;
+    box-shadow: 0 0 0 !important;
+    border-radius: 4px !important;
+    color: whitesmoke;
+    max-width: 800px;
+    position: absolute;
+}
+
+    .ui-tooltip-content {
+        font-size: 14px !important;
+    }

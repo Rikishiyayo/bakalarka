@@ -55,6 +55,7 @@ $(function () {
     weightSumValueChange();
     selectRadioButtonsValueChange();
     sortRadioButtonsValueChange();
+    tooltips();
 
     var $content = $('.highcharts-container'); // Cache your selectors!
 
@@ -363,7 +364,7 @@ function onGetExperimentDataError(xhr, errorType, exception) {
 
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
-    pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {
+    pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {  //normal try catch block doesnt catch exception when fetchPdb doesnt load any data or loads incorrect
         try {
             for (var i = 0; i < structures.length; i++) {
                 models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
@@ -381,7 +382,7 @@ function viewFile() {
 
 function setWeightSpanInSolutionRowWidth() {
     var length = 100 / $('.result-row:first span').length;
-    $('.result-row span').css('width', length + '%');
+    $('.result-row span, .header-row span').css('width', length + '%');
 }
 
 //this function loads data for every computed curve in a given solution to an array of arrays with 2 values - 'q_value' and 'intensity'
@@ -600,4 +601,25 @@ function toggleSelectAllButton(){
         $(".Controls input[type=radio][name=select][value='1']").prop('checked', false);
         highlightSelectedRadioButton('select');
     }
+}
+
+function tooltips(){
+    var position = {
+        my: "left top+20",
+        at: "left center",
+        collision: "none"
+    };
+    $('.result-row span.weight').each(function () {
+        $(this).tooltip({
+            content: $(this).text() + " - weight of model " + getModelNumberOfWeight($(this)),
+            position: position,
+            items: $(this),
+            hide: {duration: 1},
+        });
+    });
+}
+
+function getModelNumberOfWeight(weightEl) {
+    var numberOfWeightsInOneModel = $('.result-row:first span.weight').length;
+    return ($('.result-row span.weight').index(weightEl) % numberOfWeightsInOneModel) + 1;
 }

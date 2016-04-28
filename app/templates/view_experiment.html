@@ -28,11 +28,23 @@
     </div>
     <div class="best-results-table">
         <div id="best-results-table-overlay"></div>
+        <p class="header-row">
+            <span>c</span>
+            <span>c1</span>
+            <span>c2</span>
+            <span>chi</span>
+            {% for item in best_results[0][5:] %}
+                <span>w{{ loop.index }}</span>
+            {% endfor %}
+        </p>
         {% for item in best_results %}
             <p class="result-row">
                 <input type="hidden" value="{{ item[0] }}">
-                {% for weight in item[1:] %}
+                {% for weight in item[1:5] %}
                     <span>{{ weight }}</span>
+                {% endfor %}
+                {% for weight in item[5:] %}
+                    <span class="weight">{{ weight }}</span>
                 {% endfor %}
             </p>
         {% endfor %}
@@ -52,7 +64,7 @@
                 <span class="sync">Steps between synchronization: </span><span>{{ computation_details.optim_sync }}</span>
                 <span class="alpha">Alpha: </span><span>{{ computation_details.optim_alpha }}</span>
                 <span class="beta">Beta: </span><span>{{ computation_details.optim_beta }}</span>
-                <span class="gamma">Gama: </span><span>{{ computation_details.optim_gamma }}</span>
+                <span class="gamma">Gamma: </span><span>{{ computation_details.optim_gamma }}</span>
             </p>
             <!--<p class="exp_uploaded_files">-->
                 <!--<span class="steps">Models: </span>-->

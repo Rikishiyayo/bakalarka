@@ -212,7 +212,7 @@ def get_best_solutions_of_computation(user_id, comp_guid):
                 data = [i]
                 values_in_line = line.split(',')
 
-                for j, value in enumerate(values_in_line[4:]):
+                for j, value in enumerate(values_in_line):
                     data.append(float(value.strip()))
 
                 solutions.append(data)
