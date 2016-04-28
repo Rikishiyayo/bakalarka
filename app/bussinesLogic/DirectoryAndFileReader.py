@@ -1,4 +1,4 @@
-import os
+import os, errno
 from flask import current_app
 from math import log
 from app.bussinesLogic import Filtering
@@ -114,13 +114,11 @@ def get_computed_curves(user_id, comp_guid):
             try:
                 with open(file_path) as file:
                     lines = file.readlines()
-            except FileNotFoundError as err:
-                current_app.logger.error(
-                    'File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
-                raise err
             except OSError as err:
+                if err.errno == errno.ENOENT:
+                    current_app.logger.error('File with computed curve for 1 model doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
                 current_app.logger.error(
-                    'Error while trying to access or while reading result.dat in specified directory\n'
+                    'Error while trying to access or while reading a file with computed curve for 1 model in specified directory\n'
                     'function arguments: file_path - ' + file_path, exc_info=err)
                 raise err
 
@@ -161,10 +159,10 @@ def get_weights(user_id, comp_guid):
                 solutions['solution' + str(i)] = weights
 
             return solutions
-    except FileNotFoundError as err:
-        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
-        raise err
     except OSError as err:
+        if err.errno == errno.ENOENT:
+            current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+
         current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
                                  'function arguments: file_path - ' + file_path, exc_info=err)
         raise err
@@ -187,10 +185,10 @@ def get_experiment_data(user_id, comp_guid):
                 values_in_line = line.split()
                 points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip())) + 15])
             return points
-    except FileNotFoundError as err:
-        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
-        raise err
     except OSError as err:
+        if err.errno == errno.ENOENT:
+            current_app.logger.error('File saxs.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+
         current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
                                  'function arguments: file_path - ' + file_path, exc_info=err)
         raise err
@@ -220,10 +218,10 @@ def get_best_solutions_of_computation(user_id, comp_guid):
                 solutions.append(data)
 
             return solutions
-    except FileNotFoundError as err:
-        current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
-        raise err
     except OSError as err:
+        if err.errno == errno.ENOENT:
+            current_app.logger.error('File result.dat doesn\'t exist\nfunction arguments: file_path - ' + file_path, exc_info=err)
+
         current_app.logger.error('Error while trying to access or while reading result.dat in specified directory\n'
                                  'function arguments: file_path - ' + file_path, exc_info=err)
         raise err
@@ -273,10 +271,10 @@ def read_file(file_path, info_dict, keys):
                 for line in lines:
                     if key in line:
                         info_dict[key.lower()] = line.split('=')[1].strip()[1:-1]
-    except FileNotFoundError as err:
-        current_app.logger.error('File doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', keys - ' + keys.__str__(), exc_info=err)
-        raise err
     except OSError as err:
+        if err.errno == errno.ENOENT:
+            current_app.logger.error('File doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', keys - ' + keys.__str__(), exc_info=err)
+
         current_app.logger.error('Error while trying to access or while reading file in specified directory\n'
                                  'function arguments: file_path - ' + file_path + ', keys - ' + keys.__str__(), exc_info=err)
         raise err
@@ -286,10 +284,10 @@ def read_row(file_path, info_dict, key):
     try:
         with open(file_path) as file:
             info_dict[key] = file.readline().strip()
-    except FileNotFoundError as err:
-        current_app.logger.error('File result.dat/status.txt or error_message.txt doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
-        raise err
     except OSError as err:
+        if err.errno == errno.ENOENT:
+            current_app.logger.error('File result.dat/status.txt or error_message.txt doesn\'t exist\nfunction arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
+
         current_app.logger.error('Error while trying to access or while reading result.dat/status.txt or error_message.txt in specified directory\n'
                                  'function arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
         raise err
