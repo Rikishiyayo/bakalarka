@@ -305,7 +305,7 @@ function resetSliderValues(){
 
 //asynchronously calls a method on a server, which loads experiment data in JSON. If server method succesfully returns data to the browser, 'onGetExperimentDataSuccess' is executed
 function viewExperiment() {
-    $.get("/get_experidment_data",
+    $.get("/get_experiment_data",
         { user_id: $.url().segment(-2), comp_guid: $.url().segment(-1) }
     )
     .done( onGetExperimentDataSuccess )

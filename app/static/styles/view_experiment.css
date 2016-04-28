@@ -20,6 +20,7 @@
     text-align: center;
     background-color: whitesmoke;
     font-size: 20px;
+    display: none;
 }
 
     .error-screen img{
