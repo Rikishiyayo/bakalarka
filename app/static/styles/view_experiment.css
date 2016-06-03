@@ -235,7 +235,7 @@ div.best-results-table {
 
         #PresentationPanel .DataViewerPanel #pvViewer {
             display: inline-block;
-            width: 32%;
+            width: 415px;
             margin-right: 1%;
             height: 420px;
             background-color: #cdd0d7;
@@ -247,11 +247,12 @@ div.best-results-table {
             position: relative;
             z-index: 1;
             font-size: 0;
+            overflow: hidden;
         }
 
         #PresentationPanel .DataViewerPanel #chart {
             display: inline-block;
-            width: 66%;
+            width: calc(98% - 415px);
             height: 420px;
             box-sizing: border-box;
             border: 1px solid #9498a1;

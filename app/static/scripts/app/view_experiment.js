@@ -47,8 +47,6 @@ $(function () {
 
     viewExperiment();
     setSelectedRadioButtons();
-    setModelViewerWidth();
-    windowResizeActions();
     resultRowClick();
     modelButtonsClick();
     weightSliderValueChange();
@@ -57,7 +55,7 @@ $(function () {
     sortRadioButtonsValueChange();
     tooltips();
 
-    var $content = $('.highcharts-container'); // Cache your selectors!
+/*    var $content = $('.highcharts-container'); // Cache your selectors!
 
     function loop(){
         $content.stop().animate({scrollTop:'-=20'}, 400, 'linear', loop);
@@ -67,7 +65,7 @@ $(function () {
         $content.stop();
     }
 
-    $(".scrollDown").hover(loop, stop);
+    $(".scrollDown").hover(loop, stop);*/
 
 //    $('#btnFullscreen').on('click', function () {
 //        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
@@ -88,26 +86,6 @@ $(function () {
 function setSelectedRadioButtons(){
     $("input[type=radio][name=select][value='1']").prop('checked', true);
     $("input[type=radio][name=sort][value='3']").prop('checked', true);
-}
-
-// set width and height of jsmol viewer when page loads for the first time
-function setModelViewerWidth(){
-    var pvViewer = $('#pvViewer');
-    var currentHeight = pvViewer.height();
-    var currentWidth = pvViewer.width();
-    pvViewer.children('canvas').attr({'width': currentWidth - 2, 'height': currentHeight -1});
-}
-
-// resize pv viewer on window resize event so it fits the parent element
-function windowResizeActions(){
-    var pvViewer = $('#pvViewer');
-    $(window).resize(function(){
-        setTimeout(function(){
-            var currentWidth = pvViewer.width();
-            var currentHeight = pvViewer.height();
-            pvViewer.children('canvas').attr({'width': currentWidth - 1, 'height': currentHeight - 1});
-        }, 50);
-    });
 }
 
 // handles a click on a solution row
@@ -373,7 +351,6 @@ function viewFile() {
             $('.loading-screen').hide();
             $('html body').animate({ scrollTop: 60}, 500);
         } catch (err){
-            // try to log error
             $('.loading-screen').hide();
             $('.error-screen').show();
         }

@@ -26,9 +26,10 @@ class Config:
                                    "and will try to fix the problem as soon as possible."
     EXPERIMENTS_ON_ONE_PAGE = 16
 
-    LOGGING_FORMAT = '\n\n%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    LOGGING_FORMAT = '\n\n---------------------------------------------------------------------------------------' \
+                     '\n%(asctime)s - %(levelname)s - %(message)s'
     LOGGING_LOCATION = 'saxs.log'
-    LOGGING_LEVEL = logging.DEBUG
+    LOGGING_LEVEL = logging.ERROR
 
     @staticmethod
     def init_app(app):
@@ -37,18 +38,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    EXP_DIRECTORY = "/var/www/SaxsExperiments"
-
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(EXP_DIRECTORY, 'app.db')
+        'sqlite:///' + os.path.join(basedir, 'app.db')
 
-    MAIL_SERVER = 'relay.ics.muni.cz'
-    MAIL_PORT = 25
+    EXP_DIRECTORY = "/home/yayo/SaxsExperiments"
+
+    MAIL_SERVER = 'smtp.mail.yahoo.com'
+    MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = ""
-    MAIL_PASSWORD = ""
-    MAIL_DEFAULT_SENDER = "ljocha@ics.muni.cz"
+    MAIL_USERNAME = "saxsExpViewer@yahoo.com"
+    MAIL_PASSWORD = "g8e6j6o8s5f"
+    MAIL_DEFAULT_SENDER = "saxsExpViewer@yahoo.com"
     MAIL_SUBJECT = "[SaxsExpWebApp]"
 
 
