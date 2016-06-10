@@ -1,3 +1,4 @@
+config.py
 app/static/uploads/*
 flask
 *.pyc
