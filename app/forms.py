@@ -11,8 +11,12 @@ from app.models import User
 class Computation(Form):
     title = StringField('Title:', validators=[DataRequired("Required a title!"), Length(1, 35)])
     description = TextAreaField('Description:')
-    models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models. Allowed formats are 'pdb', 'zip', 'tar.gz', 'rar' or 'tar.bz2'"),
-                                                              FileAllowed(['pdb', 'zip', 'tar.gz', 'rar', 'tar.bz2'])])
+
+#   Currently we only support pdb
+#   models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models. Allowed formats are 'pdb', 'zip', 'tar.gz', 'rar' or 'tar.bz2'"),
+#                                                              FileAllowed(['pdb', 'zip', 'tar.gz', 'rar', 'tar.bz2'])])
+    models = FileField('File with model/models:', validators=[DataRequired("Required a file with model or models. Required format is 'pdb'"),
+                                                              FileAllowed(['pdb'])])
     expData = FileField('File with experiment data:', validators=[DataRequired("Required a text file with experiment data!")])
     qRange = DecimalRangeField('q range:', validators=[DataRequired("Required parameter")], default=0.1)
     calcType = RadioField('Calculation type:', choices=[('random_walk', 'Random walk'), ('stunnel', 'Stochastic tunneling')], default='random_walk')
