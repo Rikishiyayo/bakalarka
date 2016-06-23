@@ -285,7 +285,7 @@ function resetSliderValues(){
 //asynchronously calls a method on a server, which loads experiment data in JSON. If server method succesfully returns data to the browser, 'onGetExperimentDataSuccess' is executed
 function viewExperiment() {
     $.get("/get_experiment_data",
-        { user_id: $.url().segment(-2), comp_guid: $.url().segment(-1) }
+        { user_id: $.url().segment(-2), comp_guid: $.url().segment(-2) }
     )
     .done( onGetExperimentDataSuccess )
     .fail( onGetExperimentDataError )
@@ -336,6 +336,7 @@ function onGetExperimentDataSuccess(data) {
 
 function onGetExperimentDataError(xhr, errorType, exception) {
     // try to log error
+    console.log("Error while executing ajax request 'get_experiment_data");
     $('.loading-screen').hide();
     $('.error-screen').show();
 }
@@ -343,17 +344,12 @@ function onGetExperimentDataError(xhr, errorType, exception) {
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
     pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {  //normal try catch block doesnt catch exception when fetchPdb doesnt load any data or loads incorrect
-        try {
-            for (var i = 0; i < structures.length; i++) {
-                models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
-            }
-            viewer.autoZoom();
-            $('.loading-screen').hide();
-            $('html body').animate({ scrollTop: 60}, 500);
-        } catch (err){
-            $('.loading-screen').hide();
-            $('.error-screen').show();
+        for (var i = 0; i < structures.length; i++) {
+            models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
         }
+        viewer.autoZoom();
+        $('.loading-screen').hide();
+        $('html body').animate({ scrollTop: 60}, 500);
     }, { loadAllModels : true } );
 }
 

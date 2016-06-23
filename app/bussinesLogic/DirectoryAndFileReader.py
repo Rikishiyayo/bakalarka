@@ -68,6 +68,7 @@ def check_for_computation_results(user_id, comp_guid, status):
     return os.path.isfile(path_to_result_file) and os.path.isdir(path_to_required_dir) and (status == "running" or status == "done")
 
 
+# reads a file 'status.txt' in a computation directory specified by 'comp_guid' argument and returns its content
 def get_computation_status(user_id, comp_guid):
     file_path = os.path.join(current_app.config['EXP_DIRECTORY'], str(user_id), comp_guid, "status.txt")
     info = {}

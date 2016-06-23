@@ -795,7 +795,7 @@ function tooltips() {
         tooltipClass: "leftArrowTooltip",
     });
     $( ".row-models" ).tooltip({
-        content: "Allowed file formats: 'pdb'.",
+        content: "Allowed file formats: 'zip', 'tar.gz', 'pdb'.",
         position: formFieldPosition,
         items: ".row-models",
         tooltipClass: "leftArrowTooltip"
