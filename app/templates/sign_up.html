@@ -17,7 +17,7 @@
         {% endfor %}
     </div>
     <div class="register-form-wrapper">
-        <form name="register_form" action="{{ url_for('userManagement.register') }}" method="post" id="register_form">
+        <form name="register_form" action="{{ url_for('userManagement.sign_up') }}" method="post" id="register_form">
             {{ r_form.hidden_tag() }}
             <p>
                 {{ r_form.comment.label }}{{ r_form.comment}}

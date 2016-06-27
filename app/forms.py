@@ -33,6 +33,6 @@ class Computation(Form):
 # A register form
 #
 class RegistrationForm(Form):
-    username = StringField('Comment:', validators=[DataRequired("Required field!"),
+    comment = StringField('Comment:', validators=[DataRequired("Required field!"),
                                                     Length(20, message="Minimum of 20 characters required!")])
     submit = SubmitField('Register')

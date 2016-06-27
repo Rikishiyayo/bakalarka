@@ -1,4 +1,4 @@
-from flask import render_template, redirect, flash, request, current_app, url_for
+from flask import render_template, redirect, request
 from .. import db
 from app.userManagement import userMngmt
 from app.forms import RegistrationForm
