@@ -1,9 +1,8 @@
 from flask.ext.wtf import Form
-from wtforms import ValidationError, StringField, SubmitField, TextAreaField, IntegerField, FloatField, BooleanField, PasswordField, RadioField
+from wtforms import StringField, SubmitField, TextAreaField, IntegerField, FloatField, RadioField
 from wtforms.fields.html5 import DecimalRangeField
-from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp, EqualTo
+from wtforms.validators import DataRequired, NumberRange, Length
 from flask_wtf.file import FileAllowed, FileField
-from app.models import User
 
 
 # A form for computation
@@ -31,59 +30,9 @@ class Computation(Form):
     submit = SubmitField('Submit')
 
 
-# A login form
-#
-class LoginForm(Form):
-    login_email = StringField('Email', validators=[DataRequired("Enter a valid email address!"), Email()])
-    login_password = PasswordField('Password', validators=[DataRequired('Enter a password!')])
-    remember_me = BooleanField('Remember me')
-    submit = SubmitField('Log In')
-
-
 # A register form
 #
 class RegistrationForm(Form):
-    register_email = StringField('Email:', validators=[DataRequired("Enter a valid email address!"), Email()])
-    username = StringField('Username:', validators=[DataRequired("Minimum of 5 characters required!"),
-                                                    Length(5, message="Minimum of 5 characters required!"),
-                                                    Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0, "Username must have only letters, numbers, dots or underscores")])
-    register_password = PasswordField('Password:', validators=[DataRequired("Minimum of 8 characters required!"),
-                                                               Length(8, message="Minimum of 8 characters required!")])
-    password2 = PasswordField('Confirm password:', validators=[DataRequired(), EqualTo('register_password',
-                                                   message='Passwords must match.')])
+    username = StringField('Comment:', validators=[DataRequired("Required field!"),
+                                                    Length(20, message="Minimum of 20 characters required!")])
     submit = SubmitField('Register')
-
-    def validate_email(self, field):
-        if User.query.filter_by(email=field.data).first():
-            raise ValidationError('Email already registered.')
-
-    def validate_username(self, field):
-        if User.query.filter_by(username=field.data).first():
-            raise ValidationError('Username already in use.')
-
-
-# A password reset request form
-#
-class PasswordResetRequestForm(Form):
-    user_email = StringField('Email', validators=[DataRequired("Enter a valid email address!"), Email()])
-    submit = SubmitField('Confirm')
-
-
-# A password reset form
-#
-class PasswordResetForm(Form):
-    user_email = StringField('Email', validators=[DataRequired("Enter a valid email address!"), Email()])
-    new_password = PasswordField('New password:', validators=[DataRequired("Minimum of 8 characters required!"),
-                                                               Length(8, message="Minimum of 8 characters required!")])
-    new_password_confirm = PasswordField('Confirm new password:', validators=[DataRequired(), EqualTo('new_password',
-                                                   message='Passwords must match.')])
-    submit = SubmitField('Confirm')
-
-    # def validate_username_or_email_requirement(self):
-    #     if not super(PasswordResetForm, self).validate():
-    #         return False
-    #     if not self.username.data and not self.user_email.data:
-    #             msg = 'Username or email must be set!'
-    #             self.username.errors.append(msg)
-    #             self.user_email.errors.append(msg)
-    #             return False

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main_page.css') }}">
+    <script src="{{ url_for('static',filename='scripts/app/main_page.js') }}"></script>
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <div class="flash-message">
+        {% for message in get_flashed_messages(category_filter=["info"]) %}
+            <span class="info">{{ message }}</span>
+        {% endfor %}
+    </div>
+    <div class="register-form-wrapper">
+        <form name="register_form" action="{{ url_for('userManagement.register') }}" method="post" id="register_form">
+            {{ r_form.hidden_tag() }}
+            <p>
+                {{ r_form.comment.label }}{{ r_form.comment}}
+                {% for error in r_form.comment.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p class="submit-button">
+                {{ r_form.submit }}
+            </p>
+        </form>
+    </div>
+{% endblock %}
