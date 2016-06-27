@@ -26,9 +26,9 @@ def home():
                                pages=DirectoryAndFileReader.get_pagination_controls_count(current_user.id),
                                comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, 'date', -1, {}))
     elif is_user_registered(eppn) and not is_user_confirmed(eppn):
-        return redirect('/unconfirmed')
+        return redirect(url_for('userManagement.unconfirmed'))
 
-    return redirect('/sign_up')
+    return redirect(url_for('userManagement.sign_up'))
 
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
