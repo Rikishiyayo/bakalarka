@@ -3,6 +3,7 @@ from .. import db
 from app.userManagement import userMngmt
 from app.forms import RegistrationForm
 from app.models import User
+from app.bussinesLogic import DirectoryAndFileWriter
 from app.email import send_email
 
 
@@ -16,6 +17,7 @@ def sign_up():
         user = User(username=username, eppn=eppn, role_id=2)
         db.session.add(user)
         db.session.commit()
+        DirectoryAndFileWriter.create_user_directory(get_user_id(eppn))
         # send_email(user.email, 'Confirm Your Account', 'mail/confirm', user=user, token=token)
         return redirect('/unconfirmed')
 
@@ -39,3 +41,7 @@ def is_user_registered(eppn):
 def is_user_confirmed(eppn):
     user = User.query.filter_by(eppn=eppn).first()
     return user is not None and user.confirmed
+
+
+def get_user_id(eppn):
+    return User.query.filter_by(eppn=eppn).first().id
