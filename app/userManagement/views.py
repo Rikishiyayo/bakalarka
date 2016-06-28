@@ -1,36 +1,41 @@
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, url_for
 from .. import db
 from app.userManagement import userMngmt
 from app.forms import RegistrationForm
-from app.models import User
 from app.bussinesLogic import DirectoryAndFileWriter
+from app.models import User
 from app.email import send_email
 
 
 @userMngmt.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
     r_form = RegistrationForm(request.form)
+    user_details = get_user_details()
 
     if r_form.validate_on_submit():
-        eppn = request.environ["HTTP_EPPN"]
-        username = request.environ["HTTP_CN"]
-        user = User(username=username, eppn=eppn, role_id=2)
+        # user_details = DirectoryAndFileReader.get_user_details()
+        user = User(username=r_form.username.data, eppn=user_details[0], role_id=2)
         db.session.add(user)
         db.session.commit()
-        DirectoryAndFileWriter.create_user_directory(get_user_id(eppn))
+        DirectoryAndFileWriter.create_user_directory(get_user_id(user_details[0]))
         # send_email(user.email, 'Confirm Your Account', 'mail/confirm', user=user, token=token)
-        return redirect('/unconfirmed')
+        return redirect(url_for('userManagement.unconfirmed'))
 
-    return render_template('sign_up.html', r_form=r_form)
+    return render_template('sign_up.html', r_form=r_form, username=user_details[1])
 
 
 @userMngmt.route('/unconfirmed')
 def unconfirmed():
-    eppn = request.environ["HTTP_EPPN"]
-    if is_user_registered(eppn) and is_user_confirmed(eppn):
+    user_details = get_user_details()
+    if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
         return redirect('/home')
 
     return render_template('unconfirmed.html')
+
+
+def get_user_details():
+    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"]]
+    return result
 
 
 def is_user_registered(eppn):
@@ -45,3 +50,5 @@ def is_user_confirmed(eppn):
 
 def get_user_id(eppn):
     return User.query.filter_by(eppn=eppn).first().id
+
+

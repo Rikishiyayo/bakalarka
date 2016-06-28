@@ -14,7 +14,7 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
-        return '<User %r>' % (self.username)
+        return '<User %r>' % self.username
 
 
 class Role(db.Model):
@@ -25,11 +25,11 @@ class Role(db.Model):
 
     def __repr__(self):
         return self.name
-    
+
     def __str__(self):
         return self.name
-    
-    
+
+
 class UserView(ModelView):
     page_size = 30
     can_edit = False
@@ -38,13 +38,13 @@ class UserView(ModelView):
     column_editable_list = ['confirmed', 'active', 'role']
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role_id == 1
+        return True
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
         return redirect("/main_page")
-    
-    
+
+
 @lm.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

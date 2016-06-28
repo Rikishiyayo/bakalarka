@@ -1,13 +1,18 @@
 $(function () {
     validation();
     showDropdownElement();
-    hideDropdownElementWhenRegisterFieldHasFocus;
+    hideDropdownElementWhenRegisterFieldHasFocus();
     showPasswordResetRequestForm();
     showLoginForm();
     setPlaceholders();
     loginFormVisibility();
     passwordResetRequestFormVisibility();
+    setUsername();
 });
+
+function setUsername() {
+    $('#username').val($('#username_hid_inp').val());
+}
 
 //sets HTML placeholder attribute for specified textboxes
 function setPlaceholders(){
@@ -65,24 +70,8 @@ function passwordResetRequestFormVisibility(){
 function validation() {
     $('#register_form').validate({
         rules: {
-            register_email: {
-                required: true,
-                email: true,
-                remote: "/is_email_available"
-            },
             username: {
-                required: true,
-                minlength: 5,
-                remote: "/is_username_available"
-            },
-            register_password: {
-                required: true,
-                minlength: 8
-            },
-            password2: {
-                required: true,
-                minlength: 8,
-                equalTo: "#register_password"
+                required: true
             }
         },
         messages: {

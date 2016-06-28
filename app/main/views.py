@@ -1,5 +1,4 @@
 from flask import render_template, redirect, flash, jsonify, request, current_app, url_for
-from flask.ext.login import login_required, current_user
 from . import main
 from app.forms import Computation
 from app.bussinesLogic import DirectoryAndFileReader, DirectoryAndFileWriter
@@ -10,25 +9,29 @@ from app.main.errors import NewComputationRequestSubmitError
 @main.route('/')
 @main.route('/home', methods=['GET', 'POST'])
 def home():
-    eppn = request.environ["HTTP_EPPN"]
+    user_details = get_user_details()
+
+    if not is_user_registered(user_details[0]):
+        return redirect(url_for('userManagement.sign_up'))
+
     form = Computation()
+    user_id = get_user_id(user_details[0])
+    if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
+        return render_template('home.html', form=form,
+                               pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
+                               comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
+                                   get_user_id(user_details[0]), 0, 'date', -1, {}))
+    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
+        return redirect(url_for('userManagement.unconfirmed'))
+
     if form.validate_on_submit():       # this block of code is executed when browser sent POST request(user submitted form)
         try:
-            DirectoryAndFileWriter.create_experiment(form, str(current_user.id))
+            DirectoryAndFileWriter.create_experiment(form, str(user_id))
             flash(current_app.config['EXPERIMENT_SUBMITTED'], "info")
             return redirect('/home')
         except NewComputationRequestSubmitError:
             flash(current_app.config['EXPERIMENT_SUBMISSION_FAILED'], "error")
             return redirect('/home')
-
-    if is_user_registered(eppn) and is_user_confirmed(eppn):
-        return render_template('home.html', form=form,
-                               pages=DirectoryAndFileReader.get_pagination_controls_count(current_user.id),
-                               comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, 0, 'date', -1, {}))
-    elif is_user_registered(eppn) and not is_user_confirmed(eppn):
-        return redirect(url_for('userManagement.unconfirmed'))
-
-    return redirect(url_for('userManagement.sign_up'))
 
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
@@ -44,15 +47,19 @@ def view_experiment(user_id, comp_guid):
 
 @main.route('/get_experiments/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
 def get_experiments(page, sort_option, sort_order):
-    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json),
-                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json))))
+    user_details = get_user_details()
+    user_id = get_user_id(user_details[0])
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(user_id, int(page), sort_option, int(sort_order), request.json),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(user_id, sort_option, int(sort_order), request.json))))
 
 
 @main.route('/delete_computations/<page>/<sort_option>/<sort_order>', methods=['GET', 'POST'])
 def delete_computations(page, sort_option, sort_order):
-    DirectoryAndFileWriter.delete_computations(request.json, str(current_user.id))
-    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(current_user.id, int(page), sort_option, int(sort_order), request.json['filter_values']),
-                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(current_user.id, sort_option, int(sort_order), request.json['filter_values']))))
+    user_details = get_user_details()
+    user_id = get_user_id(user_details[0])
+    DirectoryAndFileWriter.delete_computations(request.json, str(user_id))
+    return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(user_id, int(page), sort_option, int(sort_order), request.json['filter_values']),
+                   pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(user_id, sort_option, int(sort_order), request.json['filter_values']))))
 
 
 @main.route('/get_experiment_data')
@@ -65,6 +72,11 @@ def get_experiment_data():
     return json
 
 
+def get_user_details():
+    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"]]
+    return result
+
+
 def is_user_registered(eppn):
     user = User.query.filter_by(eppn=eppn).first()
     return user is not None
@@ -73,3 +85,8 @@ def is_user_registered(eppn):
 def is_user_confirmed(eppn):
     user = User.query.filter_by(eppn=eppn).first()
     return user is not None and user.confirmed
+
+
+def get_user_id(eppn):
+    return User.query.filter_by(eppn=eppn).first().id
+

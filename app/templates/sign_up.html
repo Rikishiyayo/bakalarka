@@ -19,6 +19,13 @@
     <div class="register-form-wrapper">
         <form name="register_form" action="{{ url_for('userManagement.sign_up') }}" method="post" id="register_form">
             {{ r_form.hidden_tag() }}
+            <input id="username_hid_inp" type="hidden" value="{{ username }}">
+            <p>
+                {{ r_form.username.label }}{{ r_form.username}}
+                {% for error in r_form.username.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </p>
             <p>
                 {{ r_form.comment.label }}{{ r_form.comment}}
                 {% for error in r_form.comment.errors %}

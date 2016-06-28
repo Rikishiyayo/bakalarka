@@ -1,4 +1,4 @@
-import os, time, shutil, uuid, errno, pwd, grp
+import os, time, shutil, uuid, errno
 from flask import current_app
 from werkzeug import secure_filename
 from app.main.errors import NewComputationRequestSubmitError
@@ -119,4 +119,3 @@ def delete_computations(info, user_id):
     else:
         directory_to_delete = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, info['comp_guid'])
         shutil.rmtree(directory_to_delete)
-

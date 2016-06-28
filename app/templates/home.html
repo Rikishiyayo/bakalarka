@@ -13,7 +13,7 @@
         </div>
     {% endfor %}
     <div class="submit_experiment">
-        <h1>Submit a new computation</h1>
+        <h1>Submit a new computation {{ r }}</h1>
         <form action="" method="post" enctype="multipart/form-data" id="new_experiment_form">
             {{ form.hidden_tag() }}
             <p>
@@ -57,7 +57,7 @@
                 {% endfor %}
                 <label class="qRange-value">0.5</label>
             </p>
-            <p>
+            <p>line
                 {{ form.calcType.label }}
                 <span class="calcType">
                     {% for subfield in form.calcType %}
@@ -80,7 +80,7 @@
                     <span>Advanced settings</span>
                     <div class="img"></div>
                 </div>
-            </div>
+            </div>line
             <div class="advanced-settings">
                 <p>
                     {{ form.stepsBetweenSync.label }}{{ form.stepsBetweenSync }}

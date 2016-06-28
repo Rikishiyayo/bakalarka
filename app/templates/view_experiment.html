@@ -9,10 +9,6 @@
 
 {% block header %}
     {{ super() }}
-    {% if current_user.is_authenticated %}
-    {% else %}
-        <a href="{{ url_for('main_page') }}">Sign In</a>
-    {% endif %}
 {% endblock %}
 
 {% block content %}
