@@ -14,7 +14,7 @@
     {% endfor %}
     <div class="submit_experiment">
         <h1>Submit a new computation {{ r }}</h1>
-        <form action="" method="post" enctype="multipart/form-data" id="new_experiment_form">
+        <form action="/home" method="post" enctype="multipart/form-data" id="new_experiment_form">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.title.label }}{{ form.title}}
