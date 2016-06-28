@@ -16,14 +16,6 @@ def home():
 
     form = Computation()
     user_id = get_user_id(user_details[0])
-    if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
-        return render_template('home.html', form=form,
-                               pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
-                               comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
-                                   get_user_id(user_details[0]), 0, 'date', -1, {}))
-    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
-        return redirect(url_for('userManagement.unconfirmed'))
-
     if form.validate_on_submit():       # this block of code is executed when browser sent POST request(user submitted form)
         try:
             DirectoryAndFileWriter.create_experiment(form, str(user_id))
@@ -32,6 +24,14 @@ def home():
         except NewComputationRequestSubmitError:
             flash(current_app.config['EXPERIMENT_SUBMISSION_FAILED'], "error")
             return redirect('/home')
+
+    if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
+        return render_template('home.html', form=form,
+                               pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
+                               comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
+                                   get_user_id(user_details[0]), 0, 'date', -1, {}))
+    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
+        return redirect(url_for('userManagement.unconfirmed'))
 
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
