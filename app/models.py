@@ -34,8 +34,7 @@ class UserView(ModelView):
     page_size = 30
     can_edit = False
     can_create = False
-    column_exclude_list = ['password_hash']
-    column_editable_list = ['confirmed', 'active', 'role']
+    column_editable_list = ['confirmed', 'role']
 
     def is_accessible(self):
         return True
