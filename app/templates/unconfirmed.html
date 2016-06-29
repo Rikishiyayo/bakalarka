@@ -3,46 +3,20 @@
 {% block head %}
     {{ super() }}
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/unconfirmed.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+    <script src="{{ url_for('static',filename='scripts/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='scripts/bootstrap.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="flash-message">
-        {% for message in get_flashed_messages(category_filter=["info"]) %}
-            <span>{{ message }}</span>
-        {% endfor %}
+<div class="content-wrapper container">
+    <div class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+        <h1 class="">
+            Hello, {{ username }}!
+        </h1>
+        <h2 class="red-color">Your account has not been confirmed!</h2>
+        <p class="">Before you can access this site, admins need to confirm
+            your account. You will get an email when that happens.</p>
     </div>
-    <div class="account-status">
-        {% if current_user.confirmed %}
-            <span class="confirmed">Account confirmed</span>
-        {% else %}
-            <span class="not-confirmed">Account not confirmed</span>
-        {% endif %}
-        {% if current_user.active %}
-            <span class="active">Account active</span>
-        {% else %}
-            <span class="not-active">Account not active</span>
-        {% endif %}
-    </div>
-    <h1>
-        Hello, {{ current_user.username }}!
-    </h1>
-    {% if not current_user.confirmed %}
-    <h3>You have not confirmed your account yet.</h3>
-    <p>
-        Before you can access this site you need to confirm your account.
-        Check your inbox, you should have received an email with a confirmation link.
-    </p>
-    {% endif %}
-    <p>
-        You will not be able to access this site, until your account is activated by admins. Admins
-        are notified right after registration, so it should not take long.
-    </p>
-    {% if not current_user.confirmed %}
-    <p>
-        Need another confirmation email?
-        <a href="/userManagement/confirm">Click here</a>
-    </p>
-    {% endif %}
 </div>
 {% endblock %}

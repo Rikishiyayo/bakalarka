@@ -34,5 +34,6 @@ class Computation(Form):
 #
 class RegistrationForm(Form):
     username = StringField('Username:', validators=[DataRequired("Required Field!")])
-    comment = TextAreaField('Comment:', validators=[DataRequired("Required field!"), Length(20, message="Minimum of 20 characters required!")])
+    email = StringField('Email:', validators=[DataRequired("Required Field!")])
+    comment = TextAreaField('Why do you want to sign up?', validators=[DataRequired("Required field!"), Length(20, message="Minimum of 20 characters required!")])
     submit = SubmitField('Sign Up')

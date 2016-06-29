@@ -173,8 +173,7 @@ def get_weights(user_id, comp_guid):
 # user_id - id of an user which matches a directory on a server where this user has his computations saved
 # comp_guid - id of a computation
 #
-# returns an array of arrays with 2 values where each 2-value array represents a single point on a chart
-#  with attributes 'q_value' (point x of a curve) and 'intensity' (point y of a curve)
+# returns an array of arrays with 2 values where each 2-value array represents a single point on a chart with attributes 'q_value' (point x of a curve) and 'intensity' (point y of a curve)
 def get_experiment_data(user_id, comp_guid):
     file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "saxs.dat")
     points = []
@@ -292,6 +291,16 @@ def read_row(file_path, info_dict, key):
         current_app.logger.error('Error while trying to access or while reading result.dat/status.txt or error_message.txt in specified directory\n'
                                  'function arguments: file_path - ' + file_path + ', key - ' + key, exc_info=err)
         raise err
-    
+
+
+def get_user_details():
+    result = []
+    with open(os.path.join(current_app.config['EXP_DIRECTORY'], "eppn.txt")) as file:
+        result.append(file.readline())
+    with open(os.path.join(current_app.config['EXP_DIRECTORY'], "cn.txt")) as file:
+        result.append(file.readline())
+    with open(os.path.join(current_app.config['EXP_DIRECTORY'], "email.txt")) as file:
+        result.append(file.readline())
+    return result
 
 

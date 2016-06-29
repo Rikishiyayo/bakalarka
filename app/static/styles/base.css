@@ -10,7 +10,7 @@ body {
 }
 
 .PageWrapper {
-    min-width: 1400px;
+    /*min-width: 1400px;*/
     margin-left: auto;
     margin-right: auto;
     color: #4c4c4c;
@@ -135,7 +135,7 @@ section {
 
 footer {
     width: 100%;
-    margin: 100px 0;
+    padding: 100px 0;
 }
 
     footer .footer-content-wrapper{

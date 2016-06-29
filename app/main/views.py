@@ -16,7 +16,7 @@ def home():
 
     form = Computation()
     user_id = get_user_id(user_details[0])
-    if form.validate_on_submit():       # this block of code is executed when browser sent POST request(user submitted form)
+    if form.validate_on_submit():  # this block of code is executed when browser sent POST request(user submitted form)
         try:
             DirectoryAndFileWriter.create_experiment(form, str(user_id))
             flash(current_app.config['EXPERIMENT_SUBMITTED'], "info")
@@ -26,7 +26,7 @@ def home():
             return redirect('/home')
 
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
-        return render_template('home.html', form=form,
+        return render_template('home.html', form=form, username=user_details[1], is_admin=is_user_admin(user_details[0]),
                                pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
                                comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
                                    get_user_id(user_details[0]), 0, 'date', -1, {}))
@@ -73,7 +73,7 @@ def get_experiment_data():
 
 
 def get_user_details():
-    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape")]
+    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
     return result
 
 
@@ -85,6 +85,11 @@ def is_user_registered(eppn):
 def is_user_confirmed(eppn):
     user = User.query.filter_by(eppn=eppn).first()
     return user is not None and user.confirmed
+
+
+def is_user_admin(eppn):
+    user = User.query.filter_by(eppn=eppn).first()
+    return user is not None and user.role_id == 1
 
 
 def get_user_id(eppn):
