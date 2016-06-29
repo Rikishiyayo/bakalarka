@@ -26,7 +26,7 @@ def home():
             return redirect('/home')
 
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
-        return render_template('home.html', form=form, username=user_details[1], is_admin=is_user_admin(user_details[0]),
+        return render_template('home.html', form=form, username=get_user_username(user_details[0]), is_admin=is_user_admin(user_details[0]),
                                pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
                                comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
                                    get_user_id(user_details[0]), 0, 'date', -1, {}))
@@ -94,5 +94,9 @@ def is_user_admin(eppn):
 
 def get_user_id(eppn):
     return User.query.filter_by(eppn=eppn).first().id
+
+
+def get_user_username(eppn):
+    return User.query.filter_by(eppn=eppn).first().username
 
 

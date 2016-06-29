@@ -30,7 +30,7 @@ def unconfirmed():
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
         return redirect('/home')
 
-    return render_template('unconfirmed.html', username=user_details[1])
+    return render_template('unconfirmed.html', username=get_user_username(user_details[0]))
 
 
 def get_user_details():
@@ -50,6 +50,10 @@ def is_user_confirmed(eppn):
 
 def get_user_id(eppn):
     return User.query.filter_by(eppn=eppn).first().id
+
+
+def get_user_username(eppn):
+    return User.query.filter_by(eppn=eppn).first().username
 
 
 
