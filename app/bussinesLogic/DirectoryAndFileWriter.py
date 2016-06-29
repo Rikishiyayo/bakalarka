@@ -1,4 +1,4 @@
-import os, time, shutil, uuid, errno
+import os, time, shutil, uuid, errno, pwd, grp
 from flask import current_app
 from werkzeug import secure_filename
 from app.main.errors import NewComputationRequestSubmitError
@@ -10,11 +10,11 @@ def create_experiment(form, user_id):
     comp_id = str(uuid.uuid4())
     create_computation_directory(user_id, comp_id)
     create_params_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_id), form)
-    create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_id))
     filename = secure_filename(form.models.data.filename)
     extension = filename.split(os.extsep)[1]
     upload_file(form.models.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_id), "model", extension)
     upload_file(form.expData.data, os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_id), "saxs", "dat")
+    create_status_file(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_id))
 
 
 # create a directory for a new user
@@ -22,6 +22,8 @@ def create_user_directory(user_id):
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY']))
     try:
         os.mkdir(str(user_id))
+        uid, gid = pwd.getpwnam('www-data').pw_uid, grp.getgrnam('saxsfit').gr_gid
+        os.chown(str(user_id), uid, gid)
     except OSError as err:
         current_app.logger.error('Error while trying to create user directory for user with id - ' + str(user_id), exc_info=err)
         raise err
@@ -32,6 +34,8 @@ def create_computation_directory(user_id, comp_id):
     os.chdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id))
     try:
         os.mkdir(comp_id)
+        uid, gid = pwd.getpwnam('www-data').pw_uid, grp.getgrnam('saxsfit').gr_gid
+        os.chown(comp_id, uid, gid)
         os.chmod(comp_id, 0o770)
     except OSError as err:
         current_app.logger.error('Error while trying to create computation directory for user with id - ' + str(user_id), exc_info=err)
@@ -60,7 +64,7 @@ def create_params_file(path, form):
             params.write('NAME="' + form.title.data + '"\n')
             params.write('DATE="' + time.strftime("%d/%m/%Y") + '"\n')
             params.write('DESCRIPTION' + '="' + form.description.data + '"\n')
-            params.write('STRUCTURES_FILE="' + form.models.data.filename + '"\n')
+            params.write('STRUCTURES_FILE="model.pdb"\n')
             params.write('OPTIM_STEPS="' + str(form.calcSteps.data) + '"\n')
             params.write('OPTIM_SYNC="' + str(form.stepsBetweenSync.data) + '"\n')
             params.write('OPTIM_ALPHA="' + str(form.alpha.data) + '"\n')
@@ -78,13 +82,16 @@ def create_params_file(path, form):
 # path - a path to a directory where the result.dat file will be created
 def create_status_file(path):
     file_path = os.path.join(path, "status.txt")
+    umask_orig = os.umask(0)
     try:
-        with open(file_path, "w") as status:
+        with os.fdopen(os.open(file_path, os.O_WRONLY | os.O_CREAT, 0o660), "w") as status:
             status.write("accepted\n")
     except OSError as err:
         current_app.logger.error('Error while trying to create and write to a status.txt file in specified directory\n'
-                                 'function arguments: file_path - ' + file_path, exc_info=err)
+                         'function arguments: file_path - ' + file_path, exc_info=err)
         raise NewComputationRequestSubmitError("Error occurred while trying to submit a computation request.")
+    finally:
+        os.umask(umask_orig)
 
 
 # gets a file with model to display and moves it to a directory on a server to read and for user to download
@@ -112,17 +119,3 @@ def delete_computations(info, user_id):
     else:
         directory_to_delete = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, info['comp_guid'])
         shutil.rmtree(directory_to_delete)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
