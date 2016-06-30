@@ -45,7 +45,7 @@ function onGetExperimentsSuccess(data) {
     for (var i = 0; i < comps.length; i++) {
         var newEl = "<div class=\"experiment_row " + comps[i].status + "\">";
 
-        if(comps[i].progress != 0){
+        if(comps[i].progress != 0 || comps[i].status == 'user_error' || comps[i].status == 'server_error'){
             newEl += "<a href=\"/view_experiment/" + comps[i].user_id + "/" + comps[i].comp_guid + "\"></a>";
         }
 
@@ -68,9 +68,18 @@ function onGetExperimentsSuccess(data) {
     deleteRowButtonHoverAndClick();
 }
 
-//error function for asynchronous calls, tries to log error to saxs.log on server
-function onGetExperimentsError(jqXHR, textStatus, errorThrown) {
-    $('.error-info').show();
+//error function for getComputations asynchronous calls, tries to log error to saxs.log on server
+function onGetComputationsError(jqXHR, textStatus, errorThrown) {
+    $('.get-comps-error').show();
+    setTimeout(function () {
+        $('.error-info').fadeOut(700);
+        hideOverlays();
+    }, 3000);
+}
+
+//error function for deleteComputation asynchronous call, tries to log error to saxs.log on server
+function onDeleteComputationError(jqXHR, textStatus, errorThrown) {
+    $('.delete-comps-error').show();
     setTimeout(function () {
         $('.error-info').fadeOut(700);
         hideOverlays();
@@ -175,7 +184,7 @@ function reloadList(){
                 resetSortOrder();
             },
             complete: onGetExperimentsComplete,
-            error: onGetExperimentsError
+            error: onGetComputationsError
         })
     });
 }
@@ -309,7 +318,7 @@ function deleteComputation(){
             selectPageControl(selectedPage + 1);
         },
         complete: onGetExperimentsComplete,
-        error: onGetExperimentsError
+        error: onDeleteComputationError
     });
 }
 
@@ -353,7 +362,7 @@ function changePageOnPageClick(){
                 selectPageControl(selectedPage.text());
             },
             complete: onGetExperimentsComplete,
-            error: onGetExperimentsError,
+            error: onGetComputationsError,
             data: JSON.stringify(filterOptions),
             dataType: 'json'
         });
@@ -381,7 +390,7 @@ function changePageOnNextClick(){
                     }
                 },
                 complete: onGetExperimentsComplete,
-                error: onGetExperimentsError,
+                error: onGetComputationsError,
                 data: JSON.stringify(filterOptions),
                 dataType: 'json'
             });
@@ -410,7 +419,7 @@ function changePageOnPreviousClick(){
                     }
                 },
                 complete: onGetExperimentsComplete,
-                error: onGetExperimentsError,
+                error: onGetComputationsError,
                 data: JSON.stringify(filterOptions),
                 dataType: 'json'
             });
@@ -476,7 +485,7 @@ function filterList(){
                 setPages();
             },
             complete: onGetExperimentsComplete,
-            error: onGetExperimentsError,
+            error: onGetComputationsError,
             data: JSON.stringify(getFilterArguments()),
             dataType: 'json'
         });
@@ -499,7 +508,7 @@ function sortList(){
                 showSortOrderIcon(clickedEl);
             },
             complete: onGetExperimentsComplete,
-            error: onGetExperimentsError,
+            error: onGetComputationsError,
             data: JSON.stringify(filterOptions),
             dataType: 'json'
         });

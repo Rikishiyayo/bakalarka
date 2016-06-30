@@ -149,9 +149,13 @@
             <div class="experiment_list_overlay">
                 <img id="loading-icon" src="/static/styles/icons/gears.gif">
             </div>
-            <div class="error-info">
+            <div class="error-info get-comps-error">
                 <img id="error-icon" class="" src="/static/styles/icons/error.png">
-                Could not load data. Please try again.
+                Error while trying to load data. Please try again.
+            </div>
+            <div class="error-info delete-comps-error">
+                <img id="error-icon" class="" src="/static/styles/icons/error.png">
+                Error while trying to delete computation. Please try again.
             </div>
             {% for item in comps %}
                 <div class="experiment_row {{ item.status }}">

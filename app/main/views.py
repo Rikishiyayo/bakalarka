@@ -36,12 +36,21 @@ def home():
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
 def view_experiment(user_id, comp_guid):
+    user_details = DirectoryAndFileReader.get_user_details()
+
+    if not is_user_registered(user_details[0]):
+        return redirect(url_for('userManagement.sign_up'))
+
+    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
+        return redirect(url_for('userManagement.unconfirmed'))
+
     if not DirectoryAndFileReader.check_if_computation_exist(user_id, comp_guid):
         return render_template("unavailable.html", message="Requested computation results don't exist. Make sure the url is correct", icon="info.png")
     if not DirectoryAndFileReader.check_for_computation_results(user_id, comp_guid, DirectoryAndFileReader.get_computation_status(user_id, comp_guid)):
         return render_template("unavailable.html", message="Requested results cannot be displayed, because server has not finished the computation. Try again later", icon="gears.gif")
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
-    return render_template("view_experiment.html", best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
+    return render_template("view_experiment.html", username=user_details[1], is_admin=is_user_admin(user_details[0]),
+                           best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
                            computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
 
 

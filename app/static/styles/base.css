@@ -10,7 +10,7 @@ body {
 }
 
 .PageWrapper {
-    min-width: 500px;
+    /*min-width: 1400px;*/
     margin-left: auto;
     margin-right: auto;
     color: #4c4c4c;
