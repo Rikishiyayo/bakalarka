@@ -465,6 +465,7 @@ div.experiment_list{
         width: 95%;
         margin: 0 0 10px 5%;
         padding-bottom: 10px;
+        padding-top: 10px;
         display: none;
         position: relative;
         -webkit-user-select: none;
@@ -477,7 +478,7 @@ div.experiment_list{
             font-size:0;
         }
 
-            div.experiment_list .search-filter p:first-child {
+            div.experiment_list .search-filter p:first-of-type {
                 margin-bottom: 10px;
             }
 

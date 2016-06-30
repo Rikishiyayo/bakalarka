@@ -58,6 +58,13 @@ def view_experiment(user_id, comp_guid):
 def get_experiments(page, sort_option, sort_order):
     user_details = get_user_details()
     user_id = get_user_id(user_details[0])
+
+    if not is_user_registered(user_details[0]):
+        return redirect(url_for('userManagement.sign_up'))
+
+    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
+        return redirect(url_for('userManagement.unconfirmed'))
+
     return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(user_id, int(page), sort_option, int(sort_order), request.json),
                    pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(user_id, sort_option, int(sort_order), request.json))))
 
@@ -66,6 +73,13 @@ def get_experiments(page, sort_option, sort_order):
 def delete_computations(page, sort_option, sort_order):
     user_details = get_user_details()
     user_id = get_user_id(user_details[0])
+
+    if not is_user_registered(user_details[0]):
+        return redirect(url_for('userManagement.sign_up'))
+
+    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
+        return redirect(url_for('userManagement.unconfirmed'))
+
     DirectoryAndFileWriter.delete_computations(request.json, str(user_id))
     return jsonify(comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(user_id, int(page), sort_option, int(sort_order), request.json['filter_values']),
                    pages=len(DirectoryAndFileReader.get_pagination_controls_count(computations=DirectoryAndFileReader.get_computations(user_id, sort_option, int(sort_order), request.json['filter_values']))))
@@ -73,6 +87,14 @@ def delete_computations(page, sort_option, sort_order):
 
 @main.route('/get_experiment_data')
 def get_experiment_data():
+    user_details = get_user_details()
+
+    if not is_user_registered(user_details[0]):
+        return redirect(url_for('userManagement.sign_up'))
+
+    elif is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
+        return redirect(url_for('userManagement.unconfirmed'))
+
     user_id = request.args.get("user_id")
     comp_guid = request.args.get("comp_guid")
     json = jsonify(weights=DirectoryAndFileReader.get_weights(user_id, comp_guid),
