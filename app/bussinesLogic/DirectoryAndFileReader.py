@@ -293,14 +293,4 @@ def read_row(file_path, info_dict, key):
         raise err
 
 
-def get_user_details():
-    result = []
-    with open(os.path.join(current_app.config['EXP_DIRECTORY'], "eppn.txt")) as file:
-        result.append(file.readline())
-    with open(os.path.join(current_app.config['EXP_DIRECTORY'], "cn.txt")) as file:
-        result.append(file.readline())
-    with open(os.path.join(current_app.config['EXP_DIRECTORY'], "email.txt")) as file:
-        result.append(file.readline())
-    return result
-
 

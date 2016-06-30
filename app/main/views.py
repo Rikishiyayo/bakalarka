@@ -36,7 +36,7 @@ def home():
 
 @main.route('/view_experiment/<user_id>/<comp_guid>')
 def view_experiment(user_id, comp_guid):
-    user_details = DirectoryAndFileReader.get_user_details()
+    user_details = get_user_details()
 
     if not is_user_registered(user_details[0]):
         return redirect(url_for('userManagement.sign_up'))
