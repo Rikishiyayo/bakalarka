@@ -1,6 +1,5 @@
 from flask import Flask
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_mail import Mail
@@ -15,9 +14,6 @@ bootstrap = Bootstrap()
 mail = Mail()
 
 admin = Admin(name="User management")
-
-lm = LoginManager()
-lm.login_view = 'main.main_page'
 
 
 def create_app(config_name):
@@ -35,7 +31,6 @@ def create_app(config_name):
     bootstrap.init_app(app)
     mail.init_app(app)
     db.init_app(app)
-    lm.init_app(app)
     admin.init_app(app)
 
     from .main import main as main_blueprint
