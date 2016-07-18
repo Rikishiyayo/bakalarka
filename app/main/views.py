@@ -4,12 +4,15 @@ from app.forms import Computation
 from app.bussinesLogic import DirectoryAndFileReader, DirectoryAndFileWriter
 from app.models import User
 from app.main.errors import NewComputationRequestSubmitError
+from app.email import send_email
 
 
 @main.route('/')
 @main.route('/home', methods=['GET', 'POST'])
 def home():
     user_details = get_user_details()
+
+    send_email('rikishiyayo@gmail.com', 'Account active', 'mail/confirm', user=user_details[1])
 
     if not is_user_registered(user_details[0]):
         return redirect(url_for('userManagement.sign_up'))

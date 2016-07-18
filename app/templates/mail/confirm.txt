@@ -1,13 +1,3 @@
-Dear {{ user.username }},
+Dear {{ user }},
 
-Welcome to SaxsExpViewer!
-
-To confirm your account please click on the following link:
-
-{{ url_for('userManagement.confirm', token=token, _external=True) }}
-
-Sincerely,
-
-The SaxsExpViewer Team
-
-Note: replies to this email address are not monitored.
+Your account has been confirmed.
