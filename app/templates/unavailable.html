@@ -9,10 +9,7 @@
     <div class="info">
         <img src="/static/styles/icons/{{ icon }}" >
         <span>
-            {{ message }}
-            {% if current_user.is_authenticated %}
-                or <a href="/home">go to your home page</a>
-            {% endif %}
+            {{ message }} or <a href="/home">go to your home page</a>
         </span>
     </div>
 {% endblock %}
