@@ -2,6 +2,7 @@ import os, time, shutil, uuid, errno, pwd, grp
 from flask import current_app
 from werkzeug import secure_filename
 from app.main.errors import NewComputationRequestSubmitError
+from . import DirectoryAndFileReader
 
 
 # creates an experiment - creates a directory, uploads and creates required files
@@ -112,10 +113,15 @@ def get_model_data(user_id, exp_guid):
             raise err
 
 
+# deletes computations from server
+# info - a dictionary with keys 'all' and 'comp_guid'. If the key 'all' has value 'True', method deletes all computations with status 'done'.
+#        If the key 'all' has value 'False', method deletes a single computation with matching guid as is the value in 'comp_guid' key.
 def delete_computations(info, user_id):
     if info['all'] == 'True':
         for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id)):
-            shutil.rmtree(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, item))
+            if DirectoryAndFileReader.get_computation_status(user_id, item) == 'done':
+                shutil.rmtree(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, item))
     else:
         directory_to_delete = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, info['comp_guid'])
-        shutil.rmtree(directory_to_delete)
+        if DirectoryAndFileReader.get_computation_status(user_id, info['comp_guid']) == 'done':
+            shutil.rmtree(directory_to_delete)

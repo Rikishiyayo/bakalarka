@@ -166,7 +166,7 @@
                     <span class="name">{{ item.name }}</span>
                     <span class="progress">{{ item.progress }}</span>
                     <span class="status">{{ item.status }}</span>
-                    {% if item.progress != '0' or item.status == 'user_error' or item.status == 'server_error' %}
+                    {% if item.status == 'done' or item.status == 'user_error' or item.status == 'server_error' %}
                         <img class="delete" src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">
                     {% endif %}
                     {% if item.status == 'user_error'%}

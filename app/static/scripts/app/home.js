@@ -229,6 +229,7 @@ function changeStatusColor() {
 }
 
 //hovering effect over a row with a computation. Clicking on a row will sent player to a page with results of a clicked computation
+//delete button will be shown only if status is 'done'
 function nonErroneousComputationRowHoverAndClick(){
     $('.experiment_row:not(.server_error, .user_error)').on('mouseover', function () {
         if ($(this).find('a').length != 0) {
@@ -248,6 +249,7 @@ function nonErroneousComputationRowHoverAndClick(){
 }
 
 //hovering effect over a row with an erroneous computation. Clicking on this row will display player an error message
+//delete button will be shown always, because the computation is erroneous, thus we can delete it seamlessly
 function erroneousComputationRowHoverAndClick(){
     $('.experiment_row.user_error, .experiment_row.server_error').on('mouseover', function () {
         $(this).addClass('highlight');
