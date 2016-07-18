@@ -47,7 +47,7 @@ def view_experiment(user_id, comp_guid):
     if not DirectoryAndFileReader.check_if_computation_exist(user_id, comp_guid):
         return render_template("unavailable.html", message="Requested computation results don't exist. Make sure the url is correct", icon="info.png")
     if not DirectoryAndFileReader.check_for_computation_results(user_id, comp_guid, DirectoryAndFileReader.get_computation_status(user_id, comp_guid)):
-        return render_template("unavailable.html", message="Requested results cannot be displayed, because server has not finished the computation. Try again later", icon="gears.gif")
+        return render_template("unavailable.html", message="Requested results cannot be displayed, because server has not finished the computation. Try again later", icon="info.png")
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
     return render_template("view_experiment.html", username=user_details[1], is_admin=is_user_admin(user_details[0]),
                            best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
