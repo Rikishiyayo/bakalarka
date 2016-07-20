@@ -112,7 +112,7 @@ def get_user_details():
 def is_user_registered(eppn):
     user = User.query.filter_by(eppn=eppn).first()
     current_app.logger.info("checking, if authenticated user is registered. eppn = " + eppn)
-    current_app.logger.info("user object = " + user)
+    current_app.logger.info("user object is none = " + user is None)
     return user is not None
 
 
