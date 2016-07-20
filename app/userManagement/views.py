@@ -33,8 +33,8 @@ def sign_up():
 def unconfirmed():
     user_details = get_user_details()
 
-    if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
-        return redirect('/home')
+    if not is_user_registered(user_details[0]):
+        return redirect(url_for('userManagement.sign_up'))
 
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
         return redirect('/home')
