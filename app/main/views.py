@@ -4,15 +4,12 @@ from app.forms import Computation
 from app.bussinesLogic import DirectoryAndFileReader, DirectoryAndFileWriter
 from app.models import User
 from app.main.errors import NewComputationRequestSubmitError
-from app.email import send_email
 
 
 @main.route('/')
 @main.route('/home', methods=['GET', 'POST'])
 def home():
     user_details = get_user_details()
-
-    send_email('rikishiyayo@gmail.com', 'Account active', 'mail/confirm', user=user_details[1])
 
     if not is_user_registered(user_details[0]):
         return redirect(url_for('userManagement.sign_up'))
@@ -108,11 +105,14 @@ def get_experiment_data():
 
 def get_user_details():
     result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
+    current_app.logger.info("values of authenticated user from http header. eppn = " + result[0] + " cn = " + result[1] + " mail = " + result[2])
     return result
 
 
 def is_user_registered(eppn):
     user = User.query.filter_by(eppn=eppn).first()
+    current_app.logger.info("checking, if authenticated user is registered. eppn = " + eppn)
+    current_app.logger.info("user object = " + user)
     return user is not None
 
 

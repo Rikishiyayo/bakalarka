@@ -1,0 +1,3 @@
+Dear {{ user }},
+
+Your account has been confirmed.

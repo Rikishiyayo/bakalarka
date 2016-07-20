@@ -2,6 +2,7 @@ from flask.ext.login import UserMixin, request
 from flask import redirect
 from app import db
 from flask_admin.contrib.sqla import ModelView
+from app.email import send_email
 
 
 class User(UserMixin, db.Model):
@@ -10,8 +11,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=False)
     email = db.Column(db.String, index=True, unique=True)
     eppn = db.Column(db.String, index=True, unique=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    confirmed = db.Column(db.Boolean, default=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -36,6 +37,10 @@ class UserView(ModelView):
     can_create = False
     column_editable_list = ['confirmed', 'role']
 
+    def on_model_change(self, form, model, is_created):
+        if "confirmed" in form.data and form.data['confirmed'][0] == True:
+            send_email(model.email, 'Account confirmed', 'mail/confirm', user=model.username)
+
     def is_accessible(self):
         user_details = get_user_details()
         return is_user_confirmed(user_details[0]) and is_user_admin(user_details[0])
@@ -48,11 +53,6 @@ class UserView(ModelView):
 def get_user_details():
     result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
     return result
-
-
-def is_user_registered(eppn):
-    user = User.query.filter_by(eppn=eppn).first()
-    return user is not None
 
 
 def is_user_confirmed(eppn):
