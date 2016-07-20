@@ -24,6 +24,7 @@ $(function () {
     changePageOnPreviousClick();
 
     filterToggleClick();
+    toggleHelpClick();
     sortList();
     filterList();
     clearFilter();
@@ -32,6 +33,7 @@ $(function () {
     fileFormatValidation();
 
     tooltips();
+    toggleHelpTooltips();
     dialog();
 });
 
@@ -470,6 +472,43 @@ function filterToggleClick(){
     });
 }
 
+function toggleHelpClick() {
+    $('.search-filter').on('click', 'img.toggle-help.enabled', function () {
+        $(this).removeClass("enabled").addClass("disabled");
+        toggleHelpTooltips();
+        setCookie("disabled");
+    });
+    $('.search-filter').on('click', 'img.toggle-help.disabled', function () {
+        $(this).removeClass("disabled").addClass("enabled");
+        toggleHelpTooltips();
+        setCookie("enabled");
+    });
+}
+
+function toggleHelpTooltips() {
+    var el = $('.search-filter img.toggle-help');
+    if (el.hasClass("enabled")) {
+        el.tooltip( "option", "content", "Turn Off Help" );  //set content of tooltip
+        el.attr('src', '/static/styles/icons/question-mark-on.png');  //set image
+        $('input.date, input.status, input.name, input.progress').tooltip("enable");  //enable filter tooltips
+    }
+    else {
+        el.tooltip( "option", "content", "Turn On Help" );  //set title of tooltip
+        el.attr('src', '/static/styles/icons/question-mark-off.png');
+        $('input.date, input.status, input.name, input.progress').tooltip("disable");
+    }
+}
+
+function setCookie(value) {
+    $.ajax({
+        type: 'POST',
+        url: "/set_cookie",
+        contentType: 'application/json',
+        data: JSON.stringify(value),
+        dataType: 'json'
+    });
+}
+
 function filterList(){
     $('.search-filter .filter').on('click', function(){
         if (!filterValidation()) return;
@@ -746,28 +785,50 @@ function tooltips() {
         collision: "none"
     };
     $('input.date').tooltip({
-        content: "doplnit napovedu k filtrovaniufvgsdtbdsgdbgbvsgfbvgf bsgbsg b gb r r  rggg rvbr  rgrgvrggvr rvrvv vrv vrgfv lfkdnmnvflk fklmvvkm fgk gk glrgk rfgklv   rlkvrklvvlkm lkgdvklr gkvrkl lfkemrfkl",
+        content: "To search for computations with a certain date, type: <br><strong><span style=\"color:lawngreen;\">" +
+                 "\"{number of day}/{number of month}/{number of year}\"</span></strong></br> eg. \"20/04/1998\"." +
+                 "<br/><br/>To search for computations older/younger than a certain date, type: <br><strong><span style=\"color:lawngreen;\">" +
+                 "\"{comparison operator}{whitespace}{number of day}/{number of month}/{number of year}\"</span></strong></br>" +
+                 " eg. \">= 20/05/2011\". <br/><br/>To search for computations within a range of dates, type: <br><strong><span style=\"color:lawngreen;\">" +
+                 "\"{number of day}/{number of month}/{number of year}{whitespace}{-}{whitespace}{number of day}/" +
+                 "{number of month}/{number of year}\"</span></strong></br> eg. \"15/07/2011 - 20/05/2011\".",
         position: filterFieldPosition,
         items: "input.date",
         tooltipClass: "upArrowTooltip"
     });
     $('input.status').tooltip({
-        content: "doplnit napovedu k filtrovaniu",
+        content: "Search for computations with a certain status. These status values(and their shortcuts) are available: <br><strong><span style=\"color:lawngreen;\">" +
+                 "accepted(a), done(d), running(r), queued(q), checked(ch), preprocessed(p), storage_ready(sr), optim_completed(oc), server_error(se), user_error(ue)</span></strong>.</br> " +
+                 "Type these values(or shortcuts) separated by at least 1 whitespace character, eg. \"accepted q server_error d r\"",
         position: filterFieldPosition,
         items: "input.status",
         tooltipClass: "upArrowTooltip"
     });
+
     $('input.name').tooltip({
-        content: "doplnit napovedu k filtrovaniu",
+        content: "Search for computations with a certain name. No restrictions, any character is valid.",
         position: filterFieldPosition,
         items: "input.name",
         tooltipClass: "upArrowTooltip"
     });
     $('input.progress').tooltip({
-        content: "doplnit napovedu k filtrovaniu",
+        content: "To search for computations with a certain progress, type: <br><strong><span style=\"color:lawngreen;\">\"{integer}\"</span></strong></br> eg. \"500\"" +
+                 "To search for computations with bigger/lower progress than a certain value, type: <br><strong><span style=\"color:lawngreen;\">" +
+                 "\"{comparison operator}{whitespace}{integer}\"</span></strong></br> eg. \"< 785\"" +
+                 "To search for computations within a range of progress values, type: <br><strong><span style=\"color:lawngreen;\">" +
+                 "\"{integer}{whitespace}{-}{whitespace}{integer}\"</span></strong></br> eg. \"100 - 500\"",
         position: filterFieldPosition,
         items: "input.progress",
         tooltipClass: "upArrowTooltip"
+    });
+    $('.toggle-help').tooltip({
+        position: {
+            my: "right",
+            at: "left-10",
+            collision: "none"
+        },
+        items: ".toggle-help",
+        tooltipClass: "helpToggleTooltip"
     });
     $('.delete-all').tooltip({
         content: "Delete all",

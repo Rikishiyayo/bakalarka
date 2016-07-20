@@ -1,7 +1,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField, TextAreaField, IntegerField, FloatField, RadioField
 from wtforms.fields.html5 import DecimalRangeField
-from wtforms.validators import DataRequired, NumberRange, Length
+from wtforms.validators import DataRequired, NumberRange, Length, Email
 from flask_wtf.file import FileAllowed, FileField
 
 
@@ -33,7 +33,7 @@ class Computation(Form):
 # A register form
 #
 class RegistrationForm(Form):
-    username = StringField('Username:', validators=[DataRequired("Required Field!")])
-    email = StringField('Email:', validators=[DataRequired("Required Field!")])
+    username = StringField('Username:', validators=[DataRequired("Required Field!"), Length(min=5, message="Minimum of 5 characters required!")])
+    email = StringField('Email:', validators=[DataRequired("Required Field!"), Email()])
     comment = TextAreaField('Why do you want to sign up?', validators=[DataRequired("Required field!"), Length(20, message="Minimum of 20 characters required!")])
     submit = SubmitField('Sign Up')

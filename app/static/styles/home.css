@@ -495,7 +495,6 @@ div.experiment_list{
                 div.experiment_list .search-filter p span.filter, div.experiment_list .search-filter p span.clear-filter {
                     border-radius: 4px;
                     width: 10%;
-                    line-height: 30px;
                     color: #4c4c4c;
                     text-align: center;
                     transition: background-color .5s;
@@ -509,18 +508,31 @@ div.experiment_list{
                     vertical-align: middle;
                 }
 
-                div.experiment_list .search-filter p span.clear-filter {
-                    background-color: #f65858;
-                    vertical-align: middle;
-                }
-
                     div.experiment_list .search-filter p span.filter:hover {
                         background-color: #6ca4c8;
                         cursor: pointer;
                     }
 
+                div.experiment_list .search-filter p span.clear-filter {
+                    background-color: #f65858;
+                }
+
                     div.experiment_list .search-filter p span.clear-filter:hover {
                         background-color: #dc3f3f;
+                        cursor: pointer;
+                    }
+
+                div.experiment_list .search-filter p img.toggle-help {
+                    width: 4%;
+                    padding: 3px 5px;
+                    box-sizing: border-box;
+                    margin-left: 1%;
+                    height: 30px;
+                    vertical-align: middle;
+                    border-radius: 4px;
+                }
+
+                    div.experiment_list .search-filter p img.toggle-help:hover {
                         cursor: pointer;
                     }
 
@@ -555,6 +567,10 @@ div.experiment_list{
             div.experiment_list .search-filter p .status{
                 width: 20%;
             }
+
+                div.experiment_list .search-filter p span.status{
+                    width: 15%;
+                }
 
     div.experiment_list .list-header {
         box-sizing: border-box;
@@ -794,23 +810,33 @@ div.experiment_list{
     top: 7px;
 }
 
+.helpToggleTooltip{
+    color: #4c4c4c !important;
+    background-color: whitesmoke !important;
+}
+
+    .helpToggleTooltip:after{
+        border: 10px solid whitesmoke;
+        border-bottom-color: transparent;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        right: -19px;
+        top: 7px;
+    }
+
 .upArrowTooltip{
     height: auto;
     line-height: 23px;
-    max-width: 450px;
+    max-width: 1100px;
     padding: 10px !important;
 }
 
-    .upArrowTooltip .ui-tooltip-content {
-
+    .upArrowTooltip:after{
+        border-left-color: transparent;
+        border-right-color: transparent;
+        right: 50%;
+        top: -19px;
     }
-
-.upArrowTooltip:after{
-    border-left-color: transparent;
-    border-right-color: transparent;
-    right: 50%;
-    top: -19px;
-}
 
 .selectedPaginationControl {
     background-color: lightskyblue !important;
@@ -840,7 +866,7 @@ div.experiment_list{
     display: inline-block !important;
 }
 
-/* dialog classes */
+/* -------------------------------------------------------------------------------modal dialog classes-------------------------------------------------------------------------------------------------- */
 .ui-widget-overlay {
     background: lightgrey none;
     opacity: .7;

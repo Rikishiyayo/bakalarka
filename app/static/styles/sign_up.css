@@ -38,52 +38,85 @@ form{
     margin-bottom: 40px;
 }
 
-form p label{
-    font-size: 20px;
-}
-
-form p input:not([type="submit"]), form p textarea{
-    font-size: 20px;
-    border: 1px solid lightgrey;
-    border-radius: 4px;
-    color: #4c4c4c;;
-    height: 40px;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-    transition: border-color .5s;
-    -webkit-transition: border-color .5s;
-    -moz-transition: border-color .5s;
-    -o-transition: border-color .5s;
-}
-
-    form p input:not([type="submit"]):focus, form p textarea:focus{
-                border: 2px solid lightskyblue;
+    form p{
+        margin-bottom: 10px;
     }
 
-form p input#submit{
-        font-size: 20px;
-        border-radius: 4px;
-        color: #4c4c4c;;
-        height: 40px;
-        border: none;
-        background-color: lightskyblue;
-        transition: background-color .5s;
-        -webkit-transition: background-color .5s;
-        -moz-transition: background-color .5s;
-        -o-transition: background-color .5s;
-    }
+        form p label{
+            font-size: 20px;
+            line-height: 40px;
+            margin-bottom: 10px;
+        }
+            form p.label-row label{
+                margin-bottom: 0;
+            }
 
-        form p input#submit:hover{
-            background-color: #6ca4c8;
-            cursor: pointer;
+        form p input:not([type="submit"]), form p textarea{
+            font-size: 20px;
+            border: 1px solid lightgrey;
+            border-radius: 4px;
+            color: #4c4c4c;;
+            height: 40px;
+            margin-bottom: 5px;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+            transition: border-color .5s;
+            -webkit-transition: border-color .5s;
+            -moz-transition: border-color .5s;
+            -o-transition: border-color .5s;
         }
 
-form p textarea{
-    min-height: 150px !important;
-    resize: vertical;
-    max-height: 300px;
-}
+            form p input:not([type="submit"]):not(.error):focus, form p textarea:not(.error):focus{
+                border: 2px solid lightskyblue;
+            }
 
+            form p input.error:not([type="submit"]):focus, form p textarea.error:focus{
+                border: 2px solid #f65858;
+            }
+
+        form p input#submit{
+            font-size: 20px;
+            border-radius: 4px;
+            color: #4c4c4c;;
+            height: 40px;
+            margin-top: 5px;
+            border: none;
+            background-color: lightskyblue;
+            transition: background-color .5s;
+            -webkit-transition: background-color .5s;
+            -moz-transition: background-color .5s;
+            -o-transition: background-color .5s;
+        }
+
+            form p input#submit:hover{
+                background-color: #6ca4c8;
+                cursor: pointer;
+            }
+
+        form p textarea{
+            min-height: 150px !important;
+            resize: vertical;
+            max-height: 300px;
+        }
+
+        /* jquery validation error message */
+        form p span.error{
+            color: #f65858;
+            font-size: 16px;
+            display: inline-block;
+            min-height: 0;
+            padding: 0;
+        }
+
+        form p input.error, form p textarea.error{
+            border-color: #f65858;
+        }
+        
+        form p label.error{
+            color: #f65858;
+        }
+
+/* server error validation error message */
 .error-span{
     position: absolute;
     font-size: 20px;
@@ -110,71 +143,3 @@ form p textarea{
     vertical-align: middle;
     background-color: green;
 }
-
-/*.register-form-wrapper {*/
-    /*display: inline-block;*/
-    /*vertical-align: middle;*/
-    /*width: 100%;*/
-    /*padding-top: 100px;*/
-/*}*/
-
-    /*.register-form-wrapper h1{*/
-        /*width: 30%;*/
-        /*font-size: 26px;*/
-        /*text-align: center;*/
-        /*margin: auto;*/
-        /*margin-bottom: 25px;*/
-    /*}*/
-
-    /*.register-form-wrapper form{*/
-        /*width: 35%;*/
-        /*margin: auto;*/
-    /*}*/
-    /**/
-    /*.register-form-wrapper form p:not(.submit-button){*/
-        /*margin-bottom: 10px;*/
-    /*}*/
-    /**/
-
-        /*.register-form-wrapper form textarea{*/
-            /*resize: vertical;*/
-            /*height: 160px;*/
-            /*max-height: 500px;*/
-        /*}*/
-
-        /*.register-form-wrapper form input:not([type="submit"]):focus, .register-form-wrapper form textarea:focus{*/
-            /*border: 2px solid lightskyblue;*/
-        /*}*/
-
-    /*.register-form-wrapper form input.error{*/
-        /*background-color: #f65858;*/
-    /*}*/
-
-
-
-    /**/
-    /*.register-form-wrapper form label{*/
-        /*display: inline-block;*/
-        /*width: 22.5%;*/
-        /*margin-right: 2.5%;*/
-        /*vertical-align: middle;*/
-        /*font-size: 20px;*/
-        /*text-align: right;*/
-    /*}*/
-    /**/
-    /*.register-form-wrapper form span{*/
-        /*vertical-align: middle;*/
-        /*font-size: 16px;*/
-        /*color: #4c4c4c;*/
-        /*border-radius: 4px;*/
-        /*margin-left: 1%;*/
-        /*display: inline-block !important;*/
-        /*height: 40px;*/
-        /*line-height: 40px;*/
-        /*padding: 0 5px;*/
-        /*box-sizing: border-box;*/
-        /*position: absolute;*/
-    /*}*/
-    /**/
-    /**/
-    

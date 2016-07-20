@@ -2,14 +2,13 @@ from flask import render_template, redirect, request, url_for, current_app
 from .. import db
 from app.userManagement import userMngmt
 from app.forms import RegistrationForm
-from app.bussinesLogic import DirectoryAndFileWriter, DirectoryAndFileReader
+from app.bussinesLogic import DirectoryAndFileWriter
 from app.models import User
 from app.email import send_email
 
 
 @userMngmt.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
-    r_form = RegistrationForm(request.form)
     user_details = get_user_details()
 
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
@@ -17,6 +16,11 @@ def sign_up():
 
     if is_user_registered(user_details[0]) and not is_user_confirmed(user_details[0]):
         return redirect(url_for('userManagement.unconfirmed'))
+
+    r_form = RegistrationForm(request.form)
+    if request.method == "GET":
+        r_form.username.data = user_details[1]
+        r_form.email.data = user_details[2]
 
     if r_form.validate_on_submit():
         user = User(username=r_form.username.data, email=r_form.email.data, eppn=user_details[0], role_id=2)
@@ -26,7 +30,7 @@ def sign_up():
         send_email(current_app.config['ADMIN_MAIL_ADDRESS'], 'New user has registered', 'mail/new_user', user=user, comment=r_form.comment.data)
         return redirect(url_for('userManagement.unconfirmed'))
 
-    return render_template('sign_up.html', r_form=r_form, username=user_details[1], email=user_details[2])
+    return render_template('sign_up.html', r_form=r_form)
 
 
 @userMngmt.route('/unconfirmed')
