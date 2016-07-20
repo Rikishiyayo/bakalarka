@@ -31,7 +31,7 @@ def home():
         help_cookie = "enabled"
 
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
-        return render_template('home.html', form=form, username=user_details[1], help=help_cookie, is_admin=is_user_admin(user_details[0]),
+        return render_template('home.html', form=form, username=get_user_username(user_details[0]), help=help_cookie, is_admin=is_user_admin(user_details[0]),
                                pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
                                comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
                                    get_user_id(user_details[0]), 0, 'date', -1, {}))
@@ -55,7 +55,7 @@ def view_experiment(user_id, comp_guid):
         return render_template("unavailable.html", message="Requested results cannot be displayed, because server has not finished the computation. Try again later",
                                icon="info.png", username=user_details[1])
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
-    return render_template("view_experiment.html", username=user_details[1], is_admin=is_user_admin(user_details[0]),
+    return render_template("view_experiment.html", username=get_user_username(user_details[0]), is_admin=is_user_admin(user_details[0]),
                            best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
                            computation_details=DirectoryAndFileReader.get_computation_parameters(user_id, comp_guid))
 
