@@ -1,4 +1,4 @@
-from flask import render_template, redirect, flash, jsonify, request, current_app, url_for
+from flask import render_template, redirect, flash, jsonify, request, current_app, url_for, make_response
 from . import main
 from app.forms import Computation
 from app.bussinesLogic import DirectoryAndFileReader, DirectoryAndFileWriter
@@ -25,8 +25,13 @@ def home():
             flash(current_app.config['EXPERIMENT_SUBMISSION_FAILED'], "error")
             return redirect('/home')
 
+    try:
+        help_cookie = request.cookies["help"]
+    except KeyError:
+        help_cookie = "enabled"
+
     if is_user_registered(user_details[0]) and is_user_confirmed(user_details[0]):
-        return render_template('home.html', form=form, username=get_user_username(user_details[0]), is_admin=is_user_admin(user_details[0]),
+        return render_template('home.html', form=form, username=user_details[1], help=help_cookie, is_admin=is_user_admin(user_details[0]),
                                pages=DirectoryAndFileReader.get_pagination_controls_count(user_id),
                                comps=DirectoryAndFileReader.get_subset_of_computations_for_one_page(
                                    get_user_id(user_details[0]), 0, 'date', -1, {}))
@@ -102,6 +107,14 @@ def get_experiment_data():
                    computedCurves=DirectoryAndFileReader.get_computed_curves(user_id, comp_guid),
                    experimentData=DirectoryAndFileReader.get_experiment_data(user_id, comp_guid))
     return json
+
+
+@main.route('/set_cookie', methods=['POST'])
+def set_cookie():
+    value = request.json
+    resp = make_response("OK")
+    resp.set_cookie('help', value, 120 * 24 * 60 * 60)
+    return resp
 
 
 def get_user_details():
