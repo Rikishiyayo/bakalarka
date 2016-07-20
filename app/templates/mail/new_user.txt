@@ -1,3 +1,6 @@
-Dear {{ user }},
+New user has registered.
 
-Your account has been confirmed.
+Username: {{ user.username }}
+Mail address: {{ user.email }}
+
+Comment: {{ comment }}
