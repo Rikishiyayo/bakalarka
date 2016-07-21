@@ -119,9 +119,11 @@ def get_model_data(user_id, exp_guid):
 def delete_computations(info, user_id):
     if info['all'] == 'True':
         for item in os.listdir(os.path.join(current_app.config['EXP_DIRECTORY'], user_id)):
-            if DirectoryAndFileReader.get_computation_status(user_id, item) == 'done':
+            status = DirectoryAndFileReader.get_computation_status(user_id, info['comp_guid'])
+            if status == 'done' or status == "server_error" or status == "user_error":
                 shutil.rmtree(os.path.join(current_app.config['EXP_DIRECTORY'], user_id, item))
     else:
         directory_to_delete = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, info['comp_guid'])
-        if DirectoryAndFileReader.get_computation_status(user_id, info['comp_guid']) == 'done':
+        status = DirectoryAndFileReader.get_computation_status(user_id, info['comp_guid'])
+        if status == 'done' or status == "server_error" or status == "user_error":
             shutil.rmtree(directory_to_delete)
