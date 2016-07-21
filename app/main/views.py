@@ -125,14 +125,11 @@ def log():
 
 def get_user_details():
     result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
-    current_app.logger.info("values of authenticated user from http header. eppn = " + result[0] + " cn = " + result[1] + " mail = " + result[2])
     return result
 
 
 def is_user_registered(eppn):
     user = User.query.filter_by(eppn=eppn).first()
-    current_app.logger.info("checking, if authenticated user is registered. eppn = " + eppn)
-    current_app.logger.info("user object is none = " + str(user is None))
     return user is not None
 
 
