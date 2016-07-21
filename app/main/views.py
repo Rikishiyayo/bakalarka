@@ -117,6 +117,12 @@ def set_cookie():
     return resp
 
 
+@main.route('/log', methods=['POST'])
+def log():
+    current_app.logger.info("log from script: " + request.form['data'])
+    return "OK"
+
+
 def get_user_details():
     result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
     current_app.logger.info("values of authenticated user from http header. eppn = " + result[0] + " cn = " + result[1] + " mail = " + result[2])
