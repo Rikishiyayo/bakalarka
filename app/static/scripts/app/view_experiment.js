@@ -3,7 +3,7 @@
 //computationData - store a data about a computation that is being displayed(copy of JSON data obtained by AJAX request)
 //viewer - represents a PV viewer object
 //selectedSolution - number of currently selected solution
-var models = [], computationData, viewer, selectedSolution = 1, log="";
+var models = [], computationData, viewer, selectedSolution = 1, log= "user_id-" + $.url().segment(-2) + " comp_guid-" + $.url().segment(-1) + "-------";
 
 //available colors for models in PV viewer
 var colors = ['white', 'grey', 'green', 'red', 'blue', 'yellow', 'black', 'cyan', 'magenta', 'orange', 'lightgrey',
