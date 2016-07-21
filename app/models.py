@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=False)
-    email = db.Column(db.String, index=True, unique=False)
+    email = db.Column(db.String, index=True, unique=True)
     eppn = db.Column(db.String, index=True, unique=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
