@@ -3,7 +3,7 @@
 //computationData - store a data about a computation that is being displayed(copy of JSON data obtained by AJAX request)
 //viewer - represents a PV viewer object
 //selectedSolution - number of currently selected solution
-var models = [], computationData, viewer, selectedSolution = 1;
+var models = [], computationData, viewer, selectedSolution = 1, log="";
 
 //available colors for models in PV viewer
 var colors = ['white', 'grey', 'green', 'red', 'blue', 'yellow', 'black', 'cyan', 'magenta', 'orange', 'lightgrey',
@@ -81,6 +81,14 @@ $(function () {
 //    });
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function log_function() {
+    $.ajax({
+        type: 'POST',
+        url: "/log",
+        data: { data: log },
+    });
+}
 
 // set sort and select options when page loads for the first time or when user selects another solution
 function setSelectedRadioButtons(){
@@ -162,7 +170,7 @@ function weightSliderValueChange() {
         $('.sliderSummationValue').text("-");
 
         //show overlays
-        $('#controls-panel-overlay').show();
+        $('#controls-panel-overlay').show();start
         $('#best-results-table-overlay').show();
 
         $('.sliderWeightValue').text(value + "%");
@@ -284,6 +292,7 @@ function resetSliderValues(){
 
 //asynchronously calls a method on a server, which loads experiment data in JSON. If server method succesfully returns data to the browser, 'onGetExperimentDataSuccess' is executed
 function viewExperiment() {
+    log += "viewExperiment() start| ";
     $.get("/get_experiment_data",
         { user_id: $.url().segment(-2), comp_guid: $.url().segment(-1) }
     )
@@ -292,6 +301,7 @@ function viewExperiment() {
 }
 
 function onGetExperimentDataSuccess(data) {
+    log += "onGetExperimentDataSuccess() start| ";
     computationData = data;
     loadComputedCurvesForSolution(selectedSolution, false);
 
@@ -336,26 +346,35 @@ function onGetExperimentDataSuccess(data) {
 
 function onGetExperimentDataError(xhr, errorType, exception) {
     // try to log error
-    console.log("Error while executing ajax request 'get_experiment_data");
+    log += "onGetExperimentDataError() start| ";
     $('.loading-screen').hide();
+    log += "loaded screen hidden| ";
     $('.error-screen').show();
+    log += "onGetExperimentDataError() end| ";
 }
 
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
+    log += "viewFile() start| ";
     pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {  //normal try catch block doesnt catch exception when fetchPdb doesnt load any data or loads incorrect
         for (var i = 0; i < structures.length; i++) {
             models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
+            log += "model " + i + " loaded to PV viewer| ";
         }
         viewer.autoZoom();
         $('.loading-screen').hide();
+        log += "loading screen hidden| ";
         $('html body').animate({ scrollTop: 60}, 500);
+        log_function();
     }, { loadAllModels : true } );
+    log += "viewFile() end| ";
 }
 
 function setWeightSpanInSolutionRowWidth() {
+    log += "setWeightSpanInSolutionRowWidth() start| ";
     var length = 100 / $('.result-row:first span').length;
     $('.result-row span, .header-row span').css('width', length + '%');
+    log += "setWeightSpanInSolutionRowWidth() end| ";
 }
 
 //this function loads data for every computed curve in a given solution to an array of arrays with 2 values - 'q_value' and 'intensity'
@@ -387,6 +406,7 @@ function loadComputedCurvesForSolution(solution, override) {
 
 //create buttons that represent each model with weight value in a given file
 function createButtons(solution) {
+    log += "createButtons() start| ";
     var targetElement = $('.model_buttons');
     targetElement.html("");
     var models = computationData.weights['solution' + solution];
@@ -394,6 +414,7 @@ function createButtons(solution) {
         targetElement.append("<input type=\"button\" id=\"btnDisplayModel" + i + "\" value=\"Model " + i + "\" class=\"btnModel selected\" name=\""
             + i + "\" />" + "<span class=\"" + i + "\">" + models[i] + "</span>");
     }
+    log += "createButtons() end| ";
 }
 
 //return number of model with highest weight
