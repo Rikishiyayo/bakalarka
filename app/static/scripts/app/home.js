@@ -1,6 +1,7 @@
 var pages, filterOptions = {}, compBeingDeleted;
 
 $(function () {
+    preloadImages();
     setSliderValue();
     changeSliderValue();
     setOptParamsVisibility(0);
@@ -36,6 +37,15 @@ $(function () {
     toggleHelpTooltips();
     dialog();
 });
+
+function preloadImages() {
+    images = ["/static/styles/icons/recycle_bin_red.png", "/static/styles/icons/question-mark-on.png", "/static/styles/icons/question-mark-off.png", "/static/styles/icons/arrow_up.png",
+                "/static/styles/icons/gmail_dark_red.png", "/static/styles/icons/fb_dark_blue.png"];
+    for (var i = 0; i < images.length; ++i) {
+        var img = new Image();
+        img.src = images[i];
+    }
+}
 
 //---------------------------------------------------------------------------------ajax callback functions---------------------------------------------------------------------------------------
 //success function for asynchronous calls, erases current list of computations and replaces it with new list
