@@ -38,6 +38,5 @@ def unhandled_exception(err):
 
 
 def get_user_details():
-    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
-    current_app.logger.info("values of authenticated user from http header. eppn = " + result[0] + " cn = " + result[1] + " mail = " + result[2])
+    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("utf-8"), request.environ["HTTP_MAIL"].decode("utf-8")]
     return result

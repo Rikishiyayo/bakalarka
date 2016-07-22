@@ -50,10 +50,10 @@ def view_experiment(user_id, comp_guid):
         return redirect(url_for('userManagement.unconfirmed'))
 
     if not DirectoryAndFileReader.check_if_computation_exist(user_id, comp_guid):
-        return render_template("unavailable.html", message="Requested computation results don't exist. Make sure the url is correct", icon="info.png", username=user_details[1])
+        return render_template("unavailable.html", message="Requested computation results don't exist. Make sure the url is correct", icon="info.png", username=get_user_username(user_details[0]))
     if not DirectoryAndFileReader.check_for_computation_results(user_id, comp_guid, DirectoryAndFileReader.get_computation_status(user_id, comp_guid)):
         return render_template("unavailable.html", message="Requested results cannot be displayed, because server has not finished the computation. Try again later",
-                               icon="info.png", username=user_details[1])
+                               icon="info.png", username=get_user_username(user_details[0]))
     DirectoryAndFileWriter.get_model_data(user_id, comp_guid)
     return render_template("view_experiment.html", username=get_user_username(user_details[0]), is_admin=is_user_admin(user_details[0]),
                            best_results=DirectoryAndFileReader.get_best_solutions_of_computation(user_id, comp_guid),
@@ -124,7 +124,7 @@ def log():
 
 
 def get_user_details():
-    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
+    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("utf-8"), request.environ["HTTP_MAIL"].decode("utf-8")]
     return result
 
 

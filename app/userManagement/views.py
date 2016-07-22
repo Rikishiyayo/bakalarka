@@ -47,7 +47,7 @@ def unconfirmed():
 
 
 def get_user_details():
-    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("unicode_escape"), request.environ["HTTP_MAIL"].decode("unicode_escape")]
+    result = [request.environ["HTTP_EPPN"], request.environ["HTTP_CN"].decode("utf-8"), request.environ["HTTP_MAIL"].decode("utf-8")]
     return result
 
 
