@@ -4,6 +4,7 @@ $(function () {
 
 function validation() {
     $('#register_form').validate({
+        //validate on blur
         onfocusout: function (element) {
             this.element(element);
         },
@@ -22,12 +23,6 @@ function validation() {
             }
         },
         errorElement: 'span',
-        errorPlacement: function(error, element) {
-            if (element.attr("id") == "comment" )
-                error.appendTo("#comment-error");
-            else
-                error.insertAfter(element)
-        },
         highlight: function(element, errorClass, validClass) {
             $(element).addClass(errorClass).removeClass(validClass);
             $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);

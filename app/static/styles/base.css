@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial;
-    background-color: whitesmoke;
+    background-color: whitesmoke !important;
 }
 
 *:focus {
@@ -10,7 +10,6 @@ body {
 }
 
 .PageWrapper {
-    /*min-width: 1400px;*/
     margin-left: auto;
     margin-right: auto;
     color: #4c4c4c;
@@ -32,10 +31,11 @@ header {
         margin: 15px 0 15px 2.5%;
         font-size: 20px;
         background-color: lightskyblue;
-        padding: 3px 10px;
+        padding: 3px 15px;
         border-radius: 4px;
         box-sizing: border-box;
         height: 30px;
+        line-height:24px;
         transition: background-color .5s;
         -webkit-transition: background-color .5s;
         -moz-transition: background-color .5s;

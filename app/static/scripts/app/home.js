@@ -1,6 +1,13 @@
 var pages, filterOptions = {}, compBeingDeleted;
+var formFieldPosition = {
+        my: "left center",
+        at: "right+20 center",
+        collision: "none"
+    };
+var tooltipArrow = "leftArrowTooltip";
 
 $(function () {
+    changeTooltipPositionONWindowResize();
     preloadImages();
     setSliderValue();
     changeSliderValue();
@@ -34,9 +41,35 @@ $(function () {
     fileFormatValidation();
 
     tooltips();
+    setComputationFormTooltipPosition();
     toggleHelpTooltips();
     dialog();
 });
+
+function changeTooltipPositionONWindowResize() {
+    $(window).resize(function () {
+        setComputationFormTooltipPosition();
+    });
+}
+
+function setComputationFormTooltipPosition() {
+    var abovePosition = {
+        my: "right top-70",
+        at: "right",
+        collision: "none"
+    };
+    var rightPosition = {
+        my: "left center",
+        at: "right+20 center",
+        collision: "none"
+    };
+    var down = "downArrowTooltip";
+    var left = "leftArrowTooltip";
+    if(window.innerWidth < 1400)
+        computationRequestFormTooltips(abovePosition, down, 1);
+    else
+        computationRequestFormTooltips(rightPosition, left, 400);
+}
 
 function preloadImages() {
     images = ["/static/styles/icons/recycle_bin_red.png", "/static/styles/icons/question-mark-on.png", "/static/styles/icons/question-mark-off.png", "/static/styles/icons/arrow_up.png",
@@ -784,11 +817,6 @@ function dialog(){
 }
 
 function tooltips() {
-    var formFieldPosition = {
-        my: "left center",
-        at: "right+20 center",
-        collision: "none"
-    };
     var filterFieldPosition = {
         my: "center top+40",
         at: "center",
@@ -874,49 +902,59 @@ function tooltips() {
         content: "Reload list",
         position: formFieldPosition,
         items: ".img_reload_list",
-        tooltipClass: "leftArrowTooltip",
+        tooltipClass: "leftArrowTooltip"
     });
+}
+
+function computationRequestFormTooltips(position, tooltipArrow, hideDuration) {
     $( ".row-models" ).tooltip({
         content: "Allowed file formats: 'pdb'.",
-        position: formFieldPosition,
+        position: position,
         items: ".row-models",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
     $( ".row-expData" ).tooltip({
         content: "Allowed file formats: 'dat'.",
-        position: formFieldPosition,
+        position: position,
         items: ".row-expData",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
     $( "#calcSteps" ).tooltip({
         content: "Integer number between 500 - 1 000 000.",
-        position: formFieldPosition,
+        position: position,
         items: "#calcSteps",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
     $( "#stepsBetweenSync" ).tooltip({
         content: "Integer number between 100 - 10 000.",
-        position: formFieldPosition,
+        position: position,
         items: "#stepsBetweenSync",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
     $( "#alpha" ).tooltip({
         content: "Maximal length of random walk step, 1 is whole range. Float number.",
-        position: formFieldPosition,
+        position: position,
         items: "#alpha",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
     $( "#beta" ).tooltip({
         content: "This increase of chi2 is accepted with 10% probability by Metropolis criterion. Float number.",
-        position: formFieldPosition,
+        position: position,
         items: "#beta",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
     $( "#gamma" ).tooltip({
         content: "chi2 difference scaling in stochastic tunneling transformation. Float number.",
-        position: formFieldPosition,
+        position: position,
         items: "#gamma",
-        tooltipClass: "leftArrowTooltip"
+        tooltipClass: tooltipArrow,
+        hide: hideDuration
     });
 }
 

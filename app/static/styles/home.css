@@ -7,7 +7,7 @@ html, body, .PageWrapper{
     flex-direction: column;
     width: 100%;
     min-height: 100%;
-    min-width: 1400px;
+    min-width: 800px;
 }
 
 header{
@@ -66,16 +66,21 @@ footer{
     width: 500px;
 }
 
+hr.margin-between-columns{
+    border-color: lightgray;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
 div.submit_experiment{
-    width: 45%;
-    display: inline-block;
-    vertical-align: middle;
+    padding: 0;
 }
 
     div.submit_experiment h1 {
         font-size: 30px;
         margin: 0 auto 25px;
         text-align: center;
+        font-weight: bold;
     }
 
         div.submit_experiment form div:not(.img) {
@@ -141,14 +146,14 @@ div.submit_experiment{
         div.submit_experiment form p.form_buttons {
             text-align: right;
             font-size: 0;
-            margin: 40px 0 0 0;
+            margin: 30px 0 0 0;
         }
 
         div.submit_experiment form input {
             box-sizing: border-box !important;
             vertical-align: middle;
-            font-size: 17px;
-            width: 54%;
+            font-size: 16px;
+            width: 58%;
             padding: 3px 10px;
             color: #4c4c4c;
             border-radius: 4px;
@@ -187,7 +192,7 @@ div.submit_experiment{
 
             div.submit_experiment form input[type="reset"] {
                 display: inline-block;
-                width: 44%;
+                width: 40%;
                 border: none;
                 background-color: #f65858;
                 margin: 0;
@@ -211,7 +216,8 @@ div.submit_experiment{
                 padding: 0;
                 border: none;
                 margin: 0 2% 0 0;
-                width: 47%;
+                width: 51%;
+                display: inline-block;
             }
 
             div.submit_experiment form input:focus {
@@ -221,7 +227,7 @@ div.submit_experiment{
 
         div.submit_experiment form span.calcType {
             display: inline-block;
-            width: 54%;
+            width: 58%;
             vertical-align: middle;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -234,8 +240,8 @@ div.submit_experiment{
             }
 
             div.submit_experiment form span.calcType label {
-                font-size: 17px;
-                width: 54%;
+                font-size: 16px;
+                width: 55%;
                 vertical-align: middle;
                 display: inline-block;
                 text-align: center;
@@ -249,7 +255,7 @@ div.submit_experiment{
             }
 
             div.submit_experiment form span.calcType label:first-of-type {
-                width: 46%;
+                width: 45%;
             }
 
                 div.submit_experiment form span.calcType label:not(.selected-radio-button):hover {
@@ -262,10 +268,10 @@ div.submit_experiment{
             border: 1px solid lightgrey;
             border-radius: 4px;
             vertical-align: middle;
-            font-size: 17px;
+            font-size: 16px;
             font-family: Arial;
             color: #4c4c4c;
-            width: 54%;
+            width: 58%;
             height: 160px;
             padding: 3px 10px;
             resize: vertical;
@@ -283,11 +289,13 @@ div.submit_experiment{
 
         div.submit_experiment form label:not(.file-upload) {
             margin-right: 2%;
-            font-size: 17px;
+            font-size: 16px;
             display: inline-block;
-            width: 44%;
+            width: 40%;
             vertical-align: middle;
             text-align: right;
+            margin-bottom: 0;
+            font-weight: normal;
         }
 
             div.submit_experiment form label.qRange-value {
@@ -296,13 +304,15 @@ div.submit_experiment{
                 text-align: left;
             }
 
-           div.submit_experiment form label.file-upload {
+            div.submit_experiment form label.file-upload {
                 cursor: pointer;
                 line-height: 40px;
-                width: 21%;
+                width: 20%;
                 display: inline-block;
                 box-sizing: border-box;
-           }
+                margin-bottom: 0;
+                font-weight: normal;
+            }
 
             div.submit_experiment form label.file-upload span.title {
                 background-color: lightgray;
@@ -313,7 +323,7 @@ div.submit_experiment{
                 text-align: center;
                 border-top-left-radius: 4px;
                 border-bottom-left-radius: 4px;
-                font-size: 17px;
+                font-size: 16px;
                 vertical-align: middle;
                 transition: background-color .5s;
                 -webkit-transition: background-color .5s;
@@ -331,7 +341,7 @@ div.submit_experiment{
             padding: 0 5px;
             text-align: center;
             display: inline-block;
-            width: 33%;
+            width: 38%;
             box-sizing: border-box;
             border: 1px solid lightgray;
             border-top-right-radius: 4px;
@@ -345,10 +355,7 @@ div.submit_experiment{
         }
 
 div.experiment_list{
-    width: 55%;
-    display: inline-block;
-    vertical-align: top;
-    position: relative;
+    padding: 0;
 }
 
     div.experiment_list h1 {
@@ -358,6 +365,7 @@ div.experiment_list{
         display: inline-block;
         width: calc(100% - 5% - 68px);
         vertical-align: middle;
+        font-weight: bold;
     }
 
     div.experiment_list img.filter-toggle {
@@ -666,7 +674,6 @@ div.experiment_list{
     div.experiment_list .pagination-controls{
         text-align: center;
         border-radius: 4px;
-        margin-top: 10px;
         position: relative;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -711,6 +718,7 @@ div.experiment_list{
     div.experiments-rows-wrapper{
         position: relative;
         min-height: 640px;
+        margin-bottom: 10px;
     }
 
         div.experiments-rows-wrapper .error-row{
@@ -768,13 +776,25 @@ div.experiment_list{
                 -o-transition: opacity .5s;
             }
 
+    div.no-computations{
+        font-size: 30px;
+        font-weight: bold;
+        height: 220px;
+        margin-left: 5%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 150px;
+    }
+
 .ui-tooltip {
     background: #4c4c4c !important;
     box-sizing: border-box !important;
-    height: 34px;
+    height: 40px;
     padding: 0 5px !important;
     margin: 0 !important;
-    line-height: 34px;
+    line-height: 40px;
     border: none !important;
     box-shadow: 0 0 0 !important;
     border-radius: 4px !important;
@@ -791,13 +811,21 @@ div.experiment_list{
         content: " ";
         width: 0;
         border: 10px solid #4c4c4c;
-        border-top-color: transparent;
         position: absolute;
+    }
+
+.downArrowTooltip:after{
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        right: 50%;
+        bottom: -19px;
     }
 
 .leftArrowTooltip:after{
     border-bottom-color: transparent;
     border-left-color: transparent;
+    border-top-color: transparent;
     left: -19px;
     top: 7px;
 }
@@ -805,9 +833,25 @@ div.experiment_list{
 .rightArrowTooltip:after{
     border-bottom-color: transparent;
     border-right-color: transparent;
+    border-top-color: transparent;
     right: -19px;
     top: 7px;
 }
+
+.upArrowTooltip{
+    height: auto;
+    line-height: 23px;
+    max-width: 1100px;
+    padding: 10px !important;
+}
+
+    .upArrowTooltip:after{
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        right: 50%;
+        top: -19px;
+    }
 
 .helpToggleTooltip{
     color: #4c4c4c !important;
@@ -821,20 +865,6 @@ div.experiment_list{
         border-top-color: transparent;
         right: -19px;
         top: 7px;
-    }
-
-.upArrowTooltip{
-    height: auto;
-    line-height: 23px;
-    max-width: 1100px;
-    padding: 10px !important;
-}
-
-    .upArrowTooltip:after{
-        border-left-color: transparent;
-        border-right-color: transparent;
-        right: 50%;
-        top: -19px;
     }
 
 .selectedPaginationControl {
