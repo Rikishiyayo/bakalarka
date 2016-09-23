@@ -127,7 +127,7 @@ def get_computed_curves(user_id, comp_guid):
             for line in lines[2:]:
                 values_in_line = line.split()
                 points.append({"q_value": float(values_in_line[0].strip()),
-                               "intensity": float(values_in_line[1].strip())})
+                               "intensity": log(float(values_in_line[1].strip()))})
 
             models[str(j + 1)] = points
 
@@ -183,7 +183,7 @@ def get_experiment_data(user_id, comp_guid):
             lines = file.readlines()
             for line in lines[3:]:
                 values_in_line = line.split()
-                points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip())) + 15])
+                points.append([float(values_in_line[0].strip()), log(float(values_in_line[1].strip()))])
             return points
     except OSError as err:
         if err.errno == errno.ENOENT:

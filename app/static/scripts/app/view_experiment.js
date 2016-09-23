@@ -386,7 +386,7 @@ function loadComputedCurvesForSolution(solution, override) {
     for (var i = 1; i <= Object.keys(computationData.weights['solution' + solution]).length; i++) {  //iterate through all models of displayed solution
         curve = [];
         $.each(computationData.computedCurves['solution' + solution][i], function (i, v) {  //iterate through all points in that model
-            curve.push([v.q_value, Math.log(v.intensity)]);
+            curve.push([v.q_value, v.intensity]);
         });
         if (!override)
             chartOptions.series.push({ data: curve });
