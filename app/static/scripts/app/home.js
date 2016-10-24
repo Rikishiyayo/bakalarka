@@ -4,7 +4,6 @@ var formFieldPosition = {
         at: "right+20 center",
         collision: "none"
     };
-var tooltipArrow = "leftArrowTooltip";
 
 $(function () {
     changeTooltipPositionONWindowResize();
@@ -65,7 +64,7 @@ function setComputationFormTooltipPosition() {
     };
     var down = "downArrowTooltip";
     var left = "leftArrowTooltip";
-    if(window.innerWidth < 1400)
+    if(window.innerWidth < 1200)
         computationRequestFormTooltips(abovePosition, down, 1);
     else
         computationRequestFormTooltips(rightPosition, left, 400);
@@ -96,7 +95,7 @@ function onGetExperimentsSuccess(data) {
 
         newEl += "<span class=\"date\">" + comps[i].date + "</span>";
         newEl += "<span class=\"name\">" + comps[i].name + "</span>";
-        newEl += "<span class=\"progress\">" + comps[i].progress + "</span>";
+        newEl += "<span class=\"_progress\">" + comps[i].progress + "</span>";
         newEl += "<span class=\"status\">" + comps[i].status + "</span>";
         if(comps[i].progress != 0 || comps[i].status == 'user_error' || comps[i].status == 'server_error'){
             newEl += "<img class='delete' src=\"/static/styles/icons/recycle_bin.png\">";
@@ -533,12 +532,12 @@ function toggleHelpTooltips() {
     if (el.hasClass("enabled")) {
         el.tooltip( "option", "content", "Turn Off Help" );  //set content of tooltip
         el.attr('src', '/static/styles/icons/question-mark-on.png');  //set image
-        $('input.date, input.status, input.name, input.progress').tooltip("enable");  //enable filter tooltips
+        $('input.date, input.status, input.name, input._progress').tooltip("enable");  //enable filter tooltips
     }
     else {
         el.tooltip( "option", "content", "Turn On Help" );  //set title of tooltip
         el.attr('src', '/static/styles/icons/question-mark-off.png');
-        $('input.date, input.status, input.name, input.progress').tooltip("disable");
+        $('input.date, input.status, input.name, input._progress').tooltip("disable");
     }
 }
 
@@ -654,7 +653,7 @@ function getFilterArguments(){
         if($(this).val().trim() != "") {
             result[$(this).attr('class')] = $(this).val().trim();
             filterOptions[$(this).attr('class')] = $(this).val().trim();
-        }$('.search-filter input.progress')
+        }$('.search-filter input._progress')
     });
     return result;
 }
@@ -690,9 +689,10 @@ function validation() {
                 number: true
             }
         },
-        errorPlacement: function(error, element) {
-            return true;
-        }
+        errorElement: "span"
+        // errorPlacement: function(error, element) {
+        //     return true;
+        // }
     });
 }
 
@@ -722,19 +722,25 @@ function fileFormatValidation() {
 }
 
 function validateFileFormatForModels(){
-    var allowedExtensions = ["zip", "tar.gz", "pdb", "rar", "tar.bz2"];
+    // var allowedExtensions = ["zip", "tar.gz", "pdb", "rar", "tar.bz2"];
+    var allowedExtensions = ["pdb"];
     var firstDot = $('#models').val().indexOf('.');
     if (firstDot != -1) {
         var extension = $('#models').val().substring(firstDot + 1);
         if(allowedExtensions.indexOf(extension) == -1) {
             $('#models').parent().next().addClass('file-extension-validation-error');
+            $('#models').parent().parent().find('span.error').remove();
+            $('#models').parent().parent().append('<span class="error">Invalid file format!</span>');
             return false;
         } else {
             $('#models').parent().next().removeClass('file-extension-validation-error');
+            $('#models').parent().parent().find('span.error').remove();
             return true;
         }
     }
     $('#models').parent().next().addClass('file-extension-validation-error');
+    $('#models').parent().parent().find('span.error').remove();
+    $('#models').parent().parent().append('<span class="error">Invalid file format!</span>');
     return false;
 }
 
@@ -746,20 +752,25 @@ function validateFileFormatForExpData(){
         var extension = expDataInput.val().substring(firstDot + 1);
         if(allowedExtensions.indexOf(extension) == -1) {
             expDataInput.parent().next().addClass('file-extension-validation-error');
+            $('#expData').parent().parent().find('span.error').remove();
+            $('#expData').parent().parent().append('<span class="error">Invalid file format!</span>');
             return false;
         } else {
             expDataInput.parent().next().removeClass('file-extension-validation-error');
+            $('#expData').parent().parent().find('span.error').remove();
             return true;
         }
     }
     expDataInput.parent().next().addClass('file-extension-validation-error');
+    $('#expData').parent().parent().find('span.error').remove();
+    $('#expData').parent().parent().append('<span class="error">Invalid file format!</span>');
     return false;
 }
 
 function filterValidation(){
     var isValid = true;
 
-    var progressInput = $('.search-filter input.progress');
+    var progressInput = $('.search-filter input._progress');
     var progressRegEx1 = /^\s*[><=]\s\d+\s*$/;
     var progressRegEx2 = /^\s*[><]=\s\d+\s*$/;
     var progressRegEx3 = /^\s*\d+\s-\s\d+\s*$/;
@@ -849,14 +860,14 @@ function tooltips() {
         items: "input.name",
         tooltipClass: "upArrowTooltip"
     });
-    $('input.progress').tooltip({
+    $('input._progress').tooltip({
         content: "To search for computations with a certain progress, type: <br><strong><span style=\"color:lawngreen;\">\"{integer}\"</span></strong></br> eg. \"500\"" +
                  "To search for computations with bigger/lower progress than a certain value, type: <br><strong><span style=\"color:lawngreen;\">" +
                  "\"{comparison operator}{whitespace}{integer}\"</span></strong></br> eg. \"< 785\"" +
                  "To search for computations within a range of progress values, type: <br><strong><span style=\"color:lawngreen;\">" +
                  "\"{integer}{whitespace}{-}{whitespace}{integer}\"</span></strong></br> eg. \"100 - 500\"",
         position: filterFieldPosition,
-        items: "input.progress",
+        items: "input._progress",
         tooltipClass: "upArrowTooltip"
     });
     $('.toggle-help').tooltip({

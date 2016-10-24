@@ -28,44 +28,6 @@ footer{
 
 }
 
-.loading-screen{
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: whitesmoke;
-    position: fixed;
-    z-index: 10000;
-    color: #4c4c4c;
-    text-align: center;
-    opacity: 1;
-    font-size: 40px;
-    display: none;
-}
-
-    .loading-screen:after{
-        content: "";
-        display: inline-block;
-        vertical-align: middle;
-        height: 100%;
-    }
-
-    .loading-screen div{
-        background-color: black;
-        width: 200px;
-        height: 80px;
-        vertical-align: middle;
-        transition: width 3s;
-    }
-
-    .loading-screen span{
-        vertical-align: middle;
-    }
-
-.loading-screen div:hover {
-    width: 500px;
-}
-
 hr.margin-between-columns{
     border-color: lightgray;
     margin-top: 30px;
@@ -142,12 +104,62 @@ div.submit_experiment{
             -ms-user-select: none;
             user-select: none;
         }
-        
+
         div.submit_experiment form p.form_buttons {
             text-align: right;
             font-size: 0;
             margin: 30px 0 0 0;
         }
+
+        div.submit_experiment form label:not(.file-upload) {
+            margin-right: 2%;
+            font-size: 16px;
+            display: inline-block;
+            width: 40%;
+            vertical-align: middle;
+            text-align: right;
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+            div.submit_experiment form label.qRange-value {
+                width: 5%;
+                margin: 0;
+                text-align: left;
+            }
+
+            div.submit_experiment form label.file-upload {
+                cursor: pointer;
+                line-height: 40px;
+                width: 20%;
+                display: inline-block;
+                box-sizing: border-box;
+                margin-bottom: 0;
+                font-weight: normal;
+            }
+
+            div.submit_experiment form label.file-upload span.title {
+                background-color: lightgray;
+                padding: 0 5px;
+                display: inline-block;
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                font-size: 16px;
+                vertical-align: middle;
+                transition: background-color .5s;
+                -webkit-transition: background-color .5s;
+                -moz-transition: background-color .5s;
+                -o-transition: background-color .5s;
+            }
+
+            div.submit_experiment form label.file-upload span.title:hover {
+                cursor: pointer;
+                background-color: darkgrey;
+            }
+
 
         div.submit_experiment form input {
             box-sizing: border-box !important;
@@ -164,15 +176,11 @@ div.submit_experiment{
             -moz-transition: border-color .5s;
             -o-transition: border-color .5s;
         }
-        
+
 /*            div.submit_experiment form input:not([type="file"]){
                 border: 1px solid lightgrey;
                 height: 40px;
             }*/
-
-            div.submit_experiment form input.error{
-                background-color: #f65858;
-            }
 
             div.submit_experiment form input[type="submit"] {
                 display: inline-block;
@@ -242,9 +250,8 @@ div.submit_experiment{
             div.submit_experiment form span.calcType label {
                 font-size: 16px;
                 width: 55%;
-                vertical-align: middle;
                 display: inline-block;
-                text-align: center;
+                text-align: center !important;
                 line-height: 40px;
                 border-radius: 4px;
                 margin: 0;
@@ -287,55 +294,6 @@ div.submit_experiment{
                 border-width: 2px;
             }
 
-        div.submit_experiment form label:not(.file-upload) {
-            margin-right: 2%;
-            font-size: 16px;
-            display: inline-block;
-            width: 40%;
-            vertical-align: middle;
-            text-align: right;
-            margin-bottom: 0;
-            font-weight: normal;
-        }
-
-            div.submit_experiment form label.qRange-value {
-                width: 5%;
-                margin: 0;
-                text-align: left;
-            }
-
-            div.submit_experiment form label.file-upload {
-                cursor: pointer;
-                line-height: 40px;
-                width: 20%;
-                display: inline-block;
-                box-sizing: border-box;
-                margin-bottom: 0;
-                font-weight: normal;
-            }
-
-            div.submit_experiment form label.file-upload span.title {
-                background-color: lightgray;
-                padding: 0 5px;
-                display: inline-block;
-                width: 100%;
-                box-sizing: border-box;
-                text-align: center;
-                border-top-left-radius: 4px;
-                border-bottom-left-radius: 4px;
-                font-size: 16px;
-                vertical-align: middle;
-                transition: background-color .5s;
-                -webkit-transition: background-color .5s;
-                -moz-transition: background-color .5s;
-                -o-transition: background-color .5s;
-            }
-
-            div.submit_experiment form label.file-upload span.title:hover {
-                cursor: pointer;
-                background-color: darkgrey;
-            }
-
         div.submit_experiment form span.filename {
             height: 40px;
             padding: 0 5px;
@@ -352,6 +310,19 @@ div.submit_experiment{
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: pre;
+        }
+
+        div.submit_experiment form p span.error {
+            font-size: 15px;
+            color: #f65858;
+            margin-bottom: 5px;
+            display: block;
+            margin-left: 42%;
+            text-align: left;
+        }
+
+        div.submit_experiment form input.error{
+            background-color: #f65858;
         }
 
 div.experiment_list{
@@ -423,7 +394,7 @@ div.experiment_list{
     .filter-toggle-overlay{
         right: 0;
     }
-    
+
     .experiment_list_overlay, .error-info, .list-header-overlay, .search-filter-overlay, .pagination-controls-overlay {
         display: none;
         position: absolute;
@@ -568,7 +539,7 @@ div.experiment_list{
                 width: 28%;
             }
 
-            div.experiment_list .search-filter p .progress{
+            div.experiment_list .search-filter p ._progress{
                 width: 17%;
             }
 
@@ -754,7 +725,7 @@ div.experiment_list{
                 white-space: pre;
             }
 
-            div.experiments-rows-wrapper .experiment_row span.progress {
+            div.experiments-rows-wrapper .experiment_row span._progress {
                 width: 16%;
             }
 
