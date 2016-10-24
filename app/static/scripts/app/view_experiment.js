@@ -54,31 +54,6 @@ $(function () {
     selectRadioButtonsValueChange();
     sortRadioButtonsValueChange();
     tooltips();
-
-/*    var $content = $('.highcharts-container'); // Cache your selectors!
-
-    function loop(){
-        $content.stop().animate({scrollTop:'-=20'}, 400, 'linear', loop);
-    }
-
-    function stop(){
-        $content.stop();
-    }
-
-    $(".scrollDown").hover(loop, stop);*/
-
-//    $('#btnFullscreen').on('click', function () {
-//        $('.chart-fullscreen').append($('#chart')).css({ 'display': 'block', 'height': $(window).innerHeight() });
-//        var chart = new Highcharts.Chart(options);
-//        chart.setSize($('#chart').width(), $('#chart').height());
-//    });
-//
-//    $('.btnCloseChartFullscreen').on('click', function () {
-//        $('#chart').insertAfter('#PresentationPanel .DataViewerPanel #pvViewer');
-//        $('.chart-fullscreen').css('display', 'none');
-//        var chart = new Highcharts.Chart(options);
-//        chart.setSize($('#chart').width(), $('#chart').height());
-//    });
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,7 +61,7 @@ function log_function() {
     $.ajax({
         type: 'POST',
         url: "/log",
-        data: { data: log },
+        data: { data: log }
     });
 }
 
@@ -142,20 +117,17 @@ function modelButtonsClick() {
 }
 
 function updateDisplayedResults(button){
-        //if user click on model button, select or unselect it and hide/show respective model
-        if (canDeselect(button.attr('name'))) {
-            button.toggleClass('selected');
+    button.toggleClass('selected');
 
-            //if all models are selected, select 'Select all' radio button
-            $(".Controls input[name=select][value='1']").prop('checked', false);
-            highlightSelectedRadioButton('select');
-            if (allModelButtonsSelected()) {
-                $(".Controls input[name=select][value='1']").prop('checked', true);
-                highlightSelectedRadioButton('select');
-            }
-            displayModels();
-            displayCurves();
-        }
+    //if all models are selected, select 'Select all' radio button
+    $(".Controls input[name=select][value='1']").prop('checked', false);
+    highlightSelectedRadioButton('select');
+    if (allModelButtonsSelected()) {
+        $(".Controls input[name=select][value='1']").prop('checked', true);
+        highlightSelectedRadioButton('select');
+    }
+    displayModels();
+    displayCurves();
 }
 
 // handles a weight's slider value change and displays corresponding models and curves
@@ -170,10 +142,9 @@ function weightSliderValueChange() {
         $('.sliderSummationValue').text("-");
 
         //show overlays
-        $('#controls-panel-overlay').show();start
+        $('#controls-panel-overlay').show();
         $('#best-results-table-overlay').show();
 
-        $('.sliderWeightValue').text(value + "%");
         $('input[type=radio][name=select]:checked').prop('checked', false);
         setTimeout(function(){
             selectButtonsByWeight(value);
@@ -198,7 +169,6 @@ function weightSumValueChange() {
         $('#controls-panel-overlay').show();
         $('#best-results-table-overlay').show();
 
-        $('.sliderSummationValue').text(value + "%");
         $('input[type=radio][name=select]:checked').prop('checked', false);
         setTimeout(function(){
             selectButtonsByWeightSummation(value, selectedSolution);
@@ -306,38 +276,6 @@ function onGetExperimentDataSuccess(data) {
     loadComputedCurvesForSolution(selectedSolution, false);
 
     new Highcharts.Chart(chartOptions); //create a chart
-    // var highchartsObject =
-    // var chartElement = $('#chart');
-    // var chartWidth = chartElement.width();
-    // var chartHeight = chartElement.height();
-    //
-    // $('#btnZoomIn').click(function () {
-    //     chartWidth *= 1.3;
-    //     chartHeight *= 1.3;
-    //     highchartsObject.setSize(chartWidth, chartHeight);
-    //     return false;
-    // });
-    //
-    // $('#btnZoomOut').click(function () {
-    //     chartWidth *= 0.7;
-    //     chartHeight *= 0.7;
-    //     highchartsObject.setSize(chartWidth, chartHeight);
-    //     return false;
-    // });
-    //
-    // $('#btnDefault').click(function () {
-    //     highchartsObject.setSize(chartElement.width(), chartElement.height());
-    //     return false;
-    // });
-    //
-    // chartElement.append("<div class='scrollDown'>DOWN</down>");
-
-   // set value of a progress bar
-   // $(".progressBar").progressbar({
-   //     value: parseInt(metadata.progress)
-   // });
-   //
-   // $('.progress_value').text(metadata.progress + "%");
 
     viewFile();
     createButtons(selectedSolution);
@@ -358,7 +296,7 @@ function viewFile() {
     log += "viewFile() start| ";
     pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {  //normal try catch block doesnt catch exception when fetchPdb doesnt load any data or loads incorrect
         for (var i = 0; i < structures.length; i++) {
-            models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
+                models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
             log += "model " + i + " loaded to PV viewer| ";
         }
         viewer.autoZoom();
@@ -557,7 +495,7 @@ function selectButtonsByWeight(weight) {
 //this function selects buttons, which summation of weight is equal to or bigger than a selected value on a slider
 function selectButtonsByWeightSummation(value, solution) {
     var obj = computationData.weights['solution' + solution];
-    var sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
+    var sortedWeights = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});  //descending
 
     var selectedModels = [];
     var summation = 0;
