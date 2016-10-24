@@ -2,38 +2,39 @@
 
 {% block head %}
     {{ super() }}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/sign_up.css') }}">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/sign_up.css') }}">
     <script src="{{ url_for('static',filename='scripts/app/sign_up.js') }}"></script>
 {% endblock %}
 
 {% block content %}
     <div class="form-wrapper container">
-        <form name="register_form" class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6" action="{{ url_for('userManagement.sign_up') }}" method="post" id="register_form">
+        <h1 class="col-xs-20 col-sm-offset-2 col-sm-16 col-md-offset-4 col-md-12 col-lg-offset-5 col-lg-10">Sign Up</h1>
+        <form name="register_form" class="col-xs-20 col-sm-offset-2 col-sm-16 col-md-offset-4 col-md-12 col-lg-offset-5 col-lg-10" action="{{ url_for('userManagement.sign_up') }}" method="post" id="register_form">
             {{ r_form.hidden_tag() }}
             <p class="row">
-                {{ r_form.username.label(class="col-xs-4 col-sm-3") }}{{ r_form.username(class="col-xs-8 col-sm-9")}}
+                {{ r_form.username.label(class="col-xs-20 col-sm-5") }}{{ r_form.username(class="col-xs-20 col-sm-15")}}
                 {% for error in r_form.username.errors %}
                     <span class="error">{{ error }}</span>
                 {% endfor %}
             </p>
             <p class="row">
-                {{ r_form.email.label(class="col-xs-4 col-sm-3") }}{{ r_form.email(class="col-xs-8 col-sm-9")}}
+                {{ r_form.email.label(class="col-xs-20 col-sm-5") }}{{ r_form.email(class="col-xs-20 col-sm-15")}}
                 {% for error in r_form.email.errors %}
                     <span class="error">{{ error }}</span>
                 {% endfor %}
             </p>
             <p class="row label-row centered-text top-margin">
-                {{ r_form.comment.label(class="col-xs-12") }}
+                {{ r_form.comment.label(class="col-xs-20") }}
             </p>
             <p class="row">
-                {{ r_form.comment(class="col-xs-12")}}
+                {{ r_form.comment(class="col-xs-20")}}
                 {% for error in r_form.comment.errors %}
                     <span class="col-xs-12 error">{{ error }}</span>
                 {% endfor %}
             </p>
             <p class="submit-button row">
-                {{ r_form.submit(class="col-xs-12") }}
+                {{ r_form.submit(class="col-xs-20")}}
             </p>
         </form>
     </div>

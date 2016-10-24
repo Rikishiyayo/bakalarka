@@ -10,7 +10,7 @@ html, body, .PageWrapper{
     min-width: 500px;
 }
 
-header{
+header {
     display: none !important;
 }
 
@@ -33,19 +33,43 @@ footer{
 
 }
 
+h1{
+    text-align: center;
+    margin-bottom: 100px;
+}
+
 form{
-    margin-top: 50px;
     margin-bottom: 40px;
 }
 
-    form p{
-        margin-bottom: 10px;
+    form p:not(.label-row) {
+        margin-bottom: 30px;
+    }
+
+    form p.label-row {
+        margin-bottom: 0;
+    }
+
+    @media (min-width: 768px) {
+        form p:not(.label-row) {
+            margin-bottom: 10px;
+        }
+        form p.label-row {
+            margin-bottom: 10px;
+        }
     }
 
         form p label{
             font-size: 20px;
             line-height: 40px;
-            margin-bottom: 10px;
+            margin-bottom: 0;
+            padding-left: 0 !important;
+        }
+
+        @media (min-width: 768px) {
+            form p label {
+                margin-bottom: 10px;
+            }
         }
             form p.label-row label{
                 margin-bottom: 0;
@@ -58,8 +82,8 @@ form{
             color: #4c4c4c;;
             height: 40px;
             margin-bottom: 5px;
-            padding-left: 10px !important;
-            padding-right: 10px !important;
+            padding-left: 10px;
+            padding-right: 10px;
             transition: border-color .5s;
             -webkit-transition: border-color .5s;
             -moz-transition: border-color .5s;
@@ -111,7 +135,7 @@ form{
         form p input.error, form p textarea.error{
             border-color: #f65858;
         }
-        
+
         form p label.error{
             color: #f65858;
         }

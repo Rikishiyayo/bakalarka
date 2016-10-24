@@ -2,8 +2,8 @@
 
 {% block head %}
     {{ super() }}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/home.css') }}">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/home.css') }}">
     <script src="{{ url_for('static',filename='scripts/app/home.js') }}"></script>
 {% endblock %}
 
@@ -131,7 +131,7 @@
                     <p class="header">
                         <span class="date">Date</span>
                         <span class="name">Name</span>
-                        <span class="progress">Progress</span>
+                        <span class="_progress">Progress</span>
                         <span class="status">Status</span>
                         <img class="toggle-help {{ help }}">
                         <span class="clear-filter">Clear</span>
@@ -139,7 +139,7 @@
                     <p class="textboxes">
                         <input class="date" type="text">
                         <input class="name" type="text">
-                        <input class="progress" type="text">
+                        <input class="_progress" type="text">
                         <input class="status" type="text">
                         <span class="filter">Filter</span>
                     </p>
@@ -172,7 +172,7 @@
                                 {% endif %}
                                 <span class="date">{{ item.date }}</span>
                                 <span class="name">{{ item.name }}</span>
-                                <span class="progress">{{ item.progress }}</span>
+                                <span class="_progress">{{ item.progress }}</span>
                                 <span class="status">{{ item.status }}</span>
                                 {% if item.status == 'done' or item.status == 'user_error' or item.status == 'server_error' %}
                                     <img class="delete" src="{{ url_for('static', filename='styles/icons/recycle_bin.png') }}">
