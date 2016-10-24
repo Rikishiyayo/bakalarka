@@ -113,7 +113,7 @@ div.submit_experiment{
 
         div.submit_experiment form label:not(.file-upload) {
             margin-right: 2%;
-            font-size: 16px;
+            font-size: 15px;
             display: inline-block;
             width: 40%;
             vertical-align: middle;
@@ -147,7 +147,7 @@ div.submit_experiment{
                 text-align: center;
                 border-top-left-radius: 4px;
                 border-bottom-left-radius: 4px;
-                font-size: 16px;
+                font-size: 15px;
                 vertical-align: middle;
                 transition: background-color .5s;
                 -webkit-transition: background-color .5s;
@@ -164,7 +164,7 @@ div.submit_experiment{
         div.submit_experiment form input {
             box-sizing: border-box !important;
             vertical-align: middle;
-            font-size: 16px;
+            font-size: 15px;
             width: 58%;
             padding: 3px 10px;
             color: #4c4c4c;
@@ -187,6 +187,8 @@ div.submit_experiment{
                 border: none;
                 background-color: lightskyblue;
                 margin: 0;
+                font-size: 17px;
+                font-weight: bold;
                 transition: background-color .5s;
                 -webkit-transition: background-color .5s;
                 -moz-transition: background-color .5s;
@@ -204,6 +206,8 @@ div.submit_experiment{
                 border: none;
                 background-color: #f65858;
                 margin: 0;
+                font-size: 17px;
+                font-weight: bold;
                 margin-right: 2%;
                 transition: background-color .5s;
                 -webkit-transition: background-color .5s;
@@ -248,7 +252,7 @@ div.submit_experiment{
             }
 
             div.submit_experiment form span.calcType label {
-                font-size: 16px;
+                font-size: 15px;
                 width: 55%;
                 display: inline-block;
                 text-align: center !important;
@@ -275,7 +279,7 @@ div.submit_experiment{
             border: 1px solid lightgrey;
             border-radius: 4px;
             vertical-align: middle;
-            font-size: 16px;
+            font-size: 15px;
             font-family: Arial;
             color: #4c4c4c;
             width: 58%;
@@ -305,7 +309,7 @@ div.submit_experiment{
             border-top-right-radius: 4px;
             border-bottom-right-radius: 4px;
             vertical-align: middle;
-            font-size: 17px;
+            font-size: 15px;
             line-height: 40px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -404,7 +408,7 @@ div.experiment_list{
         height: 100%;
         top: 0;
         left: 0;
-        font-size: 17px;
+        font-size: 15px;
     }
 
     .list-header-overlay, .search-filter-overlay, .pagination-controls-overlay {
@@ -437,7 +441,7 @@ div.experiment_list{
         }
 
     div.experiment_list .search-filter {
-        font-size: 17px;
+        font-size: 15px;
         border-radius: 4px;
         background-color: #4c4c4c;
         color: whitesmoke;
@@ -462,7 +466,7 @@ div.experiment_list{
             }
 
             div.experiment_list .search-filter p span {
-                font-size: 17px;
+                font-size: 15px;;
                 display: inline-block;
                 box-sizing: border-box;
                 line-height: 30px;
@@ -568,7 +572,7 @@ div.experiment_list{
 
         div.experiment_list .list-header > span {
             display: inline-block;
-            font-size: 17px;
+            font-size: 15px;;
             box-sizing: border-box;
             vertical-align: middle;
             line-height: 40px;
@@ -654,7 +658,7 @@ div.experiment_list{
 
         div.experiment_list .pagination-controls span{
             display: inline-block;
-            font-size: 17px;
+            font-size: 15px;;
             box-sizing: border-box;
             vertical-align: middle;
             line-height: 40px;
@@ -695,7 +699,7 @@ div.experiment_list{
         div.experiments-rows-wrapper .error-row{
             display: none;
             width: 100%;
-            font-size: 17px;
+            font-size: 15px;;
             box-sizing: border-box;
             padding: 5px 1% 20px;
             margin-bottom: 10px;
@@ -707,7 +711,7 @@ div.experiment_list{
 
         div.experiments-rows-wrapper .experiment_row span{
             display: inline-block;
-            font-size: 17px;
+            font-size: 15px;;
             box-sizing: border-box;
             vertical-align: middle;
             line-height: 40px;
