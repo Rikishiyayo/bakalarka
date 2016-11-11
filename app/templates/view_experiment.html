@@ -5,6 +5,7 @@
     <script src="{{ url_for('static',filename='scripts/purl.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/highcharts.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/app/view_experiment.js') }}"></script>
+    <script src="{{ url_for('static',filename='scripts/jq-ajax-progress.min.js') }}"></script>
 {% endblock %}
 
 {% block header %}
@@ -18,6 +19,7 @@
     </div>
     <div class="loading-screen">
         <span>loading...</span>
+        <div id="progressbar"></div>
     </div>
     <div class="chart-fullscreen">
          <input type="button" class="btnCloseChartFullscreen" value="X" />

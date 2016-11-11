@@ -45,6 +45,9 @@ $(function () {
     $('.PageWrapper').css('min-width', '1550px');
     $('.best-results-table .result-row').first().addClass('selected-solution');  //set currently displayed solution
 
+    $( "#progressbar" ).progressbar({
+      value: 0
+    });
     viewExperiment();
     setSelectedRadioButtons();
     resultRowClick();
@@ -284,6 +287,7 @@ function viewExperiment() {
         if (e.lengthComputable) {
             var percentage = Math.round((e.loaded * 100) / e.total);
             console.log(percentage);
+            $( ".loading-screen #progressbar" ).progressbar( "option", "value", percentage/2 );
         }
     })
 }
@@ -317,13 +321,14 @@ function viewFile() {
                 models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
             log += "model " + i + " loaded to PV viewer| ";
         }
+        $( ".loading-screen #progressbar" ).progressbar( "option", "value", 100 );
         viewer.autoZoom();
         $('.loading-screen').hide();
         log += "loading screen hidden| ";
+        log += "viewFile() end| ";
         $('html body').animate({ scrollTop: 60}, 500);
         log_function();
     }, { loadAllModels : true } );
-    log += "viewFile() end| ";
 }
 
 function setWeightSpanInSolutionRowWidth() {
@@ -365,11 +370,11 @@ function createButtons(solution) {
     log += "createButtons() start| ";
     var targetElement = $('.model_buttons');
     targetElement.html("");
-    var models = computationData.weights['solution' + solution];
-    for (var i = 1; i <= Object.keys(models).length; i++) {
+    var weights = computationData.weights['solution' + solution];
+    for (var i = 1; i <= Object.keys(weights).length; i++) {
         targetElement.append("<span class=\"highlighter\" style=\"background-color: " + chartOptions.series[i].color + "\">" +
         "</span><input type=\"button\" id=\"btnDisplayModel" + i + "\" value=\"Model " + i + "\" class=\"btnModel selected\" name=\""
-            + i + "\" />" + "<span class=\"" + i + "\">" + models[i] + "</span>");
+            + i + "\" />" + "<span class=\"" + i + "\">" + weights[i] + "</span>");
     }
     log += "createButtons() end| ";
 }
@@ -566,7 +571,7 @@ function tooltips(){
             content: $(this).text() + " - weight of model " + getModelNumberOfWeight($(this)),
             position: position,
             items: $(this),
-            hide: {duration: 1},
+            hide: {duration: 1}
         });
     });
 }

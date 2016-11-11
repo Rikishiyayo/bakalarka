@@ -39,6 +39,13 @@ footer{
     font-size: 40px;
 }
 
+    .loading-screen #progressbar{
+        vertical-align: middle;
+        display: inline-block;
+        width: 160px;
+        font-size: 12px;
+    }
+
 .error-screen{
     position: absolute;
     width: 100%;
