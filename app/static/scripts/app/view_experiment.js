@@ -6,9 +6,9 @@
 var models = [], computationData, viewer, selectedSolution = 1, log= "user_id-" + $.url().segment(-2) + " comp_guid-" + $.url().segment(-1) + "-------";
 
 //available colors for models in PV viewer
-var colors = ['white', 'grey', 'green', 'red', 'blue', 'yellow', 'black', 'cyan', 'magenta', 'orange', 'lightgrey',
-                'darkred', 'darkgreen', 'darkblue', 'darkyellow', 'darkcyan', 'darkmagenta', 'darkorange', 'lightorange',
-                'darkgrey', 'lightred', 'lightgreen', 'lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'
+var colors = ['#ff0000', '#00cc99', '#ffff00', '#660033', '#ff9900', '#666633', '#000099', '#00ff00',
+                '#ff9966', '#ff6666', '#0099cc', '#ff00ff', '#009933', '#ccff33', '#339966', '#cc3300',
+                '#6600cc', '#993366', '#663300', '#99ccff', '#ffcccc', '#ff3300', '#999966', "#660066", "#66ff33", "#990099"
              ];
 
 //chart options
@@ -117,7 +117,12 @@ function modelButtonsClick() {
 }
 
 function updateDisplayedResults(button){
-    button.toggleClass('selected');
+    button.toggleClass("selected");
+    if (button.hasClass("selected")){
+        //highlight selected modal button by adding a background color equals to color of the model and curve
+        button.prev().css('background-color', chartOptions.series[button.attr("name")].color);
+    } else
+        button.prev().css('background-color', '#e3e3e3');
 
     //if all models are selected, select 'Select all' radio button
     $(".Controls input[name=select][value='1']").prop('checked', false);
@@ -225,16 +230,23 @@ function radioButtonSortChange(radioButton){
 
 function radioButtonSelectChange(radioButton){
     var modelButton = $('.model_buttons input');
+    var highlighter = $('.model_buttons span.highlighter');
     switch(radioButton.val()){
         case "1":       //display all models and curves
             modelButton.addClass('selected');
+            modelButton.each(function () {
+                $(this).prev().css('background-color', chartOptions.series[$(this).attr("name")].color);
+            });
             break;
         case "2":       //hide all models and curves
             modelButton.removeClass('selected');
+            highlighter.css('background-color', '#e3e3e3');
             break;
         case "3":       //display model and curve with highest weight
             modelButton.removeClass('selected');
-            $('.model_buttons input[name=' + getModelWithHighestWeight(selectedSolution) + ']').addClass('selected');
+            highlighter.css('background-color', '#e3e3e3');
+            var selectedButton = $('.model_buttons input[name=' + getModelWithHighestWeight(selectedSolution) + ']');
+            selectedButton.addClass('selected').prev().css('background-color', chartOptions.series[selectedButton.attr("name")].color);
             break;
     }
     highlightSelectedRadioButton("select");
@@ -268,6 +280,12 @@ function viewExperiment() {
     )
     .done( onGetExperimentDataSuccess )
     .fail( onGetExperimentDataError )
+    .progress(function(e) {
+        if (e.lengthComputable) {
+            var percentage = Math.round((e.loaded * 100) / e.total);
+            console.log(percentage);
+        }
+    })
 }
 
 function onGetExperimentDataSuccess(data) {
@@ -327,7 +345,7 @@ function loadComputedCurvesForSolution(solution, override) {
             curve.push([v.q_value, v.intensity]);
         });
         if (!override)
-            chartOptions.series.push({ data: curve });
+            chartOptions.series.push({ data: curve, color: colors[(i - 1) % 26] });
         else {
             var chartEl = $('#chart');
             chartEl.highcharts().series[i].setData(curve, false);
@@ -349,7 +367,8 @@ function createButtons(solution) {
     targetElement.html("");
     var models = computationData.weights['solution' + solution];
     for (var i = 1; i <= Object.keys(models).length; i++) {
-        targetElement.append("<input type=\"button\" id=\"btnDisplayModel" + i + "\" value=\"Model " + i + "\" class=\"btnModel selected\" name=\""
+        targetElement.append("<span class=\"highlighter\" style=\"background-color: " + chartOptions.series[i].color + "\">" +
+        "</span><input type=\"button\" id=\"btnDisplayModel" + i + "\" value=\"Model " + i + "\" class=\"btnModel selected\" name=\""
             + i + "\" />" + "<span class=\"" + i + "\">" + models[i] + "</span>");
     }
     log += "createButtons() end| ";
@@ -384,14 +403,15 @@ function sortModels(order, solution) {
     var targetElement = $('.model_buttons');
     targetElement.html("");
     for (var i = 0; i < sortedWeights.length; i++) {
-        targetElement.append("<input type=\"button\" id=\"btnDisplayModel" + sortedWeights[i] + "\" value=\"Model "
-            + sortedWeights[i] + "\" class=\"btnModel\" + name=\""
+        targetElement.append("<span class=\"highlighter\"></span><input type=\"button\" id=\"btnDisplayModel"
+            + sortedWeights[i] + "\" value=\"Model " + sortedWeights[i] + "\" class=\"btnModel\" + name=\""
             + sortedWeights[i] + "\" />" + "<span class=\"" + i + "\">" + computationData.weights['solution' + solution][sortedWeights[i]] + "</span>");
     }
 
-    //add class 'selected' to buttons that were selected before sorting
+    //highlight selected model buttons
     for (var j = 0; j < selectedModelsIds.length; j++) {
-        $('.model_buttons input#' + selectedModelsIds[j]).addClass('selected');
+        var currentModelButton = $('.model_buttons input#' + selectedModelsIds[j]);
+        currentModelButton.addClass('selected').prev().css('background-color', chartOptions.series[currentModelButton.attr('name')].color);
     }
 
     setTimeout(function() {
@@ -485,8 +505,10 @@ function selectButtonsByWeight(weight) {
     $('.model_buttons input').each(function () {
         if (parseFloat($(this).next().text()) >= (parseFloat(weight) / 100)) {
             $(this).addClass('selected');
+            $(this).prev().css('background-color', chartOptions.series[$(this).attr('name')].color);
         } else {
             $(this).removeClass('selected');
+            $(this).prev().css('background-color', '#e3e3e3');
         }
     });
     toggleSelectAllButton();
@@ -506,16 +528,14 @@ function selectButtonsByWeightSummation(value, solution) {
     });
 
     $('.model_buttons input').removeClass('selected');
+    $('.model_buttons span.highlighter').css('background-color', '#e3e3e3');
     $.each(selectedModels, function(i, v){
-        $(".model_buttons input[name=" + v + "]").addClass('selected');
+        var currentModelButton = $(".model_buttons input[name=" + v + "]");
+        currentModelButton.addClass('selected');
+        currentModelButton.prev().css('background-color', chartOptions.series[currentModelButton.attr('name')].color);
+
     });
     toggleSelectAllButton();
-}
-
-//check if clicked button is the last selected button. if yes, return false. if no, return yes.
-function canDeselect(model) {
-    var modelButtons = $('.model_buttons input.selected');
-    return !(modelButtons.length == 1 && modelButtons.attr('name') == model);
 }
 
 //check if all model buttons are clicked.if yes, return true.if no, return false.

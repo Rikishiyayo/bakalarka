@@ -13,6 +13,7 @@ html, body, .PageWrapper{
 section{
     flex-grow: 1;
     flex-shrink: 0;
+    width: 99%;
 }
 
 footer{
@@ -311,12 +312,26 @@ div.best-results-table {
                 font-size: 0;
             }
 
-                .ControlsPanel .model_buttons span {
+                .ControlsPanel .model_buttons span.highlighter {
                     font-size: 12px;
                     display: inline-block;
                     height: 25px;
                     line-height: 25px;
-                    width: 15%;
+                    width: 4%;
+                    margin-bottom: 10px;
+                    vertical-align: middle;
+                    background-color: #e3e3e3;
+                    border-bottom-left-radius: 4px;
+                    border-top-left-radius: 4px;
+                    box-sizing: border-box;
+                }
+
+                .ControlsPanel .model_buttons span:not(.highlighter) {
+                    font-size: 12px;
+                    display: inline-block;
+                    height: 25px;
+                    line-height: 25px;
+                    width: 11.5%;
                     margin: 0 2% 10px 0%;
                     vertical-align: middle;
                     background-color: #e3e3e3;
@@ -326,19 +341,17 @@ div.best-results-table {
                     text-align: center;
                 }
 
-                    .ControlsPanel .model_buttons span:nth-of-type(3n + 3) {
+                    .ControlsPanel .model_buttons span:not(.highlighter):nth-of-type(3n + 3) {
                         margin-right: 0;
                     }
 
                 .ControlsPanel .model_buttons input {
                     box-sizing: border-box;
-                    width: 17%;
+                    width: 16.5%;
                     height: 25px;
                     margin-bottom: 10px;
                     text-align: center;
                     border: none;
-                    border-bottom-left-radius: 4px;
-                    border-top-left-radius: 4px;
                     font-size: 12px;
                     font-weight: bold;
                     padding: 0 6px 0 6px;
@@ -356,19 +369,10 @@ div.best-results-table {
                     -o-transition: background-color .5s;
                 }
 
-                    .ControlsPanel .model_buttons input:not(.selected):hover {
+                    .ControlsPanel .model_buttons input:hover {
                         background-color: #a9acb3 !important;
                         cursor: pointer;
                     }
-
-                    .ControlsPanel .model_buttons input.selected {
-                        background-color: greenyellow;
-                    }
-
-                        .ControlsPanel .model_buttons input.selected:hover {
-                            background-color: #8acc25;
-                            cursor: pointer;
-                        }
 
             .ControlsPanel .Controls {
                 -webkit-user-select: none;
