@@ -98,18 +98,23 @@ def create_status_file(path):
 # gets a file with model to display and moves it to a directory on a server to read and for user to download
 # user_id - an id of a user that represents a directory where experiment data are stored
 # exp_guid - an identificator of a experiment
-def get_model_data(user_id, exp_guid):
-    src_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, exp_guid, "model.pdb")
-    dst_dir = os.path.join(current_app.config['APP_ROOT'], "app/static/uploads", exp_guid)
+def move_model_and_experiment_data_to_upload_dir(user_id, comp_guid):
+    src_models_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "model.pdb")
+    src_exp_data_file_path = os.path.join(current_app.config['EXP_DIRECTORY'], user_id, comp_guid, "saxs.dat")
+    dst_dir = os.path.join(current_app.config['APP_ROOT'], "app/static/uploads", comp_guid)
 
     try:
         os.mkdir(dst_dir)
         dst_file_path_models = os.path.join(dst_dir, "model.pdb")
-        shutil.copyfile(src_file_path, dst_file_path_models)
+        dst_file_path_exp_data = os.path.join(dst_dir, "saxs.dat")
+        shutil.copyfile(src_models_file_path, dst_file_path_models)
+        shutil.copyfile(src_exp_data_file_path, dst_file_path_exp_data)
     except OSError as err:
         if err.errno != errno.EEXIST:
-            current_app.logger.error('Error while trying to create a new directory in specified directory or trying to copy model.pdb to \'static/uploads/[exp_guid]\'\n'
-                                     'arguments: dst_dir - ' + dst_dir, exc_info=err)
+            current_app.logger.error(
+                'Error while trying to create a new directory in specified directory or trying to copy model.pdb or saxs.dat to \'static/uploads/[exp_guid]\'\n'
+                'arguments: dst_dir - ' + dst_dir + ', user_id - ' + user_id + ', comp_guid - ' + comp_guid,
+                exc_info=err)
             raise err
 
 
