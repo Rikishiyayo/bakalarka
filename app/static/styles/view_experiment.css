@@ -36,15 +36,25 @@ footer{
     color: #4c4c4c;
     text-align: center;
     opacity: 1;
-    font-size: 40px;
+    font-size: 30px;
 }
 
-    .loading-screen #progressbar{
+    .loading-screen .loading-screen-content-wrapper{
         vertical-align: middle;
         display: inline-block;
-        width: 160px;
-        font-size: 12px;
     }
+
+        .loading-screen .loading-screen-content-wrapper #progressbar{
+            font-size: 12px;
+            width: 200px;
+            margin: 7px auto 0;
+            border-color: #4c4c4c;
+        }
+
+            .loading-screen .loading-screen-content-wrapper #progressbar .ui-widget-header{
+                background: lightskyblue;
+                border: 1px solid #4c4c4c;
+            }
 
 .error-screen{
     position: absolute;

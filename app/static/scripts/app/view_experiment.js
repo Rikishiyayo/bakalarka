@@ -46,7 +46,7 @@ $(function () {
     $('.best-results-table .result-row').first().addClass('selected-solution');  //set currently displayed solution
 
     $( "#progressbar" ).progressbar({
-      value: 0
+      value: 10
     });
     viewExperiment();
     setSelectedRadioButtons();
@@ -277,6 +277,7 @@ function resetSliderValues(){
 
 //asynchronously calls a method on a server, which loads experiment data in JSON. If server method succesfully returns data to the browser, 'onGetExperimentDataSuccess' is executed
 function viewExperiment() {
+    var changeLoadingText = true;
     log += "viewExperiment() start| ";
     $.get("/get_experiment_data",
         { user_id: $.url().segment(-2), comp_guid: $.url().segment(-1) }
@@ -285,9 +286,10 @@ function viewExperiment() {
     .fail( onGetExperimentDataError )
     .progress(function(e) {
         if (e.lengthComputable) {
-            var percentage = Math.round((e.loaded * 100) / e.total);
-            console.log(percentage);
-            $( ".loading-screen #progressbar" ).progressbar( "option", "value", percentage/2 );
+            var percentage = Math.round((e.loaded * 60) / e.total);
+            changeLoadingText == true ? $(".loading-screen span").text("downloading computation results...") : "";
+            changeLoadingText = false;
+            $( ".loading-screen #progressbar" ).progressbar( "option", "value", percentage + 10 );
         }
     })
 }
@@ -316,6 +318,7 @@ function onGetExperimentDataError(xhr, errorType, exception) {
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
     log += "viewFile() start| ";
+    $(".loading-screen span").text("downloading models...")
     pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {  //normal try catch block doesnt catch exception when fetchPdb doesnt load any data or loads incorrect
         for (var i = 0; i < structures.length; i++) {
                 models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
@@ -390,7 +393,7 @@ function getModelWithHighestWeight(solution){
 function sortModels(order, solution) {
     var obj = computationData.weights['solution' + solution];
     var sortedWeights;
-    
+
     if (order == "asc")
         sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
     else if (order == "desc")
@@ -546,7 +549,7 @@ function selectButtonsByWeightSummation(value, solution) {
 //check if all model buttons are clicked.if yes, return true.if no, return false.
 function allModelButtonsSelected() {
     return $('.model_buttons input.btnModel').length == $('.model_buttons input.btnModel.selected').length;
-    
+
 }
 
 //select radio button 'selectAll' option if all models are selected, otherwise deselect
