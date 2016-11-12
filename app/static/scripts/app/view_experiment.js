@@ -318,14 +318,14 @@ function onGetExperimentDataError(xhr, errorType, exception) {
 //this function asynchronously loads models to be displayed by PV viewer
 function viewFile() {
     log += "viewFile() start| ";
-    $(".loading-screen span").text("downloading models...")
+    $(".loading-screen span").text("downloading models...");
     pv.io.fetchPdb('/static/uploads/' + $.url().segment(-1) + '/model.pdb', function(structures) {  //normal try catch block doesnt catch exception when fetchPdb doesnt load any data or loads incorrect
         for (var i = 0; i < structures.length; i++) {
-                models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
+            models.push(viewer.cartoon('model' + (i + 1), structures[i], { color: pv.color.uniform(colors[i % 26]) }));
             log += "model " + i + " loaded to PV viewer| ";
+            i == 0 ? $( ".loading-screen #progressbar" ).progressbar( "option", "value", 100 ) : "";
         }
-        $( ".loading-screen #progressbar" ).progressbar( "option", "value", 100 );
-        viewer.autoZoom();
+                viewer.autoZoom();
         $('.loading-screen').hide();
         log += "loading screen hidden| ";
         log += "viewFile() end| ";
