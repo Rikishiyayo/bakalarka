@@ -325,8 +325,10 @@ function viewFile() {
             log += "model " + i + " loaded to PV viewer| ";
             i == 0 ? $( ".loading-screen #progressbar" ).progressbar( "option", "value", 100 ) : "";
         }
-                viewer.autoZoom();
-        $('.loading-screen').hide();
+        viewer.autoZoom();
+        setTimeout(function () {
+            $('.loading-screen').hide();
+        }, 60);
         log += "loading screen hidden| ";
         log += "viewFile() end| ";
         $('html body').animate({ scrollTop: 60}, 500);
