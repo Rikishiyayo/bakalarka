@@ -42,7 +42,7 @@ var options = {
 ////////////////////////////////////////////// main function - calls other functions ////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
     viewer = pv.Viewer(document.getElementById('pvViewer'), options);  //must be javascript function 'getElementById', otherwise pv throws an error while trying to display molecules
-    $('.PageWrapper').css('min-width', '1550px');
+    $('.PageWrapper').css('min-width', '1600px');
     $('.best-results-table .result-row').first().addClass('selected-solution');  //set currently displayed solution
 
     $( "#progressbar" ).progressbar({
@@ -92,10 +92,9 @@ function resultRowClick() {
         highlightSelectedRadioButton('sort');
 
         setTimeout(function(){
-            chartOptions.series = chartOptions.series.slice(0, 1);
-            createButtons(solution);
             loadComputedCurvesForSolution(solution, true);
             displayModels();
+            createButtons(solution);
         }, 10);
     });
 }
@@ -128,10 +127,11 @@ function updateDisplayedResults(button){
         button.prev().css('background-color', '#e3e3e3');
 
     //if all models are selected, select 'Select all' radio button
-    $(".Controls input[name=select][value='1']").prop('checked', false);
+    var selectAllButton = $(".Controls input[name=select][value='1']");
+    selectAllButton.prop('checked', false);
     highlightSelectedRadioButton('select');
     if (allModelButtonsSelected()) {
-        $(".Controls input[name=select][value='1']").prop('checked', true);
+        selectAllButton.prop('checked', true);
         highlightSelectedRadioButton('select');
     }
     displayModels();
@@ -268,6 +268,7 @@ function highlightSelectedRadioButton(option){
     }
 }
 
+// reset slider values to default values(when user selects different solution, manually chooses model or uses radio button controls 'select' or 'sort by weight')
 function resetSliderValues(){
     $('#sliderSummation').val(0);
     $('#sliderWeight').val(0);
@@ -338,8 +339,8 @@ function viewFile() {
 
 function setWeightSpanInSolutionRowWidth() {
     log += "setWeightSpanInSolutionRowWidth() start| ";
-    var length = 100 / $('.result-row:first span').length;
-    $('.result-row span, .header-row span').css('width', length + '%');
+    $('.result-row span.narrow, .header-row span.narrow').css('width', "4%");
+    $('.result-row span.wide, .header-row span.wide').css('width', "6%" );
     log += "setWeightSpanInSolutionRowWidth() end| ";
 }
 
@@ -379,7 +380,7 @@ function createButtons(solution) {
     for (var i = 1; i <= Object.keys(weights).length; i++) {
         targetElement.append("<span class=\"highlighter\" style=\"background-color: " + chartOptions.series[i].color + "\">" +
         "</span><input type=\"button\" id=\"btnDisplayModel" + i + "\" value=\"Model " + i + "\" class=\"btnModel selected\" name=\""
-            + i + "\" />" + "<span class=\"" + i + "\">" + weights[i] + "</span>");
+            + i + "\" />" + "<span class=\"" + i + "\">" + parseFloat(weights[i]).toFixed(3) + "</span>");
     }
     log += "createButtons() end| ";
 }
@@ -395,7 +396,7 @@ function getModelWithHighestWeight(solution){
 function sortModels(order, solution) {
     var obj = computationData.weights['solution' + solution];
     var sortedWeights;
-
+    
     if (order == "asc")
         sortedWeights = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
     else if (order == "desc")
@@ -543,7 +544,6 @@ function selectButtonsByWeightSummation(value, solution) {
         var currentModelButton = $(".model_buttons input[name=" + v + "]");
         currentModelButton.addClass('selected');
         currentModelButton.prev().css('background-color', chartOptions.series[currentModelButton.attr('name')].color);
-
     });
     toggleSelectAllButton();
 }
@@ -551,7 +551,7 @@ function selectButtonsByWeightSummation(value, solution) {
 //check if all model buttons are clicked.if yes, return true.if no, return false.
 function allModelButtonsSelected() {
     return $('.model_buttons input.btnModel').length == $('.model_buttons input.btnModel.selected').length;
-
+    
 }
 
 //select radio button 'selectAll' option if all models are selected, otherwise deselect

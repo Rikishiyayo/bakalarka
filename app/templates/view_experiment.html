@@ -29,22 +29,30 @@
     <div class="best-results-table">
         <div id="best-results-table-overlay"></div>
         <p class="header-row">
-            <span>c</span>
-            <span>c1</span>
-            <span>c2</span>
-            <span>chi</span>
+            <span class="wide">c</span>
+            <span class="narrow">c1</span>
+            <span class="narrow">c2</span>
+            <span class="wide">chi</span>
             {% for item in best_results[0][5:] %}
-                <span>w{{ loop.index }}</span>
+                <span class="wide">w{{ loop.index }}</span>
             {% endfor %}
         </p>
         {% for item in best_results %}
             <p class="result-row">
                 <input type="hidden" value="{{ item[0] }}">
                 {% for weight in item[1:5] %}
-                    <span>{{ weight }}</span>
+                    {% if loop.index == 2 %}
+                        <span class="narrow">{{ weight }}</span>
+                    {% else %}
+                        {% if loop.index == 3 %}
+                            <span class="narrow">{{ weight }}</span>
+                        {% else %}
+                            <span class="wide">{{ weight }}</span>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
                 {% for weight in item[5:] %}
-                    <span class="weight">{{ weight }}</span>
+                    <span class="weight narrow">{{ weight }}</span>
                 {% endfor %}
             </p>
         {% endfor %}
@@ -67,8 +75,8 @@
                 <span class="gamma">Gamma: </span><span>{{ computation_details.optim_gamma }}</span>
                 <span class="input-data-download">Input data: </span>
                 <span>
-                    <a class="download" href="/static/uploads/{{ comp_guid }}/model.pdb" download="{{ username }}_{{ computation_details.name }}_models">models</a>
-                    <a class="download" href="/static/uploads/{{ comp_guid }}/saxs.dat" download="{{ username }}_{{ computation_details.name }}_exp_data">saxs.dat</a>
+                    <a class="download" href="/static/uploads/{{ comp_guid }}/model.pdb" download="{{ username }}_{{ computation_details.name }}_models.pdb">Models</a>
+                    <a class="download" href="/static/uploads/{{ comp_guid }}/saxs.dat" download="{{ username }}_{{ computation_details.name }}_SAXS_data.dat">SAXS data</a>
                 </span>
             </p>
     </div>

@@ -1,27 +1,8 @@
-html, body, .PageWrapper{
-    height: 100%;
-}
-
 .PageWrapper{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100%;
     min-width: 800px;
 }
 
-header{
-    flex-shrink: 0;
-}
-
-section{
-    flex-grow: 1;
-    flex-shrink: 0;
-}
-
 footer{
-    flex-shrink: 0;
-    display: flex !important;
     align-items: center;
     height: 140px;
     padding: 0;
@@ -59,7 +40,7 @@ div.submit_experiment{
                     margin: auto;
                     display: inline-block;
                     border-radius: 4px;
-                    padding: 4px 5px 5px 5px;
+                    padding: 4px 10px 5px 10px;
                     -webkit-user-select: none;
                     -moz-user-select: none;
                     -ms-user-select: none;
@@ -757,7 +738,10 @@ div.experiment_list{
         height: 220px;
         margin-left: 5%;
         display: flex;
+        display: -webkit-flex;
         flex-direction: column;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
         justify-content: flex-end;
         align-items: center;
         margin-bottom: 150px;

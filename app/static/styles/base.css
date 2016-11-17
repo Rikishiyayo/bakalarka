@@ -1,3 +1,7 @@
+html, body, .PageWrapper{
+    height: 100%;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -10,6 +14,14 @@ body {
 }
 
 .PageWrapper {
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    min-width: 500px;
     margin-left: auto;
     margin-right: auto;
     color: #4c4c4c;
@@ -22,6 +34,9 @@ header {
     font-size: 0;
     height: 60px;
     position: relative;
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    -ms-flex-shrink: 0;
 }
 
     header a.user_management_link{
@@ -41,7 +56,7 @@ header {
         -moz-transition: background-color .5s;
         -o-transition: background-color .5s;
     }
-    
+
         header a.user_management_link:hover{
             background-color: #6ca4c8;
             cursor: pointer;
@@ -90,6 +105,12 @@ section {
     margin:10px auto;
     font-size: 0;
     position: relative;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-grow: 1;
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    -ms-flex-shrink: 0;
 }
 
     section .flash-message{
@@ -136,6 +157,12 @@ section {
 footer {
     width: 100%;
     padding: 100px 0;
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    display: flex !important;
+    display: -webkit-flex !important;
+    align-items: center;
 }
 
     footer .footer-content-wrapper{

@@ -2,6 +2,7 @@ import os, errno
 from flask import current_app
 from math import log
 from app.bussinesLogic import Filtering
+from decimal import Decimal
 
 status_shortcuts = {"accepted": "a", "running": "r", "queued": "q", "done": "d"}
 
@@ -213,7 +214,7 @@ def get_best_solutions_of_computation(user_id, comp_guid):
                 values_in_line = line.split(',')
 
                 for j, value in enumerate(values_in_line):
-                    data.append(float(value.strip()))
+                    data.append((Decimal(value.strip())).quantize(Decimal('1.000')))
 
                 solutions.append(data)
 
