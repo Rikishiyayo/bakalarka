@@ -66,51 +66,6 @@ footer{
         vertical-align: middle;
     }
 
-.chart-fullscreen{
-    box-sizing: border-box;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: #4c4c4c;
-    display: none;
-    position: fixed;
-    z-index: 10000
-}
-
-    .chart-fullscreen #chart {
-        display: block;
-        width: 100%;
-        height: 88%;
-        background-color: white;
-        padding: 20px;
-        box-sizing: border-box;
-        top: 0;
-        left: 0;
-        margin: auto;
-        position: relative;
-    }
-
-    .chart-fullscreen .btnCloseChartFullscreen {
-        display: block;
-        position: absolute;
-        background-color: white;
-        color: red;
-        border: none;
-        width: 40px;
-        height: 40px;
-        right: 0;
-        top: 0;
-        z-index: 100000;
-        font-weight: bold;
-        font-size: 26px;
-    }
-
-        .chart-fullscreen .btnCloseChartFullscreen:hover {
-            background-color: red;
-            color: white;
-            cursor: pointer;
-        }
-
 div.best-results-table {
     width:74%;
     margin-bottom: 10px;
@@ -153,7 +108,6 @@ div.best-results-table {
             }
 
         div.best-results-table p.result-row {
-            border-radius: 4px;
             transition: background-color .5s;
             -webkit-transition: background-color .5s;
             -moz-transition: background-color .5s;
@@ -283,7 +237,7 @@ div.best-results-table {
             border: 1px solid #9498a1;
             border-radius: 4px;
             margin-right: 1%;
-            overflow: auto;
+            overflow: hidden;
             vertical-align: middle;
         }
 
