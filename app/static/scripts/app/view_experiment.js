@@ -21,8 +21,10 @@ var chartOptions = {
         },
         zoomType: 'x',
         panning: true,
-        panKey: 'shift'
+        panKey: 'shift',
+        height: 418
     },
+    credits: { enabled: false },
     xAxis: { title: { text: "q" } },
     yAxis: { title: { text: 'log intensity' } },
     series: [],
