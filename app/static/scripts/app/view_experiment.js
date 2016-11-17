@@ -14,12 +14,15 @@ var colors = ['#ff0000', '#00cc99', '#ffff00', '#660033', '#ff9900', '#666633', 
 //chart options
 var chartOptions = {
     chart: { renderTo: 'chart',
-             type: 'spline',
-             events: {
-                redraw: function () {
-                }
-             }
-           },
+        type: 'spline',
+        events: {
+            redraw: function () {
+            }
+        },
+        zoomType: 'x',
+        panning: true,
+        panKey: 'shift'
+    },
     xAxis: { title: { text: "q" } },
     yAxis: { title: { text: 'log intensity' } },
     series: [],
@@ -82,7 +85,7 @@ function resultRowClick() {
         $('#best-results-table-overlay').show();
 
         // highlight selected row
-        var solution = $(this).find('input[type=hidden]').val();
+        selectedSolution = $(this).find('input[type=hidden]').val();
         $('.result-row').removeClass('selected-solution');
         $(this).addClass('selected-solution');
 
@@ -92,9 +95,9 @@ function resultRowClick() {
         highlightSelectedRadioButton('sort');
 
         setTimeout(function(){
-            loadComputedCurvesForSolution(solution, true);
+            loadComputedCurvesForSolution(selectedSolution, true);
             displayModels();
-            createButtons(solution);
+            createButtons(selectedSolution);
         }, 10);
     });
 }
